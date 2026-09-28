@@ -13,7 +13,7 @@ spring:
   datasource:
     url: ${JDBC_DATABASE_URL}
     username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    password: ${DB_PASSWORD:}
     hikari:
       maximum-pool-size: 3
       minimum-idle: 0

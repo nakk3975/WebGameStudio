@@ -1,5 +1,13 @@
 # GhostDesk deployment
 
+## Deployment status — 2026-09-28
+
+- Public website: https://ghostdesk-p24l.onrender.com (live; bundled case is playable).
+- API service: https://ghostdesk-api.onrender.com (created).
+- Neon project and production schema/sample are applied.
+- **DB connection remains blocked:** automatic approval review rejected sending the newly generated read-only database password to Render. `DB_PASSWORD` has not been configured. Explicit approval for this transfer is needed before database-backed API verification can complete. No password is in this repository.
+- API liveness can start with a missing password; DB readiness remains unavailable until credentials are configured. This is not a successful DB connection.
+
 ## Components
 
 - Public repository: https://github.com/nakk3975/WebGameStudio

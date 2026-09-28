@@ -46,3 +46,6 @@ services:
       - path: /*
         name: X-Robots-Tag
         value: noindex, nofollow
+      - path: /*
+        name: Content-Security-Policy
+        value: "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://ghostdesk-api.onrender.com; object-src 'none'; base-uri 'self'; frame-ancestors 'self'"
