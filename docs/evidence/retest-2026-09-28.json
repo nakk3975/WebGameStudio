@@ -1,0 +1,48 @@
+{
+  "sourceCommit": "154ec2d6b12877965f3c94a306d85449cc8348ba",
+  "frontendTests": 51,
+  "apiTests": 6,
+  "typecheck": "passed",
+  "webBuild": "passed",
+  "standaloneBuild": "passed",
+  "ci": {
+    "runId": 36402753164,
+    "conclusion": "success",
+    "url": "https://github.com/nakk3975/WebGameStudio/actions/runs/36402753164"
+  },
+  "deploy": {
+    "id": "dep-dat32cjbc2fs73b01g6g",
+    "status": "live",
+    "finishedAt": "2026-09-28T09:20:09.212788Z"
+  },
+  "url": "https://ghostdesk-p24l.onrender.com",
+  "frontendHttpStatus": 200,
+  "apiChecks": {
+    "/health/live": 200,
+    "/health/ready": 200,
+    "/api/v1/ghostdesk/catalog": 200
+  },
+  "browserChecks": [
+    "editor second-draft return retains selection and undo",
+    "undo and redo",
+    "wrong and correct passwords",
+    "save immediately before home and reload restores note and clues",
+    "missing evidence rejected",
+    "ending B to resumed ending A",
+    "production second tab read-only while test running",
+    "editor lock released after returning home",
+    "standalone HTML home and editor via HTTP"
+  ],
+  "initialJsKilobytes": {
+    "before": 567.22,
+    "after": 368.64,
+    "gzipBefore": 177.21,
+    "gzipAfter": 113.21
+  },
+  "limitations": [
+    "Actual browser quota failure and force-close not tested",
+    "Actual mobile devices, Safari and Firefox not tested",
+    "Standalone file origin not tested",
+    "Performance comparison is bundle size, not measured user latency"
+  ]
+}
