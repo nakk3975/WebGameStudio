@@ -60,3 +60,11 @@ Render liveness uses `/health/live` and does not touch the database. Do not sche
 ## Scope
 
 This deployment serves a public sample catalog. Personal progress, notes, and editor drafts stay in IndexedDB on the user's device. GitHub OAuth, cloud saves, draft ownership, creator publishing and invitations are not implemented. JSON export remains the available backup. There is no production monitoring or recovery drill yet.
+
+## 다섯 사건 업데이트 / 2026-09-28
+
+- V002를 검증 브랜치와 운영 브랜치에 순서대로 적용. 공개 사건은 5개, migration version은 2. 기존 001 패키지 및 API 권한은 변경하지 않음.
+- 프런트 코드: `fc3e2dd0654c054abd871090958d87fbd577ed2f`. Render 배포: `dep-dat3lgp42hec73fc9ju0` (LIVE).
+- GitHub Actions: https://github.com/nakk3975/WebGameStudio/actions/runs/36407043046 성공.
+- API 재배포 없이 새 사건 4개 조회 가능. 네 패키지는 번들 원본과 일치하며 웹은 서버가 늦어도 내장된 다섯 사건을 바로 제공.
+- 실제 운영에서 기존 001 진행 보존 및 002의 별도 저장·재로딩 확인. 세부 검사와 실기기 Safari 미검증 범위는 VERIFICATION.md 참고.

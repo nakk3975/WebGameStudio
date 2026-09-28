@@ -1,0 +1,17 @@
+{
+  "url": "https://ghostdesk-p24l.onrender.com",
+  "status": 200,
+  "title": "GhostDesk — 다섯 개의 미스터리 기록",
+  "cspPresent": true,
+  "scripts": [
+    "./assets/index-CAyoCxMT.js"
+  ],
+  "commit": "fc3e2dd0654c054abd871090958d87fbd577ed2f",
+  "renderDeploy": "dep-dat3lgp42hec73fc9ju0",
+  "renderStatus": "live",
+  "ciRun": 36407043046,
+  "ciConclusion": "success",
+  "migration": 2,
+  "frontendTests": 76,
+  "apiTests": 6
+}
