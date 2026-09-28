@@ -1,3 +1,4 @@
+import { UserMessage } from "./feedback";
 import { z } from "zod";
 import {
   validateCase,
@@ -94,6 +95,15 @@ async function writeRecords(
   });
 }
 export function parseSave(raw: unknown): Save {
+  try {
+    return parseSaveContent(raw);
+  } catch {
+    throw new UserMessage(
+      "진행 파일을 읽을 수 없습니다. 이 게임에서 저장한 진행 파일인지 확인해 주세요.",
+    );
+  }
+}
+function parseSaveContent(raw: unknown): Save {
   const p = z
     .object({
       format: z.literal("ghostdesk-save-1"),
@@ -132,6 +142,14 @@ export function download(name: string, object: unknown) {
 }
 export async function importJson(file: File) {
   if (file.size > 1048576)
-    throw Error("1MiB 이하의 JSON만 가져올 수 있습니다.");
-  return JSON.parse(await file.text()) as unknown;
+    throw new UserMessage(
+      "파일이 너무 큽니다. 1MB 이하의 파일을 선택해 주세요.",
+    );
+  try {
+    return JSON.parse(await file.text()) as unknown;
+  } catch {
+    throw new UserMessage(
+      "파일을 읽을 수 없습니다. 이 게임에서 저장한 파일을 선택해 주세요.",
+    );
+  }
 }

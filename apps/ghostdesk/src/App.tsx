@@ -1,3 +1,4 @@
+import { userMessage } from "./feedback";
 import {
   lazy,
   Suspense,
@@ -108,6 +109,7 @@ function Workspace({ account }: { account: Account }) {
     [ready, setReady] = useState(false),
     [notice, setNotice] = useState(""),
     [settings, setSettings] = useState(false),
+    [settingsSave, setSettingsSave] = useState<Save | null>(null),
     [font, setFont] = useState(1),
     [motion, setMotion] = useState(false),
     [restart, setRestart] = useState(false);
@@ -115,11 +117,20 @@ function Workspace({ account }: { account: Account }) {
   const [remotePackages, setRemotePackages] = useState<
     Record<string, CasePackage>
   >({});
-  const entries =
+  const customCases = new Map(
+    Object.values(saves)
+      .filter((s) => !caseLibrary.some((e) => e.case.caseId === s.case.caseId))
+      .map((s) => [s.case.caseId, s.case]),
+  );
+  if (
     importedCase &&
-    !caseLibrary.some((entry) => entry.case.caseId === importedCase.caseId)
-      ? [...caseLibrary, caseEntry(importedCase)]
-      : caseLibrary;
+    !caseLibrary.some((e) => e.case.caseId === importedCase.caseId)
+  )
+    customCases.set(importedCase.caseId, importedCase);
+  const entries = [
+    ...caseLibrary,
+    ...Array.from(customCases.values(), caseEntry),
+  ];
   const selectedEntry =
     entries.find((entry) => entry.case.caseId === selectedCaseId) || entries[0];
   const chosen =
@@ -254,7 +265,7 @@ function Workspace({ account }: { account: Account }) {
         }
         if (results.some((result) => result.status === "rejected"))
           setNotice(
-            "일부 저장을 읽지 못했습니다. 다른 사건은 계속 플레이하거나 내보낸 JSON을 가져올 수 있습니다.",
+            "일부 저장을 읽지 못했습니다. 다른 사건은 계속 플레이하거나 저장해 둔 진행 파일을 가져올 수 있습니다.",
           );
       })
       .finally(() => setReady(true));
@@ -321,19 +332,34 @@ function Workspace({ account }: { account: Account }) {
             if (!test) remember(s);
           }}
           persistSave={persistSave}
-          cloudStatus={test ? undefined : cloudStatus}
-          onSettings={() => setSettings(true)}
+          cloudStatus={
+            test
+              ? undefined
+              : account.user &&
+                  !caseLibrary.some(
+                    (e) => e.case.versionId === active.case.versionId,
+                  )
+                ? "직접 만든 사건 · 이 기기에 저장됨"
+                : cloudStatus
+          }
+          onSettings={(snapshot) => {
+            setSettingsSave(snapshot);
+            setSettings(true);
+          }}
         />
       ) : view === "home" ? (
         <>
           <header className="topbar">
             <Brand />
             <nav>
-              <span className="pill">INTERACTIVE MYSTERY</span>
+              <span className="pill">직접 푸는 미스터리</span>
               <AccountButton account={account} />
               <button
                 className="icon-button"
-                onClick={() => setSettings(true)}
+                onClick={() => {
+                  setSettingsSave(saved);
+                  setSettings(true);
+                }}
                 aria-label="설정"
               >
                 <Settings size={19} />
@@ -420,10 +446,10 @@ function Workspace({ account }: { account: Account }) {
                       </button>
                       <button
                         onClick={() =>
-                          download("ghostdesk-device-backup.json", r.save)
+                          download("ghostdesk-device-backup.gdsave", r.save)
                         }
                       >
-                        이 기기 기록 내보내기
+                        이 기기 기록 파일 저장
                       </button>
                     </div>
                   </section>
@@ -431,7 +457,7 @@ function Workspace({ account }: { account: Account }) {
             <section className="case-library" aria-label="사건 선택">
               <div className="library-heading">
                 <div>
-                  <span className="section-kicker">CASE ARCHIVE</span>
+                  <span className="section-kicker">사건 기록</span>
                   <h2>어떤 기록부터 열어볼까요?</h2>
                 </div>
                 <span className="library-count">{entries.length}개의 사건</span>
@@ -570,6 +596,7 @@ function Workspace({ account }: { account: Account }) {
               </button>
               <button
                 className="import-link"
+                disabled={!ready || !account.ready}
                 onClick={() => file.current?.click()}
               >
                 <Upload size={22} />
@@ -587,7 +614,7 @@ function Workspace({ account }: { account: Account }) {
         hidden
         ref={file}
         type="file"
-        accept=".json,application/json"
+        accept=".gdsave,.json,application/json"
         onChange={async (e) => {
           const f = e.target.files?.[0];
           e.target.value = "";
@@ -601,7 +628,12 @@ function Workspace({ account }: { account: Account }) {
             setTest(false);
             setView("play");
           } catch (err) {
-            setNotice(err instanceof Error ? err.message : "가져오기 실패");
+            setNotice(
+              userMessage(
+                err,
+                "진행을 가져오지 못했습니다. 기존 기록은 유지됩니다. 잠시 후 다시 시도해 주세요.",
+              ),
+            );
           }
         }}
       />
@@ -619,9 +651,11 @@ function Workspace({ account }: { account: Account }) {
           </p>
           <div className="button-row">
             <button
-              onClick={() => saved && download("ghostdesk-save.json", saved)}
+              onClick={() =>
+                saved && download("ghostdesk-progress.gdsave", saved)
+              }
             >
-              <Download size={16} /> 기존 진행 내보내기
+              <Download size={16} /> 기존 진행 파일 저장
             </button>
             <button className="primary" onClick={() => start()}>
               새 조사 시작
@@ -669,12 +703,18 @@ function Workspace({ account }: { account: Account }) {
             Esc로 현재 창 닫기 · 제목 표시줄의 버튼으로 창 배치
           </p>
           <p className="muted">
-            진행은 이 브라우저에 저장됩니다. 다른 기기로 옮기기 전 진행 JSON을
-            내보내세요. 현재 버전은 효과음이 없습니다.
+            {account.user
+              ? "공식 사건의 진행은 계정에 자동 저장됩니다. 다른 기기로 옮기기 전 ‘계정에 저장됨’을 확인해 주세요. 직접 만든 사건과 제작 중인 초안은 이 기기에만 저장됩니다."
+              : "진행은 현재 브라우저에 자동 저장됩니다. 다른 기기에서도 이어 하려면 로그인하거나 진행 파일을 저장해 옮겨 주세요."}
           </p>
-          {saved && (
-            <button onClick={() => download("ghostdesk-save.json", saved)}>
-              <Download size={16} /> 진행 내보내기
+          <p className="muted">현재는 효과음이 없습니다.</p>
+          {settingsSave && (
+            <button
+              onClick={() =>
+                download("ghostdesk-progress.gdsave", settingsSave)
+              }
+            >
+              <Download size={16} /> 진행 파일 저장
             </button>
           )}
         </Modal>

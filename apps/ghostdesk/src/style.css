@@ -1361,7 +1361,7 @@ small {
   font-size: 13px;
   overflow-wrap: anywhere;
 }
-.validation-error code {
+.validation-error strong {
   font-size: 11px;
 }
 .warning {

@@ -198,3 +198,47 @@ it("sends the verified account guard and never sends cross-origin cookies", asyn
     }),
   );
 });
+it("ignores a stale list response after a newer upload and another edit", async () => {
+  const { transport } = server();
+  const d = device(transport);
+  await d.persist(save("first"));
+  await d.flush();
+  const old = await transport.list();
+  let release!: (rows: RemoteSave[]) => void, started!: () => void;
+  const began = new Promise<void>((r) => (started = r));
+  const delayed = {
+    ...transport,
+    list: () => {
+      started();
+      return new Promise<RemoteSave[]>((r) => (release = r));
+    },
+  };
+  const reader = device(delayed, "qa", async () => structuredClone(d.records));
+  const refreshing = reader.initialize();
+  await began;
+  await reader.persist(save("second"));
+  await reader.flush();
+  await reader.persist(save("third"));
+  release(old);
+  await refreshing;
+  expect(reader.records[c.caseId].revision).toBe(2);
+  expect(reader.records[c.caseId].conflict).toBeUndefined();
+  await reader.flush();
+  expect((await transport.list())[0].save.notes).toBe("third");
+});
+it.each([
+  new TypeError("Failed to fetch"),
+  new DOMException("The operation was aborted.", "AbortError"),
+])(
+  "shows a friendly connection error instead of browser internals",
+  async (failure) => {
+    vi.spyOn(globalThis, "fetch").mockRejectedValue(failure);
+    await expect(
+      cloudTransport(
+        "https://api.example",
+        "user-a",
+        async () => "signed-token",
+      ).list(),
+    ).rejects.toThrow("이 기기의 진행은 유지");
+  },
+);

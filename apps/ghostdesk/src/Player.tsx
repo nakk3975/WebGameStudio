@@ -73,7 +73,7 @@ export default function Player({
   isTest: boolean;
   onExit: () => void;
   onSaved: (s: Save) => void;
-  onSettings: () => void;
+  onSettings: (snapshot: Save) => void;
   persistSave?: (s: Save) => Promise<void>;
   cloudStatus?: string;
 }) {
@@ -411,7 +411,7 @@ export default function Player({
       return (
         <div className="board-content">
           <div className="section-kicker">
-            COLLECTED EVIDENCE / {state.clueIds.length}
+            수집한 단서 / {state.clueIds.length}
           </div>
           <h2>기록을 연결해 보세요.</h2>
           <p className="muted">파일을 읽으면 단서가 자동으로 모입니다.</p>
@@ -465,7 +465,7 @@ export default function Player({
     if (id === "@conclusion")
       return (
         <div className="conclusion-content">
-          <div className="section-kicker">FINAL DEDUCTION</div>
+          <div className="section-kicker">최종 결론</div>
           <h2>그날, 무슨 일이 있었을까?</h2>
           <p className="muted">
             가설 하나와 그것을 뒷받침하는 근거를 선택하세요.
@@ -529,7 +529,7 @@ export default function Player({
           <div className="vault-lock">
             <LockKeyhole size={32} />
           </div>
-          <div className="section-kicker">PROTECTED ARCHIVE</div>
+          <div className="section-kicker">잠긴 보관함</div>
           <h2>보관함이 잠겨 있습니다.</h2>
           <p>{p.title}</p>
           <form
@@ -565,8 +565,10 @@ export default function Player({
             </button>
           </form>
           <p className="small muted">
-            앞뒤 공백 제거 · NFC 정규화 ·{" "}
-            {p.ignoreCase ? "대소문자 무시" : "대소문자 구분"}
+            답 앞뒤의 빈칸은 무시합니다.{" "}
+            {p.ignoreCase
+              ? "영문 대소문자는 상관없어요."
+              : "영문 대소문자를 구분해 주세요."}
             <br />
             시도{" "}
             {Object.hasOwn(state.attempts, p.id) ? state.attempts[p.id] : 0}회 ·
@@ -640,12 +642,12 @@ export default function Player({
             <div>
               <span>벽시계</span>
               <strong>03:10</strong>
-              <small>WALL CLOCK</small>
+              <small>벽시계</small>
             </div>
             <div>
               <span>기록용 PC</span>
               <strong>03:17</strong>
-              <small>TERMINAL 04</small>
+              <small>컴퓨터 시계</small>
             </div>
           </div>
           <p>{f.text}</p>
@@ -660,7 +662,7 @@ export default function Player({
         className={"document " + (f.id === "f-queue" ? "log-document" : "")}
       >
         <div className="document-meta">
-          <span>{f.id === "f-queue" ? "SYSTEM LOG" : "TEXT DOCUMENT"}</span>
+          <span>{f.id === "f-queue" ? "시스템 기록" : "문서"}</span>
           <span>읽기 전용</span>
         </div>
         <pre>{f.text}</pre>
@@ -684,7 +686,7 @@ export default function Player({
         </button>
         <div className="player-case">
           <span className="case-tag">
-            {isTest ? "TEST SNAPSHOT" : "CASE " + entry.number}
+            {isTest ? "테스트 플레이" : "CASE " + entry.number}
           </span>
           <b>{c.title}</b>
         </div>
@@ -696,8 +698,10 @@ export default function Player({
           </span>
           <button
             className="icon-button"
-            onClick={() => download("ghostdesk-save.json", latest.current)}
-            aria-label="진행 내보내기"
+            onClick={() =>
+              download("ghostdesk-progress.gdsave", latest.current)
+            }
+            aria-label="진행 파일 저장"
           >
             <Download size={18} />
           </button>
@@ -710,7 +714,7 @@ export default function Player({
           </button>
           <button
             className="icon-button"
-            onClick={onSettings}
+            onClick={() => onSettings(structuredClone(latest.current))}
             aria-label="설정"
           >
             <Settings size={18} />
@@ -823,7 +827,7 @@ export default function Player({
           ))}
         </main>
         <aside className="investigation">
-          <div className="section-kicker">INVESTIGATION</div>
+          <div className="section-kicker">조사 현황</div>
           <h2>조사 기록</h2>
           <div className="progress-caption">
             <span>발견한 단서</span>
@@ -854,7 +858,7 @@ export default function Player({
             <Network size={17} /> 증거 보드
           </button>
           <div className="investigation-bottom">
-            <span className="section-kicker">YOUR DEDUCTION</span>
+            <span className="section-kicker">나의 추리</span>
             <p>
               의심을 결론으로 만들려면
               <br />
@@ -965,21 +969,24 @@ export default function Player({
       )}
       {state.mode === "ERROR" && (
         <Modal title="사건 규칙을 확인해야 합니다" onClose={() => onExit()}>
-          <p>{state.diagnostic}</p>
+          <p>
+            사건을 진행하는 중 문제가 생겼습니다. 홈으로 돌아가 다시 이어 해
+            주세요. 같은 문제가 반복되면 오류 기록을 저장해 알려 주세요.
+          </p>
           <p>
             이번 행동 전 상태로 되돌렸으며, 직전 정상 저장은 덮어쓰지
             않았습니다.
           </p>
           <button
             onClick={() =>
-              download("ghostdesk-diagnostic.json", {
+              download("ghostdesk-support.txt", {
                 code: state.diagnostic,
                 eventSeq: state.eventSeq,
                 versionId: c.versionId,
               })
             }
           >
-            진단 내보내기
+            오류 기록 저장
           </button>
           <button onClick={onExit}>돌아가기</button>
         </Modal>
@@ -1046,8 +1053,8 @@ export default function Player({
             <FileText size={28} />
             <span>
               {c.endings.find((e) => e.id === state.endingId)!.revisitable
-                ? "REOPEN THE CASE"
-                : "CASE CLOSED"}
+                ? "다시 조사하기"
+                : "조사 완료"}
             </span>
           </div>
           <p className="ending-text">
@@ -1071,9 +1078,11 @@ export default function Player({
               </button>
             )}
             <button
-              onClick={() => download("ghostdesk-save.json", latest.current)}
+              onClick={() =>
+                download("ghostdesk-progress.gdsave", latest.current)
+              }
             >
-              <Download size={16} /> 진행 내보내기
+              <Download size={16} /> 진행 파일 저장
             </button>
             <button onClick={leave}>
               {isTest ? "제작기로 돌아가기" : "사건 선택으로"}

@@ -1,3 +1,4 @@
+import { UserMessage, userMessage } from "./feedback";
 import { parseSave, read, write, createSaveQueue, type Save } from "./storage";
 import { caseLibrary } from "./cases";
 export type RemoteSave = {
@@ -30,10 +31,10 @@ export function parseRemote(raw: unknown): RemoteSave {
     x.revision < 1 ||
     typeof x.updatedAt !== "string"
   )
-    throw Error("저장 형식이 올바르지 않습니다.");
+    throw new UserMessage("저장 형식이 올바르지 않습니다.");
   const save = parseSave(x.save);
   if (save.case.caseId !== x.caseId)
-    throw Error("사건 번호가 일치하지 않습니다.");
+    throw new UserMessage("사건 번호가 일치하지 않습니다.");
   return { ...x, save };
 }
 export function cloudTransport(
@@ -63,14 +64,22 @@ export function cloudTransport(
         },
       );
       if (r.status === 401)
-        throw Error("로그인이 만료되었습니다. 다시 로그인해 주세요.");
+        throw new UserMessage("로그인이 만료되었습니다. 다시 로그인해 주세요.");
       if (r.status === 409) {
         const x = await r.json();
         throw new SaveConflict(x.current ? parseRemote(x.current) : null);
       }
       if (!r.ok)
-        throw Error("계정 저장에 연결하지 못했습니다. 기기 진행은 보관됩니다.");
+        throw new UserMessage(
+          "계정 저장에 연결하지 못했습니다. 기기 진행은 보관됩니다.",
+        );
       return await r.json();
+    } catch (error) {
+      if (error instanceof SaveConflict || error instanceof UserMessage)
+        throw error;
+      throw new UserMessage(
+        "계정 저장에 연결하지 못했습니다. 이 기기의 진행은 유지되며 다시 연결되면 저장합니다.",
+      );
     } finally {
       clearTimeout(timer);
     }
@@ -79,7 +88,9 @@ export function cloudTransport(
     async list() {
       const rows = await request("");
       if (!Array.isArray(rows) || rows.length > 50)
-        throw Error("저장 목록 오류");
+        throw new UserMessage(
+          "계정의 진행 목록을 읽지 못했습니다. 잠시 뒤 다시 시도해 주세요.",
+        );
       return rows.map(parseRemote);
     },
     async put(save, revision) {
@@ -171,7 +182,7 @@ export class CloudSaves {
     );
   }
   async persist(save: Save) {
-    if (this.closed) throw Error("계정이 변경되었습니다.");
+    if (this.closed) throw new UserMessage("계정이 변경되었습니다.");
     const id = save.case.caseId,
       old = this.records[id];
     const official = caseLibrary.some(
@@ -203,7 +214,7 @@ export class CloudSaves {
         const id = remote.caseId,
           local = this.records[id];
         if (local?.dirty) {
-          if (local.revision !== remote.revision) local.conflict = remote;
+          if (remote.revision > local.revision) local.conflict = remote;
         } else if (!local || remote.revision > local.revision) {
           this.records[id] = {
             save: remote.save,
@@ -216,8 +227,10 @@ export class CloudSaves {
       await this.cache(this.records);
       this.label();
     } catch (e) {
-      this.status =
-        e instanceof Error ? e.message : "계정 연결을 다시 시도해 주세요";
+      this.status = userMessage(
+        e,
+        "계정 기록을 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+      );
       this.emit();
     }
   }
@@ -254,7 +267,10 @@ export class CloudSaves {
         if (e instanceof SaveConflict) this.records[id].conflict = e.current;
         else {
           retry = true;
-          this.status = e instanceof Error ? e.message : "계정 전송 대기";
+          this.status = userMessage(
+            e,
+            "계정 저장을 기다리는 중입니다. 이 기기의 진행은 유지됩니다.",
+          );
         }
         await this.cache(this.records).catch(() => {});
       }

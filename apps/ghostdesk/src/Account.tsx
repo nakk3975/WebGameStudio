@@ -1,3 +1,4 @@
+import { UserMessage, userMessage } from "./feedback";
 import { useEffect, useState, type ReactNode } from "react";
 import { UserRound, LogIn } from "lucide-react";
 import { Modal } from "./App";
@@ -65,9 +66,11 @@ export function AccountProvider({
   }, [enabled]);
   async function refresh() {
     if (!client)
-      throw Error("로그인 연결을 준비 중입니다. 잠시 후 다시 시도해 주세요.");
+      throw new UserMessage(
+        "로그인 연결을 준비 중입니다. 잠시 후 다시 시도해 주세요.",
+      );
     const r = await client.getSession({ query: { disableCookieCache: true } });
-    if (r.error) throw Error("로그인 상태를 확인하지 못했습니다.");
+    if (r.error) throw new UserMessage("로그인 상태를 확인하지 못했습니다.");
     const u = r.data?.user;
     setUser(u ? { id: u.id, name: u.name, email: u.email } : null);
     return u;
@@ -89,7 +92,9 @@ export function AccountProvider({
       if (mode === "reset") {
         const r = await client.forgetPassword.emailOtp({ email });
         if (r.error)
-          throw Error("코드 요청에 실패했습니다. 잠시 후 다시 시도해 주세요.");
+          throw new UserMessage(
+            "코드 요청에 실패했습니다. 잠시 후 다시 시도해 주세요.",
+          );
         setMode("reset-code");
         setMessage(
           "가입된 이메일이면 재설정 코드가 발송됩니다. 스팸함도 확인해 주세요.",
@@ -98,7 +103,8 @@ export function AccountProvider({
       }
       if (mode === "reset-code") {
         const r = await client.emailOtp.resetPassword({ email, otp, password });
-        if (r.error) throw Error("코드 또는 새 비밀번호를 확인해 주세요.");
+        if (r.error)
+          throw new UserMessage("코드 또는 새 비밀번호를 확인해 주세요.");
         setMode("login");
         setPassword("");
         setMessage("비밀번호를 변경했습니다. 다시 로그인해 주세요.");
@@ -113,21 +119,23 @@ export function AccountProvider({
             })
           : await client.signIn.email({ email, password });
       if (r.error)
-        throw Error(
+        throw new UserMessage(
           mode === "signup"
             ? "가입 정보를 확인해 주세요. 이미 가입한 이메일이면 로그인하거나 비밀번호를 재설정하세요."
             : "이메일 또는 비밀번호를 확인해 주세요.",
         );
       const u = await refresh();
       if (!u)
-        throw Error(
+        throw new UserMessage(
           "로그인을 유지하지 못했습니다. 브라우저의 사이트 저장 설정을 확인해 주세요.",
         );
       setOpen(false);
       setPassword("");
       setOtp("");
     } catch (e) {
-      setMessage(e instanceof Error ? e.message : "연결을 다시 시도해 주세요.");
+      setMessage(
+        userMessage(e, "연결하지 못했습니다. 잠시 후 다시 시도해 주세요."),
+      );
     } finally {
       setBusy(false);
     }
@@ -141,15 +149,15 @@ export function AccountProvider({
       setOpen(true);
     },
     token: async () => {
-      if (!client || !user) throw Error("로그인이 필요합니다.");
+      if (!client || !user) throw new UserMessage("로그인이 필요합니다.");
       const session = await client.getSession({
         query: { disableCookieCache: true },
       });
       if (session.data?.user.id !== user.id)
-        throw Error("계정이 변경되었습니다. 홈을 새로고침해 주세요.");
+        throw new UserMessage("계정이 변경되었습니다. 홈을 새로고침해 주세요.");
       const r = await client.token();
       if (r.error || !r.data?.token)
-        throw Error("로그인이 만료되었습니다. 다시 로그인해 주세요.");
+        throw new UserMessage("로그인이 만료되었습니다. 다시 로그인해 주세요.");
       return r.data.token;
     },
   };
@@ -193,7 +201,7 @@ export function AccountProvider({
                   setBusy(true);
                   try {
                     const r = await client.signOut();
-                    if (r.error) throw Error();
+                    if (r.error) throw new UserMessage();
                     setUser(null);
                     setOpen(false);
                   } catch {
@@ -258,8 +266,8 @@ export function AccountProvider({
               )}
               {connectionFailed && !client && (
                 <p role="alert">
-                  로그인 연결을 준비하지 못했습니다. HTTPS 사이트에서 새로고침한
-                  뒤 다시 시도해 주세요.
+                  로그인 연결을 준비하지 못했습니다. 사이트를 새로고침한 뒤 다시
+                  시도해 주세요.
                 </p>
               )}
               <button className="primary" disabled={busy || !client}>

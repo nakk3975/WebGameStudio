@@ -1,3 +1,9 @@
+import {
+  UserMessage,
+  userMessage,
+  issueLocation,
+  issueMessage,
+} from "./feedback";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   ReactFlow,
@@ -247,9 +253,9 @@ export default function Studio({
       setStatus("이 기기에 저장됨");
       return true;
     } catch {
-      setStatus("저장 실패 · JSON을 내보내세요");
+      setStatus("저장 실패 · 사건 파일을 저장해 주세요");
       setMessage(
-        "초안을 저장하지 못했습니다. JSON으로 내보내거나 다시 시도하세요.",
+        "초안을 저장하지 못했습니다. 사건 파일을 내려받아 보관하거나 다시 시도해 주세요.",
       );
       return false;
     }
@@ -310,10 +316,12 @@ export default function Studio({
     setSelected(i);
   }
   function addDraft(doc: CasePackage) {
-    if (readOnly) return;
+    if (readOnly) return false;
     if (drafts.length >= 10) {
-      setMessage("로컬 초안은 최대 10개입니다. JSON으로 내보내 보관하세요.");
-      return;
+      setMessage(
+        "이 기기에는 초안을 10개까지 보관할 수 있습니다. 현재 사건을 파일로 저장해 보관해 주세요.",
+      );
+      return false;
     }
     setDrafts((x) => [...x, { document: doc, revision: 1 }]);
     setActive(drafts.length);
@@ -321,6 +329,7 @@ export default function Studio({
     setFuture([]);
     select("info");
     setLastTest(null);
+    return true;
   }
   if (!ready || !c)
     return <div className="loading">사건 제작소를 여는 중입니다.</div>;
@@ -340,8 +349,8 @@ export default function Studio({
       ["FILE_READ", "파일을 읽으면"],
       ["CLUE_FOUND", "단서를 찾으면"],
       ["PUZZLE_SOLVED", "퍼즐을 풀면"],
-      ["FLAG_EQUALS", "플래그가 같으면"],
-      ["TIMER_REACHED", "타이머가 끝나면"],
+      ["FLAG_EQUALS", "진행 표시가 켜지거나 꺼지면"],
+      ["TIMER_REACHED", "기다리는 시간이 끝나면"],
       ["ALL", "모든 조건"],
       ["ANY", "하나 이상의 조건"],
       ["NOT", "조건의 반대"],
@@ -444,7 +453,7 @@ export default function Studio({
         ) : cond.type === "FLAG_EQUALS" ? (
           <>
             <TextField
-              label="플래그 이름"
+              label="진행 표시 이름"
               value={cond.id}
               onCommit={(id) => set({ ...cond, id })}
             />
@@ -454,7 +463,7 @@ export default function Studio({
                 checked={cond.value}
                 onChange={(e) => set({ ...cond, value: e.target.checked })}
               />
-              참
+              켜짐
             </label>
           </>
         ) : (
@@ -489,8 +498,8 @@ export default function Studio({
             ["REVEAL_FILE", "파일 공개"],
             ["APPEND_MESSAGE", "메시지 도착"],
             ["ADD_CLUE", "단서 추가"],
-            ["SET_FLAG", "플래그 설정"],
-            ["START_TIMER", "타이머 시작"],
+            ["SET_FLAG", "진행 표시 바꾸기"],
+            ["START_TIMER", "기다리기 시작"],
             ["END_CASE", "엔딩 확정"],
           ].map(([id, label]) => ({ id, label }))}
           onChange={(type) => {
@@ -517,7 +526,7 @@ export default function Studio({
         {e.type === "SET_FLAG" || e.type === "START_TIMER" ? (
           <>
             <TextField
-              label={e.type === "SET_FLAG" ? "플래그 이름" : "타이머 이름"}
+              label={e.type === "SET_FLAG" ? "진행 표시 이름" : "대기 이름"}
               value={e.id}
               onCommit={(id) => set({ ...e, id })}
             />
@@ -530,18 +539,22 @@ export default function Studio({
                     set({ ...e, value: event.target.checked })
                   }
                 />
-                참으로 설정
+                켜기 (선택을 해제하면 끄기)
               </label>
             ) : (
               <label className="field">
-                대기 시간(ms)
+                대기 시간(초)
                 <input
                   type="number"
-                  min="1"
-                  max="3600000"
-                  value={e.durationMs}
+                  min="0.001"
+                  max="3600"
+                  step="0.001"
+                  value={e.durationMs / 1000}
                   onChange={(event) =>
-                    set({ ...e, durationMs: Number(event.target.value) })
+                    set({
+                      ...e,
+                      durationMs: Math.round(Number(event.target.value) * 1000),
+                    })
                   }
                 />
               </label>
@@ -631,7 +644,7 @@ export default function Studio({
         c[kind].flatMap((v, i) =>
           v.id !== item.id && JSON.stringify(v).includes('"' + item.id + '"')
             ? [
-                `${labels[kind]} / ${"title" in v ? v.title : "label" in v ? v.label : v.id}`,
+                `${labels[kind]} / ${"title" in v ? v.title : "label" in v ? v.label : "규칙 " + (i + 1)}`,
               ]
             : [],
         ),
@@ -642,6 +655,28 @@ export default function Studio({
       if (category !== "info" && category !== "graph")
         Object.assign(x[category][selected], patch);
     });
+  const targetName = (id: string) => {
+    for (const kind of [
+      "files",
+      "clues",
+      "puzzles",
+      "messages",
+      "endings",
+    ] as const) {
+      const found = options(kind).find((x) => x.id === id);
+      if (found) return found.label;
+    }
+    const waits = c.rules
+      .flatMap((r) => r.then)
+      .filter((e) => e.type === "START_TIMER");
+    const wait = waits.findIndex((e) => e.id === id);
+    if (wait >= 0) return "대기 " + (wait + 1);
+    const marks = c.rules
+      .flatMap((r) => r.then)
+      .filter((e) => e.type === "SET_FLAG");
+    const mark = marks.findIndex((e) => e.id === id);
+    return mark >= 0 ? "진행 표시 " + (mark + 1) : "연결 대상 확인 필요";
+  };
   const nodes: Node[] = [],
     edges: Edge[] = [];
   if (category === "graph")
@@ -649,7 +684,7 @@ export default function Studio({
       const a = "r-" + r.id;
       nodes.push({
         id: a,
-        data: { label: r.id + " · 우선순위 " + r.priority },
+        data: { label: "규칙 " + (i + 1) + " · 실행 순서 " + r.priority },
         position: { x: 270, y: i * 150 },
       });
       conditionAtoms(r.when).forEach((atom, j) => {
@@ -658,11 +693,15 @@ export default function Studio({
           id,
           data: {
             label:
-              atom.type +
+              {
+                FILE_READ: "파일 읽기",
+                CLUE_FOUND: "단서 수집",
+                PUZZLE_SOLVED: "퍼즐 해결",
+                TIMER_REACHED: "기다리기 완료",
+                FLAG_EQUALS: "진행 표시 확인",
+              }[atom.type] +
               "\n" +
-              (options("files").find((f) => f.id === atom.id)?.label ||
-                options("puzzles").find((p) => p.id === atom.id)?.label ||
-                atom.id),
+              targetName(atom.id),
           },
           position: { x: 0, y: i * 150 + j * 65 },
         });
@@ -674,9 +713,16 @@ export default function Studio({
           id,
           data: {
             label:
-              e.type +
+              {
+                REVEAL_FILE: "파일 공개",
+                APPEND_MESSAGE: "메시지 도착",
+                ADD_CLUE: "단서 추가",
+                SET_FLAG: "진행 표시 바꾸기",
+                START_TIMER: "기다리기 시작",
+                END_CASE: "엔딩 표시",
+              }[e.type] +
               "\n" +
-              (options("files").find((f) => f.id === e.id)?.label || e.id),
+              targetName(e.id),
           },
           position: { x: 540, y: i * 150 + j * 65 },
         });
@@ -734,7 +780,7 @@ export default function Studio({
             </option>
           ))}
         </select>
-        <span className="pill">PRIVATE · r{d.revision}</span>
+        <span className="pill">나만의 초안</span>
         <button
           disabled={readOnly}
           onClick={() => addDraft(duplicateCase(c, uid()))}
@@ -762,11 +808,11 @@ export default function Studio({
         >
           <Redo2 size={17} />
         </button>
-        <button onClick={() => download("ghostdesk-case.json", c)}>
-          <Download size={16} /> 내보내기
+        <button onClick={() => download("ghostdesk-case.gdcase", c)}>
+          <Download size={16} /> 사건 파일 저장
         </button>
         <button disabled={readOnly} onClick={() => input.current?.click()}>
-          <Upload size={16} /> 가져오기
+          <Upload size={16} /> 사건 파일 가져오기
         </button>
       </div>
       <div className="studio-layout">
@@ -794,7 +840,7 @@ export default function Studio({
         <main className="studio-main">
           <div className="studio-section-title">
             <div>
-              <span className="section-kicker">CASE EDITOR</span>
+              <span className="section-kicker">사건 제작소</span>
               <h1>{labels[category]}</h1>
             </div>
             {category !== "info" && category !== "graph" && (
@@ -805,15 +851,15 @@ export default function Studio({
           </div>
           {lastTest && lastTest !== d.revision && (
             <p className="info-banner">
-              테스트 이후 초안이 변경되었습니다. 새 revision으로 다시
+              테스트 이후 초안이 변경되었습니다. 변경한 내용으로 다시
               테스트하세요.
             </p>
           )}
           {category === "graph" ? (
             <>
               <p className="muted">
-                조건과 효과의 연결을 보여줍니다. 가운데 규칙을 눌러 폼에서
-                수정하세요.
+                조건과 효과의 연결을 보여줍니다. 가운데 규칙을 눌러 편집
+                화면에서 수정하세요.
               </p>
               <div className="flow-wrap">
                 <ReactFlow
@@ -851,7 +897,7 @@ export default function Studio({
                           ? x.label
                           : "author" in x
                             ? x.author + " · " + x.text.slice(0, 20)
-                            : x.id}
+                            : "규칙 " + (i + 1)}
                     </button>
                   ))}
                 </div>
@@ -900,8 +946,8 @@ export default function Studio({
                       onCommit={(v) => edit((x) => (x.contentWarning = v))}
                     />
                     <p className="muted">
-                      초안은 현재 기기에만 저장됩니다. 서버 발행·공유는 다음
-                      개발 단계입니다.
+                      초안은 현재 기기에만 저장됩니다. 다른 사람에게 전달하려면
+                      사건 파일을 저장해서 보내 주세요.
                     </p>
                   </>
                 ) : !item ? (
@@ -909,7 +955,7 @@ export default function Studio({
                 ) : (
                   <>
                     <div className="item-id">
-                      {item.id}
+                      {labels[category]} {selected + 1}
                       <button
                         className="danger quiet"
                         onClick={() => setDeletion(true)}
@@ -936,7 +982,17 @@ export default function Studio({
                                 "IMAGE",
                                 "CHAT_LINK",
                                 "FOLDER",
-                              ].map((id) => ({ id, label: id }))}
+                              ].map((id) => ({
+                                id,
+                                label: (
+                                  {
+                                    TEXT: "문서",
+                                    IMAGE: "그림",
+                                    CHAT_LINK: "메신저 연결",
+                                    FOLDER: "폴더",
+                                  } as Record<string, string>
+                                )[id],
+                              }))}
                               onChange={(type) =>
                                 updateItem({
                                   type,
@@ -1035,14 +1091,14 @@ export default function Studio({
                               onCommit={(title) => updateItem({ title })}
                             />
                             <TextField
-                              label="정답 문자열"
+                              label="정답"
                               value={p.answer}
                               maxLength={100}
                               onCommit={(answer) => updateItem({ answer })}
                             />
                             <p className="muted">
-                              앞뒤 공백 제거와 NFC 정규화를 적용합니다. 선행 0은
-                              보존합니다.
+                              답 앞뒤의 빈칸은 무시합니다. 숫자 앞의 0은 정답에
+                              포함됩니다. 예: 0310
                             </p>
                             <label className="check">
                               <input
@@ -1252,7 +1308,7 @@ export default function Studio({
           )}
         </main>
         <aside className="validation-panel">
-          <div className="section-kicker">VALIDATION / r{d.revision}</div>
+          <div className="section-kicker">사건 점검</div>
           <h2>
             {validation.errors.length ? (
               <>
@@ -1260,7 +1316,7 @@ export default function Studio({
               </>
             ) : (
               <>
-                <CheckCircle2 size={21} /> 구조 검사 통과
+                <CheckCircle2 size={21} /> 플레이 준비 완료
               </>
             )}
           </h2>
@@ -1268,7 +1324,7 @@ export default function Studio({
             {(
               new TextEncoder().encode(JSON.stringify(c)).length / 1024
             ).toFixed(1)}{" "}
-            KiB / 1,024 KiB
+            KB / 최대 1MB
           </p>
           {validation.errors.map((e, i) => (
             <button
@@ -1279,23 +1335,23 @@ export default function Studio({
                 if (cat in labels) select(cat as Category, Number(index) || 0);
               }}
             >
-              <code>{e.path}</code>
-              {e.message}
+              <strong>{issueLocation(e.path, c)}</strong>
+              {issueMessage(e)}
             </button>
           ))}
           {validation.warnings.map((w, i) => (
             <p key={i} className="warning">
-              {w.message}
+              {issueMessage(w)}
             </p>
           ))}
           <hr />
           <p>
-            구조 검사는 참조와 제한을 확인합니다. 추리의 설득력은 직접
-            플레이하며 확인하세요.
+            연결된 단서와 진행 조건을 자동으로 확인합니다. 이야기가 자연스럽게
+            이어지는지는 직접 플레이하며 확인해 주세요.
           </p>
           <p className="small muted">
-            검사에 실패한 초안도 로컬 저장·내보내기가 가능합니다. 테스트 시작은
-            차단됩니다.
+            수정이 필요한 초안도 이 기기에 보관하거나 파일로 저장할 수 있습니다.
+            표시된 문제를 해결하면 테스트할 수 있습니다.
           </p>
         </aside>
       </div>
@@ -1303,7 +1359,7 @@ export default function Studio({
         ref={input}
         hidden
         type="file"
-        accept=".json,application/json"
+        accept=".gdcase,.json,application/json"
         onChange={async (e) => {
           const f = e.target.files?.[0];
           e.target.value = "";
@@ -1311,16 +1367,18 @@ export default function Studio({
           try {
             const result = validateCase(await importJson(f));
             if (!result.data)
-              throw Error(
-                result.errors
-                  .map((x) => x.path + ": " + x.message)
-                  .slice(0, 4)
-                  .join("\n"),
+              throw new UserMessage(
+                "이 사건 파일은 불러올 수 없습니다. 제작소에서 문제를 수정한 뒤 다시 저장해 주세요.",
               );
-            addDraft(duplicateCase(result.data, uid()));
-            setMessage("검사를 통과한 사건을 새로운 복사본으로 가져왔습니다.");
+            if (addDraft(duplicateCase(result.data, uid())))
+              setMessage("사건을 새로운 복사본으로 가져왔습니다.");
           } catch (err) {
-            setMessage(err instanceof Error ? err.message : "가져오기 실패");
+            setMessage(
+              userMessage(
+                err,
+                "사건 파일을 가져오지 못했습니다. 기존 초안은 유지됩니다.",
+              ),
+            );
           }
         }}
       />
@@ -1333,8 +1391,8 @@ export default function Studio({
         <Modal title="이 항목을 삭제할까요?" onClose={() => setDeletion(false)}>
           <p>
             {refPaths.length
-              ? "다음 항목이 이 데이터를 참조합니다. 삭제하면 오류를 수정하기 전까지 테스트를 시작할 수 없습니다."
-              : "다른 항목의 직접 참조는 없습니다."}
+              ? "다음 항목이 여기에 연결되어 있습니다. 삭제하면 연결을 다시 설정해야 플레이할 수 있습니다."
+              : "이 항목에 연결된 다른 항목은 없습니다."}
           </p>
           <ul>
             {refPaths.map((x) => (
