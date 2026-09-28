@@ -144,3 +144,17 @@
 - API의 저장 본문 크기/형식 제한, no-store, 409 응답, 인증 PUT CORS 검사.
 - Neon 검증 브랜치에서 실제 ghostdesk_app 역할로 RLS 확인: 자기 기록 1개, 다른 계정 기록 조회 0개/수정 0개, 오래된 revision 갱신 0개/유효 revision 갱신 1개.
 - 실제 iPhone Safari 및 실제 휴대전화 간 전환은 여전히 미검증. HTTP의 독립 세션 검사는 OS/브라우저의 저장 제한 검사를 대체하지 않는다.
+
+### 0.3 운영 반영 확인
+
+- API 커밋 `38520f3`, Render `dep-dat4bvvlk1mc73e7lr30` LIVE (10:51:06 UTC). 프런트 커밋 `2d9d2b8`, Render `dep-dat4d4nlk1mc73e7pt70` LIVE (10:51:52 UTC).
+- GitHub Actions `36411869706`, `36412075584` 모두 success.
+- 테스트 전용 예약 도메인 이메일 계정 2개 생성. 실제 사용자 이메일·비밀번호는 사용하지 않았다. 같은 계정의 별도 HTTP 쿠키 세션 2개와 다른 계정 세션으로 인증/저장을 검증했다.
+- 동일 출처 Auth rewrite를 통한 signup/signin/get-session/token/signout 성공. Secure·HttpOnly·경로 `/`의 앱 도메인 세션 쿠키 확인.
+- 운영 API: 다섯 공식 사건 PUT 성공, 별도 세션 GET에서 진행·노트 복원, 다른 계정의 목록은 비어 있음, 계정 헤더 불일치/미인증/위조 토큰 401, 오래된 revision PUT은 409이며 최신 노트 보존. 저장 API Cache-Control no-store 확인.
+- 운영 Chrome에서 로그인/회원가입 폼 렌더링 및 버튼 활성화 확인. 실제 자격 증명 입력은 브라우저 UI에서 수행하지 않았으며 인증·저장 연결은 독립 HTTP 세션으로 검사했다. 기존 비회원 001·002 저장 표시도 유지됐다.
+- 로컬 Chrome 390px iframe 로그인 폼의 가로 넘침 없음, 입력 글자 16px 확인. 실기기 Safari, 실제 이메일 수신/비밀번호 재설정 완료, 로그인한 React 화면 전체 조작 E2E는 미검증.
+- 검증 중 Auth SDK의 호출 가능한 프록시를 React 상태 갱신 함수로 잘못 실행할 수 있는 문제를 발견해 `setClient(() => client)`로 수정했다. Auth SDK는 보안 컨텍스트를 요구하므로 로컬 인증 UI 테스트는 HTTPS 또는 localhost를 사용한다.
+
+- 사용자 요청에 맞춰 가입 필드를 이메일·비밀번호 2개로 축소했다. 이름은 기본 표시명으로 처리하고 추가 인증 단계를 요구하지 않는다. 비밀번호 복구 코드 입력은 사용자가 복구를 요청할 때만 나타난다.
+- `/auth/*`에 `private, no-store` 응답 헤더 규칙을 설정했다. 외부 rewrite 실측 응답은 `max-age=0`, CDN `BYPASS`였으므로 Auth 경로의 no-store 적용을 확인했다고 주장하지 않는다. 개인 저장 API는 no-store가 적용됨을 확인했다.

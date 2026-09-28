@@ -24,7 +24,6 @@ export function AccountProvider({
   );
   const [email, setEmail] = useState(""),
     [password, setPassword] = useState(""),
-    [name, setName] = useState(""),
     [otp, setOtp] = useState("");
   const [busy, setBusy] = useState(false),
     [message, setMessage] = useState("");
@@ -110,7 +109,7 @@ export function AccountProvider({
           ? await client.signUp.email({
               email,
               password,
-              name: name.trim() || "조사관",
+              name: "조사관",
             })
           : await client.signIn.email({ email, password });
       if (r.error)
@@ -209,19 +208,11 @@ export function AccountProvider({
             </div>
           ) : (
             <form className="account-form" onSubmit={submit}>
-              <p>이메일로 계정을 만들고, 다른 기기에서도 조사를 이어가세요.</p>
-              {mode === "signup" && (
-                <label className="field">
-                  조사관 이름
-                  <input
-                    autoComplete="nickname"
-                    value={name}
-                    maxLength={40}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                  />
-                </label>
-              )}
+              <p>
+                {mode === "signup"
+                  ? "이메일과 비밀번호만 입력하면 바로 시작할 수 있어요."
+                  : "같은 계정으로 로그인하고 다른 기기에서도 이어 하세요."}
+              </p>
               <label className="field">
                 이메일
                 <input
