@@ -45,6 +45,7 @@ import EvidenceView from "./EvidenceView";
 import MediaGallery from "./MediaGallery";
 import { availableMedia } from "./case-media";
 import PuzzleAnswer from "./PuzzleAnswer";
+import VisualPuzzle from "./VisualPuzzle";
 import { Brand, Modal } from "./App";
 const Icon = ({ file }: { file: CaseFile }) =>
   file.id === "trash" ? (
@@ -546,6 +547,7 @@ export default function Player({
       return <p className="empty">아직 접근할 수 없는 파일입니다.</p>;
     if (f.puzzleId && !state.solvedPuzzleIds.includes(f.puzzleId)) {
       const p = c.puzzles.find((p) => p.id === f.puzzleId)!;
+      const Answer = p.inputMode === "visual" ? VisualPuzzle : PuzzleAnswer;
       return (
         <div className={"vault " + (p.stageTitle ? "stage-puzzle" : "")}>
           <div className="vault-lock">
@@ -597,9 +599,10 @@ export default function Player({
               })}
             </div>
           )}
-          <PuzzleAnswer
+          <Answer
             key={p.id}
             puzzle={p}
+            paused={mediaPaused}
             onSubmit={(answer) => {
               const r = transition(c, state, {
                 type: "SOLVE",

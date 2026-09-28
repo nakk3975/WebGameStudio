@@ -1,0 +1,38 @@
+{
+  "cases": [
+    {
+      "versionId": "demo-0317-v3",
+      "status": 200,
+      "exactMatch": true,
+      "puzzles": 5
+    },
+    {
+      "versionId": "hotel-404-v3",
+      "status": 200,
+      "exactMatch": true,
+      "puzzles": 5
+    },
+    {
+      "versionId": "auction-seven-v3",
+      "status": 200,
+      "exactMatch": true,
+      "puzzles": 5
+    },
+    {
+      "versionId": "encore-last-v3",
+      "status": 200,
+      "exactMatch": true,
+      "puzzles": 5
+    },
+    {
+      "versionId": "monday-loop-v3",
+      "status": 200,
+      "exactMatch": true,
+      "puzzles": 5
+    }
+  ],
+  "readiness": {
+    "status": "ready",
+    "publishedCases": 5
+  }
+}

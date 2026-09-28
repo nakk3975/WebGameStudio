@@ -3775,3 +3775,210 @@ button:not(:disabled):active {
     max-width: 108px;
   }
 }
+
+/* Observation puzzles keep their controls and zoom inside the record window. */
+.visual-puzzle {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  text-align: left;
+}
+.visual-instruction {
+  margin: 0;
+  line-height: 1.65;
+}
+.photo-investigation {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #080f17;
+}
+.photo-investigation > img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.photo-pin {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 2px solid #e7efeb;
+  border-radius: 50%;
+  background: #132636ed;
+  color: #fff;
+  font-weight: 800;
+  font-size: 15px;
+  box-shadow: 0 2px 8px #0008;
+}
+.photo-pin[aria-pressed="true"] {
+  color: #102422;
+  background: #90ddcb;
+  border-color: #fff;
+  outline: 3px solid #112b27;
+}
+.photo-pin:focus-visible {
+  outline: 3px solid #ffd083;
+  outline-offset: 3px;
+}
+.photo-selection-status {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: center;
+  font-size: 13px;
+}
+.photo-selection-status > button {
+  min-height: 44px;
+}
+.photo-inspection {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background-size: 400% 400%;
+  background-repeat: no-repeat;
+}
+.visual-followup {
+  padding: 12px;
+  margin: 0;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.visual-followup legend {
+  padding: 0 5px;
+  font-weight: 600;
+}
+.visual-choice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 4px;
+  min-height: 44px;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.visual-choice input {
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: #8cdbca;
+}
+.visual-description {
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  color: var(--muted);
+}
+.visual-description summary {
+  cursor: pointer;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+.scene-description {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+.scene-description > span {
+  flex: 1 1 200px;
+  line-height: 1.6;
+}
+.scene-description > button {
+  min-height: 44px;
+}
+.frame-comparison {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.captured-scene {
+  overflow: hidden;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #0a1722;
+}
+.captured-scene img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  display: block;
+}
+.captured-scene > div:not(.capture-empty) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 8px;
+}
+.captured-scene button {
+  min-height: 44px;
+}
+.capture-empty {
+  display: grid;
+  place-items: center;
+  min-height: 100px;
+  padding: 12px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.visual-notice {
+  margin: 0;
+  min-height: 20px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.video-controls .capture-frame {
+  flex-basis: 100%;
+  background: #24483f;
+  color: #defff4;
+  border-color: #65bfa9;
+}
+.visual-puzzle .cctv-player {
+  min-width: 0;
+}
+@media (max-width: 480px) {
+  .photo-investigation .cctv-badge {
+    font-size: 9px;
+    left: 5px;
+    top: 5px;
+  }
+  .photo-investigation .cctv-stamp {
+    font-size: 9px;
+    left: 5px;
+    bottom: 5px;
+  }
+  .frame-comparison {
+    gap: 6px;
+  }
+}
+.stage-puzzle form.visual-puzzle {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+.stage-puzzle .visual-puzzle button {
+  width: auto;
+}
+.stage-puzzle .visual-puzzle .photo-pin {
+  width: 44px;
+  height: 44px;
+  margin: 0;
+}
+/* The global pressed-button offset must not move a positioned photo marker. */
+.stage-puzzle .visual-puzzle .photo-pin:active {
+  transform: translate(-50%, -50%);
+}

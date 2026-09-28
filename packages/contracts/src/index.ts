@@ -124,7 +124,19 @@ export const caseSchema = z
             hints: z.array(plain(1000)).min(1).max(4),
             stageTitle: plain(80).optional(),
             evidenceIds: z.array(id).max(8).optional(),
-            inputMode: z.enum(["text", "choice", "sequence"]).optional(),
+            inputMode: z
+              .enum(["text", "choice", "sequence", "visual"])
+              .optional(),
+            visualId: z
+              .enum([
+                "lab-network",
+                "hotel-date",
+                "hotel-repeat",
+                "auction-seal",
+                "stage-route",
+                "island-device",
+              ])
+              .optional(),
             choices: z
               .array(
                 z
@@ -316,6 +328,11 @@ export function validateCase(input: unknown): {
       });
   });
   c.puzzles.forEach((p, i) => {
+    if ((p.inputMode === "visual") !== !!p.visualId)
+      errors.push({
+        path: `puzzles.${i}.visualId`,
+        message: "관찰 퍼즐에 사용할 장면을 지정해 주세요.",
+      });
     p.evidenceIds?.forEach((ref) =>
       has("files", ref, `puzzles.${i}.evidenceIds`),
     );

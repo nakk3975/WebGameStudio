@@ -4,7 +4,7 @@ import hotel from "./assets/hotel.webp";
 import auction from "./assets/auction.webp";
 import stage from "./assets/stage.webp";
 import island from "./assets/island.webp";
-import hotelVideo from "./assets/hotel-cctv.mp4";
+import { hotelClip } from "./cctv";
 import MediaGallery from "./MediaGallery";
 import type { CaseMedia } from "./case-media";
 
@@ -58,13 +58,13 @@ export default function EvidenceView({
           title: asset === "hotel" ? "CAM-404 · 복도 기록" : "현장 사진",
           alt:
             asset === "hotel"
-              ? "노란 공사용 덮개가 있는 복도를 흰 시트 카트가 지나가는 재현 영상. 원본 기록은 06-12 14:32입니다. 카트는 복도 안쪽에서 가운데를 거쳐 우측으로 이동하고 같은 구간이 다시 재생됩니다."
+              ? hotelClip.alt
               : file.alt || "사건 기록에 첨부된 현장 사진.",
           caption:
             asset === "hotel"
-              ? "기록 속 복도 장면을 재현했습니다. 재생하거나 멈춰서 화면 표지와 원본 기록을 살펴보세요."
+              ? hotelClip.caption
               : file.text,
-          video: asset === "hotel" ? hotelVideo : undefined,
+          video: asset === "hotel" ? hotelClip.video : undefined,
           observations,
         },
         ...related,

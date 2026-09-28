@@ -1,6 +1,7 @@
 import type { CasePackage } from "../../../packages/contracts/src";
 import additions from "./additional-cases.json";
 import expanded from "./expanded-cases.json";
+import visual from "./visual-cases.json";
 import { sample } from "./sample";
 
 export type CaseEntry = {
@@ -62,7 +63,8 @@ const details = [
   },
 ];
 export const legacyCases = [sample, ...(additions as CasePackage[])];
-export const caseLibrary: CaseEntry[] = (expanded as CasePackage[]).map(
+export const archivedCases = [...legacyCases, ...(expanded as CasePackage[])];
+export const caseLibrary: CaseEntry[] = (visual as CasePackage[]).map(
   (c, i) => ({
     case: c,
     number: String(i + 1).padStart(3, "0"),
@@ -70,7 +72,7 @@ export const caseLibrary: CaseEntry[] = (expanded as CasePackage[]).map(
   }),
 );
 export function isOfficialCaseVersion(c: CasePackage) {
-  return [...legacyCases, ...caseLibrary.map((e) => e.case)].some(
+  return [...archivedCases, ...caseLibrary.map((e) => e.case)].some(
     (official) =>
       official.caseId === c.caseId && official.versionId === c.versionId,
   );

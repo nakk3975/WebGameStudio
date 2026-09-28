@@ -2,6 +2,7 @@ import { expect, it } from "vitest";
 import {
   caseLibrary,
   legacyCases,
+  archivedCases,
   isOfficialCaseVersion,
 } from "../apps/ghostdesk/src/cases";
 import {
@@ -11,7 +12,7 @@ import {
 import { initialState } from "../packages/engine-ghostdesk/src";
 import { parseSave, type Save } from "../apps/ghostdesk/src/storage";
 
-it.each([...legacyCases, ...caseLibrary.map((e) => e.case)])(
+it.each([...archivedCases, ...caseLibrary.map((e) => e.case)])(
   "keeps $versionId saves official and does not infer a solved case from a retry ending",
   (c) => {
     const save: Save = {

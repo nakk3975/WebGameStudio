@@ -1,18 +1,41 @@
 import { useEffect, useRef, useState } from "react";
 import type { CaseMedia } from "./case-media";
+import {
+  CCTV_DURATION,
+  CCTV_INTERVAL,
+  cctvFrameIndex,
+  cctvSample,
+} from "./cctv";
 
 const timeLabel = (seconds: number) =>
   `00:${String(Math.floor(seconds)).padStart(2, "0")}`;
 
-function CCTVPlayer({ item, paused }: { item: CaseMedia; paused: boolean }) {
+export function CCTVPlayer({
+  item,
+  paused,
+  onCapture,
+  captureDisabled = false,
+}: {
+  item: CaseMedia;
+  paused: boolean;
+  onCapture?: (time: number) => void;
+  captureDisabled?: boolean;
+}) {
   const video = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
   const [time, setTime] = useState(0);
-  const [duration, setDuration] = useState(12);
+  const [duration, setDuration] = useState(CCTV_DURATION);
+  const [ready, setReady] = useState(false);
   const [error, setError] = useState("");
   useEffect(() => {
     if (paused) video.current?.pause();
   }, [paused]);
+  function seek(next: number) {
+    if (!video.current || !ready) return;
+    video.current.pause();
+    video.current.currentTime = next;
+    setTime(next);
+  }
   return (
     <div className="cctv-player">
       <div className="evidence-viewport cctv-screen">
@@ -22,7 +45,6 @@ function CCTVPlayer({ item, paused }: { item: CaseMedia; paused: boolean }) {
           poster={item.src}
           muted
           playsInline
-          loop
           preload="metadata"
           aria-label="404호 복도 CCTV 재현 영상"
           onPlay={(e) => {
@@ -30,8 +52,12 @@ function CCTVPlayer({ item, paused }: { item: CaseMedia; paused: boolean }) {
             else setPlaying(true);
           }}
           onPause={() => setPlaying(false)}
+          onEnded={() => setPlaying(false)}
           onTimeUpdate={(e) => setTime(e.currentTarget.currentTime)}
-          onLoadedMetadata={(e) => setDuration(e.currentTarget.duration || 12)}
+          onLoadedMetadata={(e) => {
+            setDuration(e.currentTarget.duration || CCTV_DURATION);
+            setReady(true);
+          }}
           onError={() =>
             setError(
               "영상을 불러오지 못했어요. 아래 장면 설명과 원본 기록으로도 조사할 수 있어요.",
@@ -40,13 +66,13 @@ function CCTVPlayer({ item, paused }: { item: CaseMedia; paused: boolean }) {
         />
         <span className="cctv-badge">화면 표지 · LIVE</span>
         <span className="cctv-stamp">
-          원본 06-12 14:32 · F-{8821 + Math.min(2, Math.floor(time / 4))}
+          원본 06-12 14:32 · F-{8821 + cctvFrameIndex(time)}
         </span>
-        <span className="cctv-reconstruction">사건 재현 영상</span>
+        <span className="cctv-reconstruction">4초 간격 · 장면 재현</span>
       </div>
       <div className="video-controls">
         <button
-          disabled={paused || !!error}
+          disabled={paused || !!error || !ready}
           onClick={async () => {
             const el = video.current;
             if (!el) return;
@@ -69,17 +95,34 @@ function CCTVPlayer({ item, paused }: { item: CaseMedia; paused: boolean }) {
         >
           {playing ? "영상 일시정지" : "영상 재생"}
         </button>
-        <button
-          disabled={!!error}
-          onClick={() => {
-            if (video.current) {
-              video.current.pause();
-              video.current.currentTime = 0;
-              setTime(0);
-            }
-          }}
-        >
+        <button disabled={!!error || !ready} onClick={() => seek(0)}>
           처음으로
+        </button>
+        <button
+          disabled={!!error || !ready || time <= 0}
+          onClick={() =>
+            seek(
+              Math.max(
+                0,
+                (Math.ceil(time / CCTV_INTERVAL) - 1) * CCTV_INTERVAL,
+              ),
+            )
+          }
+        >
+          이전 장면
+        </button>
+        <button
+          disabled={!!error || !ready || time >= 24}
+          onClick={() =>
+            seek(
+              Math.min(
+                24,
+                (Math.floor(time / CCTV_INTERVAL) + 1) * CCTV_INTERVAL,
+              ),
+            )
+          }
+        >
+          다음 장면
         </button>
         <span>
           {timeLabel(time)} / {timeLabel(duration)}
@@ -92,16 +135,23 @@ function CCTVPlayer({ item, paused }: { item: CaseMedia; paused: boolean }) {
           value={time}
           aria-label="영상 위치"
           aria-valuetext={`${time.toFixed(1)}초`}
-          disabled={!!error}
-          onChange={(e) => {
-            const next = Number(e.currentTarget.value);
-            if (video.current) {
-              video.current.pause();
-              video.current.currentTime = next;
-              setTime(next);
-            }
-          }}
+          disabled={!!error || !ready}
+          onChange={(e) => seek(Number(e.currentTarget.value))}
         />
+        {onCapture && (
+          <button
+            type="button"
+            className="capture-frame"
+            disabled={paused || !!error || !ready || captureDisabled}
+            onClick={() => {
+              const captured = cctvSample(video.current?.currentTime || 0);
+              seek(captured);
+              onCapture(captured);
+            }}
+          >
+            현재 장면 담기
+          </button>
+        )}
       </div>
       {error && (
         <p role="status" className="media-note">

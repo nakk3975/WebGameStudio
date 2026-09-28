@@ -575,8 +575,9 @@ function Workspace({ account }: { account: Account }) {
               )}
               {saved && saved.case.versionId !== chosen.versionId && (
                 <p className="edition-notice">
-                  다섯 단계로 확장된 새 조사가 있어요. ‘이어서 조사’는 기존
-                  기록을 유지하며, ‘새 조사 시작’에서 확장판을 시작할 수 있어요.
+                  사진과 영상을 직접 살펴보는 관찰 퍼즐이 추가됐어요. ‘이어서
+                  조사’는 기존 기록을 유지하며, ‘새 조사 시작’에서 새 퍼즐을
+                  만날 수 있어요.
                 </p>
               )}
               {archived && (

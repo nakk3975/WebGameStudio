@@ -6,6 +6,7 @@ import labNetwork from "./assets/lab-network.webp";
 import hotelFrontdesk from "./assets/hotel-frontdesk.webp";
 import hotelLaundry from "./assets/hotel-laundry.webp";
 import auctionEnvelopes from "./assets/auction-envelopes.webp";
+import auctionSeals from "./assets/auction-seals.webp";
 import auctionDisplay from "./assets/auction-display.webp";
 import stageConsole from "./assets/stage-console.webp";
 import stageCorridor from "./assets/stage-corridor.webp";
@@ -141,11 +142,23 @@ export function availableMedia(
   fileId?: string,
 ): CaseMedia[] {
   if (!isOfficialCaseVersion(c)) return [];
-  return mediaAttachments.filter(
-    (item) =>
-      item.caseId === c.caseId &&
-      item.sourceIds.some(
-        (id) => (!fileId || id === fileId) && canOpen(c, state, id),
-      ),
-  );
+  return mediaAttachments
+    .filter(
+      (item) =>
+        item.caseId === c.caseId &&
+        item.sourceIds.some(
+          (id) => (!fileId || id === fileId) && canOpen(c, state, id),
+        ),
+    )
+    .map((item) =>
+      item.id === "auction-envelopes" && c.versionId === "auction-seven-v3"
+        ? {
+            ...item,
+            src: auctionSeals,
+            alt: "왼쪽 봉인은 파란 선 한 줄, 가운데는 두 줄의 온전한 봉인, 오른쪽은 두 줄 표시가 있는 봉인이 갈라져 있습니다.",
+            caption:
+              "검수 표시와 봉인 종이의 상태를 확대해 대조할 수 있는 사진입니다.",
+          }
+        : item,
+    );
 }

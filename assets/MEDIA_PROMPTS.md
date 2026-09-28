@@ -50,3 +50,22 @@ Use case: precise-object-edit. Edit target: the supplied hotel hallway photograp
 
 Use case: background-extraction. Edit target: the supplied hotel hallway photograph. Extract ONLY the metal linen trolley with its stacks of folded white sheets and all its wheels, preserving its original side/front angle and proportions. Make the background genuinely transparent. Keep the entire trolley centered with a little transparent margin. No hallway, floor, room, text, people or additional objects. Natural photographic detail, do not change the design of the trolley. This cutout is for a fictional CCTV reenactment.
 
+
+## 2026-09-29: whole-scene CCTV and observable seals
+
+Built-in `image_gen.imagegen` edits, no external API or model credits. All outputs were inspected. Source PNGs were converted to WebP at up to 1280×720, quality 87, without compositing edits. Input paths below are relative to the repository.
+
+### hotel-frame-middle.webp
+Input: `apps/ghostdesk/src/assets/hotel.webp`.
+
+Use case: precise-object-edit. Edit target: the attached fictional hotel CCTV still for a mystery game. Create the next complete photographic frame from exactly this same locked surveillance camera, same 16:9 composition, walls, doors, yellow construction sheet, floor seams, light fixtures, far window and low contrast lighting. The metal linen cart with neatly folded white sheets has rolled closer toward the camera, now near the middle of the visible floor, slightly to the right of the center. It must be photographed as an integrated solid object in this exact scene, with wheel contact on the tile floor, consistent perspective, realistic scale increase, matching subtle contact shadows and floor reflections. All FOUR wheels must contact the floor; no floating. Keep identical cart construction and sheet folds. No added people, no new objects, no text, no camera movement, no collage, no sticker-like edges. Only the cart position and its physically necessary shadows/reflection change. The result is ONE whole scene, not a transparent cutout.
+
+### hotel-frame-exit.webp
+Input: `apps/ghostdesk/src/assets/hotel.webp`.
+
+Use case: precise-object-edit. Edit target: the attached fictional hotel CCTV still. Generate a later complete photographic frame, from the SAME LOCKED CCTV CAMERA. Preserve exact corridor architecture, left doors, yellow plastic construction sheeting on the right, lighting fixtures, far window, floor and the original camera perspective. The very same metal laundry cart stacked with white folded sheets has moved toward and mostly past the camera at the LOWER RIGHT EDGE, so only the top and trailing left part of the cart remains visible at bottom right; most of it has left the image. No cart remains in its old location. Match near-camera size and foreshortening correctly, preserve visible floor contact, soft contact shadow and reflected light. This is one whole photograph, no floating cutout or pasted sticker. Keep every unrelated part unchanged. No person, no additional object, no text, no camera pan, no zoom, no decorative effects. Landscape 16:9, restrained low-light surveillance photography, physically coherent.
+
+### auction-seals.webp
+Input: `apps/ghostdesk/src/assets/auction-envelopes.webp`.
+
+Use case: precise-object-edit. Edit target: existing fictional auction evidence photo. Preserve camera angle, envelope placement, warm desk light, magnifier, wood grain and wrapped painting. Change ONLY the three circular pale paper seals, making them large enough to inspect in the game. Left envelope: an intact round paper seal with ONE thick straight dark-blue diagonal stroke. Center envelope: an intact round paper seal with TWO clearly separated parallel thick dark-blue diagonal strokes, neatly continuous across the seal, completely unbroken paper edges. Right envelope: a round paper seal with the SAME TWO parallel thick dark-blue strokes BUT the seal is visibly TORN across its middle, with a wide irregular split and a slightly lifted triangular envelope flap. Make the right seal's tear unmistakable, showing dark paper beneath, while the center is pristine. Realistic paper fibers, adhesive and shadows, no floating labels. No letters, numbers or text anywhere. Keep all other scene elements unchanged. Landscape 16:9 whole photo.
