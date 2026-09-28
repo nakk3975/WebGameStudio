@@ -1,0 +1,8 @@
+**
+!apps/
+!apps/api/
+!apps/api/pom.xml
+!apps/api/maven-settings.xml
+!apps/api/src/
+!apps/api/src/**
+!Dockerfile

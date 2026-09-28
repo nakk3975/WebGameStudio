@@ -1,0 +1,35 @@
+server:
+  port: ${PORT:8080}
+  error:
+    include-message: never
+    include-stacktrace: never
+  tomcat:
+    threads:
+      max: 30
+      min-spare: 2
+spring:
+  application:
+    name: ghostdesk-api
+  datasource:
+    url: ${JDBC_DATABASE_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 3
+      minimum-idle: 0
+      idle-timeout: 60000
+      max-lifetime: 240000
+      connection-timeout: 15000
+      initialization-fail-timeout: -1
+      keepalive-time: 0
+      read-only: true
+      data-source-properties:
+        connectTimeout: 10
+        socketTimeout: 15
+        ApplicationName: ghostdesk-api
+mybatis:
+  configuration:
+    default-statement-timeout: 10
+    arg-name-based-constructor-auto-mapping: true
+app:
+  allowed-origins: ${ALLOWED_ORIGINS:http://localhost:4173,http://terminal.local:4173}

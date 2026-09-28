@@ -1,0 +1,48 @@
+# Deployment specification. Supply secrets in Render, never in Git.
+services:
+  - type: web
+    name: ghostdesk-api
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health/live
+    autoDeployTrigger: "off"
+    envVars:
+      - key: JDBC_DATABASE_URL
+        sync: false
+      - key: DB_USERNAME
+        value: ghostdesk_app
+      - key: DB_PASSWORD
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false
+  - type: web
+    name: ghostdesk
+    runtime: static
+    buildCommand: npm ci && npm run build
+    staticPublishPath: apps/ghostdesk/dist
+    autoDeployTrigger: "off"
+    envVars:
+      - key: NODE_VERSION
+        value: "24.19.0"
+      - key: VITE_API_BASE_URL
+        sync: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: no-referrer
+      - path: /*
+        name: X-Frame-Options
+        value: SAMEORIGIN
+      - path: /*
+        name: X-Robots-Tag
+        value: noindex, nofollow

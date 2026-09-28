@@ -1,0 +1,42 @@
+[
+  {
+    "name": "react",
+    "version": "19.3.0",
+    "license": "MIT"
+  },
+  {
+    "name": "react-dom",
+    "version": "19.3.0",
+    "license": "MIT"
+  },
+  {
+    "name": "vite",
+    "version": "8.3.1",
+    "license": "MIT"
+  },
+  {
+    "name": "vitest",
+    "version": "5.0.2",
+    "license": "MIT"
+  },
+  {
+    "name": "zod",
+    "version": "4.6.5",
+    "license": "MIT"
+  },
+  {
+    "name": "@xyflow/react",
+    "version": "12.12.0",
+    "license": "MIT"
+  },
+  {
+    "name": "lucide-react",
+    "version": "1.48.0",
+    "license": "ISC"
+  },
+  {
+    "name": "typescript",
+    "version": "7.0.2",
+    "license": "Apache-2.0"
+  }
+]

@@ -1,0 +1,44 @@
+{
+  "project": "GhostDesk",
+  "version": "0.1.0",
+  "date": "2026-09-28",
+  "sourceCommit": null,
+  "deploymentId": null,
+  "databaseMigration": null,
+  "schemaVersion": 1,
+  "engineVersion": "ghostdesk-core-1",
+  "tests": {
+    "unit": 33,
+    "typecheck": "passed",
+    "build": "passed",
+    "renderBlueprintSchema": "passed",
+    "chromeManual": "passed core flow",
+    "physicalMobile": "not tested"
+  },
+  "standalone": {
+    "bytes": 637226,
+    "sha256": "e63d6b18bad4be53c4c8c84826914c7c1efd30988d0e73089b1cf18873d5965e"
+  },
+  "bundles": [
+    {
+      "file": "index-DIvBXlIU.js",
+      "bytes": 565114,
+      "gzipBytes": 173855
+    },
+    {
+      "file": "index-DuF61Enf.css",
+      "bytes": 39558,
+      "gzipBytes": 8474
+    },
+    {
+      "file": "index-DYfIk87H.css",
+      "bytes": 39050,
+      "gzipBytes": 8374
+    },
+    {
+      "file": "index-C1j-CwIe.js",
+      "bytes": 565470,
+      "gzipBytes": 173988
+    }
+  ]
+}
