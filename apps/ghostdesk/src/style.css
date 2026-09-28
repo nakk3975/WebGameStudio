@@ -2901,7 +2901,6 @@ button:not(:disabled):active {
 .big-clock.word-clock {
   font-size: clamp(42px, 5.5vw, 76px);
   letter-spacing: 1px;
-  margin-block: 52px 28px;
 }
 @media (max-width: 1000px) {
   .case-cards {
@@ -2950,7 +2949,6 @@ button:not(:disabled):active {
   }
   .big-clock.word-clock {
     font-size: clamp(40px, 10vw, 64px);
-    margin-block: 30px 15px;
   }
 }
 .case-intro p,
@@ -3375,11 +3373,12 @@ button:not(:disabled):active {
   word-break: normal;
 }
 .big-clock {
+  /* Reserve the numeric display's line box even when the label is smaller. */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(clamp(82px, 7.6vw, 108px) * 1.1);
   white-space: nowrap;
-}
-.word-clock {
-  font-size: clamp(2.5rem, 5vw, 4.6rem);
-  letter-spacing: -0.055em;
 }
 .edition-notice,
 .stage-notice {
@@ -3649,8 +3648,8 @@ button:not(:disabled):active {
     padding: 14px;
     font-size: 0.875em;
   }
-  .word-clock {
-    font-size: clamp(2.3rem, 12vw, 4rem);
+  .big-clock {
+    height: 88px;
   }
 }
 @media (max-height: 520px) and (max-width: 760px) {
