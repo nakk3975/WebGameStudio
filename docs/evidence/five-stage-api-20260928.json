@@ -1,0 +1,32 @@
+[
+  {
+    "version": "demo-0317-v2",
+    "status": 200,
+    "puzzles": 5,
+    "matchesBundle": true
+  },
+  {
+    "version": "hotel-404-v2",
+    "status": 200,
+    "puzzles": 5,
+    "matchesBundle": true
+  },
+  {
+    "version": "auction-seven-v2",
+    "status": 200,
+    "puzzles": 5,
+    "matchesBundle": true
+  },
+  {
+    "version": "encore-last-v2",
+    "status": 200,
+    "puzzles": 5,
+    "matchesBundle": true
+  },
+  {
+    "version": "monday-loop-v2",
+    "status": 200,
+    "puzzles": 5,
+    "matchesBundle": true
+  }
+]
