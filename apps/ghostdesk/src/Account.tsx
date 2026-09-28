@@ -36,7 +36,9 @@ export function AccountProvider({
     import("./auth")
       .then(async ({ authClient: c }) => {
         if (!c || !active) return;
-        setClient(c);
+        // Better Auth is a callable proxy; wrap it so React stores the client
+        // instead of invoking it as a state updater.
+        setClient(() => c);
         const r = await c.getSession();
         if (active)
           setUser(
