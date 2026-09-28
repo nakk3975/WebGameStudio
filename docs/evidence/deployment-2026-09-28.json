@@ -1,0 +1,70 @@
+{
+  "verifiedDateKST": "2026-09-28",
+  "api": "https://ghostdesk-api.onrender.com",
+  "website": "https://ghostdesk-p24l.onrender.com",
+  "apiDeploy": "dep-dat2lgp42hec73f8kds0",
+  "apiSourceCommit": "d2db1e64650ce175a711a1685211a32ede67b722",
+  "packageValidation": {
+    "valid": true,
+    "equalsPinnedSample": true,
+    "versionId": "demo-0317-v1",
+    "files": 7,
+    "endings": 2
+  },
+  "checks": [
+    {
+      "path": "/health/live",
+      "status": 200,
+      "expected": 200,
+      "origin": null,
+      "cors": null,
+      "seconds": 7.68,
+      "body": "{\"status\":\"ok\",\"service\":\"ghostdesk-api\"}"
+    },
+    {
+      "path": "/health/ready",
+      "status": 200,
+      "expected": 200,
+      "origin": null,
+      "cors": null,
+      "seconds": 13.39,
+      "body": "{\"status\":\"ready\",\"publishedCases\":1}"
+    },
+    {
+      "path": "/api/v1/ghostdesk/catalog",
+      "status": 200,
+      "expected": 200,
+      "origin": "https://ghostdesk-p24l.onrender.com",
+      "cors": "https://ghostdesk-p24l.onrender.com",
+      "seconds": 13.78,
+      "body": "[{\"caseId\":\"demo-0317\",\"versionId\":\"demo-0317-v1\",\"title\":\"03:17에 멈춘 전송\",\"description\":\"기록 담당자가 사라진 새벽. 남겨진 컴퓨터에는 외부 전송 기록 한 줄이 남아 있다. 기록을 대조해 그날의 일을 재구성하라.\",\"estimatedMinutes\":15}]"
+    },
+    {
+      "path": "/api/v1/ghostdesk/versions/demo-0317-v1/package",
+      "status": 200,
+      "expected": 200,
+      "origin": "https://ghostdesk-p24l.onrender.com",
+      "cors": "https://ghostdesk-p24l.onrender.com",
+      "seconds": 7.11
+    },
+    {
+      "path": "/api/v1/ghostdesk/versions/missing/package",
+      "status": 404,
+      "expected": 404,
+      "origin": null,
+      "cors": null,
+      "seconds": 1.4,
+      "body": ""
+    },
+    {
+      "path": "/api/v1/ghostdesk/catalog",
+      "status": 403,
+      "expected": 403,
+      "origin": "https://untrusted.example",
+      "cors": null,
+      "seconds": 1.1,
+      "body": "Invalid CORS request"
+    }
+  ],
+  "note": "Single verification observations, not p50/p95 or cold-start benchmarks."
+}

@@ -48,7 +48,7 @@
 - 200% 브라우저 확대의 전 화면, 스크린리더, 드래그 경계 전체, UI 창 위치 복구.
 - 100파일/300메시지 성능, p50/p95, 10Mbps/RTT100ms, cold 5회/warm 30회 목표.
 - 처음 플레이하는 사용자 5명의 난이도/재미. 개발자의 정답 경로 완료는 재미 검증이 아니다.
-- API, 서버 인증/권한, 온라인 저장/409, Neon, Render 유휴 복귀, 운영 백업.
+- 서버 인증/소유자 권한, 온라인 저장/409, Neon·Render 유휴 복귀, 운영 백업. 공개 읽기 API의 실제 DB 연결은 아래 0.2 기록 참조.
 
 현재 브라우저 시나리오는 지속 CI E2E 파일이 아닌 실행 기록이다. 원격 저장소 연결 이후 Playwright CI 시나리오를 추가하는 것이 후속 작업이다.
 
@@ -58,4 +58,6 @@
 - Java 21 / Spring Boot 3.5.16: API 테스트 6개, Maven verify 통과.
 - Neon 새 프로젝트의 검증 브랜치에서 마이그레이션 트랜잭션 및 사건 1개, 파일 7개, 엔딩 2개를 확인 후 같은 SQL을 운영 브랜치에 적용.
 - 운영 ghostdesk_app 역할: SELECT=true, INSERT/UPDATE/DELETE=false, CREATEDB/CREATEROLE/BYPASSRLS=false 확인.
-- 배포 URL 및 실제 HTTP 검증 결과는 배포 완료 후 DEPLOYMENT.md에 기록.
+- 승인 후 Render에 DB 비밀번호를 적용하고 재배포 완료. `/health/ready`, 공개 사건 목록·패키지 모두 200 확인. 패키지는 프런트 검증기를 통과하고 번들 원본과 일치.
+- 공개 웹 Origin 허용, 다른 Origin 403, 알 수 없는 버전 404 확인. 웹 새로고침 후 단서 보존과 이어서 조사/재개 확인.
+- 프런트 타입 검사·37개 테스트·빌드를 다시 통과. 배포 주소·배포 ID·HTTP 응답 기록은 DEPLOYMENT.md 및 evidence/deployment-2026-09-28.json에 기록.

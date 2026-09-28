@@ -17,8 +17,7 @@
 
 웹 주소: https://ghostdesk-p24l.onrender.com
 
-Neon DB와 Render 서버는 생성했습니다. DB 비밀번호를 Render에 등록하는 승인 단계가 남아 있어 현재 웹은 번들 사건으로 플레이합니다. 실제 DB 연동 완료 상태는 `docs/DEPLOYMENT.md`에 기록합니다.
-
+Neon DB와 Render API 연결을 완료했습니다. 공개 사건 목록과 버전 패키지를 DB에서 조회합니다. 서버 응답이 늦을 때는 번들 사건으로 바로 플레이할 수 있습니다. 개인 진행과 제작기 초안은 현재 기기에 저장됩니다. 배포 검증 결과는 `docs/DEPLOYMENT.md`에서 확인할 수 있습니다.
 
 배포 전 확인용 `output/GhostDesk_Play.html`은 JS/CSS를 포함한 단일 HTML입니다. 다운로드한 파일을 Chrome/Edge로 열 수 있습니다. 브라우저별 file origin 저장 정책은 다를 수 있으므로 중요한 진행은 JSON으로 내보내세요. Chrome/Edge 실기기에서의 단일 파일 실행은 별도 확인 대상입니다.
 

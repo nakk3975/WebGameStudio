@@ -2,11 +2,27 @@
 
 ## Deployment status — 2026-09-28
 
-- Public website: https://ghostdesk-p24l.onrender.com (live; bundled case is playable).
-- API service: https://ghostdesk-api.onrender.com (created).
-- Neon project and production schema/sample are applied.
-- **DB connection remains blocked:** automatic approval review rejected sending the newly generated read-only database password to Render. `DB_PASSWORD` has not been configured. Explicit approval for this transfer is needed before database-backed API verification can complete. No password is in this repository.
-- API liveness can start with a missing password; DB readiness remains unavailable until credentials are configured. This is not a successful DB connection.
+- Public website: https://ghostdesk-p24l.onrender.com (live).
+- API service: https://ghostdesk-api.onrender.com (live, connected to Neon).
+- Neon production schema and published sample are applied.
+- After explicit user approval, the `ghostdesk_app` password was set in the Render API environment. No database password is in the repository or browser build.
+- API deploy `dep-dat2lgp42hec73f8kds0` became live at 2026-09-28 17:53:41 KST, running commit `d2db1e64650ce175a711a1685211a32ede67b722`.
+- Frontend deploy runs commit `4cbd7a7dfe5b0bbfbb01226e5d48ae330baaea8a`; later commits change API configuration and documentation only.
+
+### Live verification
+
+| Check | Result |
+| --- | --- |
+| `/health/live` | 200, process healthy |
+| `/health/ready` | 200, `ready`, 1 published case |
+| `/api/v1/ghostdesk/catalog` | 200, sample title and version returned from Neon |
+| `/api/v1/ghostdesk/versions/demo-0317-v1/package` | 200, package passes the actual frontend validator and equals the pinned sample |
+| Unknown version | 404 |
+| CORS from the deployed website | Exact `Access-Control-Allow-Origin` returned |
+| CORS from an unconfigured origin | 403 |
+| Browser reload and resume | Saved clue preserved; pause/resume and game screen work |
+
+The read role has SELECT permission, no INSERT/UPDATE/DELETE permission, and no CREATEDB/CREATEROLE/BYPASSRLS privileges. The API's MyBatis queries filter published content. HTTP observations are recorded in `docs/evidence/deployment-2026-09-28.json`; their timings are single observations through the verification environment, not a performance benchmark. Free-plan sleep/wake testing remains separate.
 
 ## Components
 
