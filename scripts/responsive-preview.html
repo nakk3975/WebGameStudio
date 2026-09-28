@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8">
+<title>GhostDesk responsive checks (Chrome iframe, not device emulation)</title>
+<style>
+body{margin:0;background:#070b12;color:#deebf5;font:14px system-ui}header{padding:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}button,input{font:inherit;padding:9px;border:1px solid #50677e;border-radius:6px;color:inherit;background:#172737}button{cursor:pointer}input{width:75px}main{padding:8px;display:flex;justify-content:center;align-items:flex-start}iframe{background:#111b2a;border:1px solid #567087;border-radius:8px;flex-shrink:0}small{display:block;padding:0 14px 8px;color:#a9bacc}
+</style>
+<header>
+<button data-size="320,740">320 × 740</button><button data-size="360,780">360 × 780</button>
+<button data-size="390,844">390 × 844</button><button data-size="430,932">430 × 932</button>
+<button data-size="768,1024">768 × 1024</button><button data-size="844,390">844 × 390</button>
+<button data-size="1280,900">1280 × 900</button>
+<label>너비 <input id="width" type="number" value="390"></label><label>높이 <input id="height" type="number" value="844"></label>
+<button id="apply">크기 적용</button><button id="reload">새로고침</button>
+</header>
+<small>Chrome iframe으로 반응형 레이아웃을 검사합니다. 실제 터치·Safari·소프트 키보드 에뮬레이션이 아닙니다.</small>
+<main><iframe title="GhostDesk 검사 화면" src="/" width="390" height="844"></iframe></main>
+<script>
+const frame=document.querySelector('iframe'),w=document.querySelector('#width'),h=document.querySelector('#height');
+const resize=()=>{frame.width=w.value;frame.height=h.value};
+document.querySelectorAll('[data-size]').forEach(button=>button.addEventListener('click',()=>{[w.value,h.value]=button.dataset.size.split(',');resize()}));
+document.querySelector('#apply').addEventListener('click',resize);
+document.querySelector('#reload').addEventListener('click',()=>{frame.src='/'});
+</script>
+</html>

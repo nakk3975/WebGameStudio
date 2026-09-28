@@ -34,10 +34,12 @@ import type { CaseFile } from "../../../packages/contracts/src";
 import {
   transition,
   canInspect,
+  canOpen,
   type Event,
   type State,
 } from "../../../packages/engine-ghostdesk/src";
-import { write, download, createSaveQueue, type Save } from "./storage";
+import { writePlay, download, createSaveQueue, type Save } from "./storage";
+import { caseEntry } from "./cases";
 import { Brand, Modal } from "./App";
 const Icon = ({ file }: { file: CaseFile }) =>
   file.id === "trash" ? (
@@ -87,9 +89,10 @@ export default function Player({
     [reveal, setReveal] = useState(false),
     [endVisible, setEndVisible] = useState(state.mode === "ENDED"),
     [exiting, setExiting] = useState(false);
-  const area = useRef<HTMLDivElement>(null),
+  const player = useRef<HTMLDivElement>(null),
+    area = useRef<HTMLDivElement>(null),
     latest = useRef<Save>(initial),
-    saveQueue = useRef(createSaveQueue<Save>((s) => write("play", s))),
+    saveQueue = useRef(createSaveQueue<Save>(writePlay)),
     leaving = useRef(false),
     drag = useRef<{ id: string; dx: number; dy: number } | null>(null),
     previousSolved = useRef(state.solvedPuzzleIds.length);
@@ -117,6 +120,40 @@ export default function Player({
     const t = setInterval(() => send({ type: "TICK", ms: 250 }), 250);
     return () => clearInterval(t);
   }, [send]);
+  useEffect(() => {
+    const viewport = window.visualViewport;
+    const update = () => {
+      const el = player.current;
+      if (!el) return;
+      if (!viewport || viewport.scale !== 1 || window.innerWidth > 760) {
+        el.style.removeProperty("--visible-height");
+        delete el.dataset.keyboard;
+        return;
+      }
+      el.style.setProperty(
+        "--visible-height",
+        `${Math.round(viewport.height)}px`,
+      );
+      const editing = document.activeElement?.matches(
+        "input, textarea, select",
+      );
+      el.dataset.keyboard =
+        editing && window.innerHeight - viewport.height > 120
+          ? "open"
+          : "closed";
+    };
+    update();
+    viewport?.addEventListener("resize", update);
+    window.addEventListener("resize", update);
+    document.addEventListener("focusin", update);
+    document.addEventListener("focusout", update);
+    return () => {
+      viewport?.removeEventListener("resize", update);
+      window.removeEventListener("resize", update);
+      document.removeEventListener("focusin", update);
+      document.removeEventListener("focusout", update);
+    };
+  }, []);
   useEffect(() => {
     const pause = () => send({ type: "PAUSE" });
     const hidden = () => {
@@ -216,7 +253,7 @@ export default function Player({
         );
         return;
       }
-      send({ type: "OPEN_FILE", id });
+      if (canOpen(c, state, id)) send({ type: "OPEN_FILE", id });
       if (f.type === "CHAT_LINK") send({ type: "READ_MESSAGES" });
     }
     setWins((old) => {
@@ -303,6 +340,11 @@ export default function Player({
   const unread = state.deliveredMessageIds.filter(
     (x) => !state.readMessageIds.includes(x),
   ).length;
+  const entry = caseEntry(c);
+  const nextHint =
+    c.puzzles.find((p) => !state.solvedPuzzleIds.includes(p.id))?.id ||
+    c.puzzles[0]?.id ||
+    null;
   const requiredClues = [
     ...new Set(c.hypotheses.flatMap((h) => h.requiredClues)),
   ];
@@ -398,7 +440,7 @@ export default function Player({
             <div className="empty">
               아직 발견한 단서가 없습니다.
               <br />
-              바탕화면의 인수인계 메모부터 열어보세요.
+              사건 자료에서 첫 메모를 열어보세요.
             </div>
           )}
           <label className="field">
@@ -536,7 +578,7 @@ export default function Player({
       return (
         <div className="folder-content">
           <div className="breadcrumbs">
-            TERMINAL 04 <ChevronRight size={14} />
+            {entry.location} <ChevronRight size={14} />
             {f.title}
           </div>
           {f.text && <p className="muted">{f.text}</p>}
@@ -554,10 +596,12 @@ export default function Player({
       return (
         <div className="chat-content">
           <div className="chat-person">
-            <div className="avatar">M</div>
+            <div className="avatar">
+              <MessageSquare size={18} />
+            </div>
             <div>
-              <b>민재</b>
-              <span>야간 연구팀</span>
+              <b>사건 대화</b>
+              <span>{entry.location} · 기록된 메시지</span>
             </div>
             <button
               className="quiet"
@@ -566,7 +610,7 @@ export default function Player({
               모두 읽음
             </button>
           </div>
-          <div className="chat-date">사건 당일 · 새벽</div>
+          <div className="chat-date">사건 당시의 대화 기록</div>
           {c.messages
             .filter((m) => state.deliveredMessageIds.includes(m.id))
             .map((m) => (
@@ -625,7 +669,7 @@ export default function Player({
     );
   }
   return (
-    <div className="player" inert={exiting}>
+    <div className="player" ref={player} inert={exiting}>
       <header className="topbar">
         <button
           className="brand-button"
@@ -636,7 +680,7 @@ export default function Player({
         </button>
         <div className="player-case">
           <span className="case-tag">
-            {isTest ? "TEST SNAPSHOT" : "CASE 001"}
+            {isTest ? "TEST SNAPSHOT" : "CASE " + entry.number}
           </span>
           <b>{c.title}</b>
         </div>
@@ -676,21 +720,24 @@ export default function Player({
       </div>
       <div className="desktop-layout">
         <aside className="desktop-files">
+          <span className="file-rail-label">사건 자료</span>
           {c.files
             .filter((f) => !f.parentId && state.visibleFileIds.includes(f.id))
             .map((f) => fileButton(f, true))}
         </aside>
         <main className="desktop-area" ref={area}>
           <div className="desktop-watermark">
-            <span>ARCHIVE / TERMINAL 04</span>
-            <strong>03:17</strong>
+            <span>
+              {entry.location} / CASE {entry.number}
+            </span>
+            <strong>{entry.display}</strong>
             <p>모든 기록에는, 빈틈이 있다.</p>
           </div>
-          {!wins.length && (
+          {!wins.some((w) => !w.minimized) && (
             <div className="desktop-welcome">
               <BookOpen size={24} />
               <h2>남겨진 기록에서 시작하세요.</h2>
-              <p>인수인계 메모를 읽고 서로 다른 기록을 대조하세요.</p>
+              <p>첫 메모에서 조사 의뢰와 잠금 해제 방법을 확인하세요.</p>
               <button
                 className="primary"
                 onClick={() =>
@@ -818,10 +865,7 @@ export default function Player({
               <ClipboardCheck size={17} />
               {state.mode === "ENDED" ? "결론 다시 보기" : "결론 작성"}
             </button>
-            <button
-              className="quiet"
-              onClick={() => setHintId(c.puzzles[0]?.id || null)}
-            >
+            <button className="quiet" onClick={() => setHintId(nextHint)}>
               <Lightbulb size={15} /> 단계별 힌트
             </button>
           </div>
@@ -836,6 +880,7 @@ export default function Player({
           aria-label="바탕화면 보기"
         >
           <Ghost size={22} />
+          <span className="mobile-nav-label">자료</span>
         </button>
         <div className="task-list">
           {wins.map((w) => (
@@ -854,26 +899,43 @@ export default function Player({
           aria-label="증거 보드"
         >
           <Network size={18} />
+          <span className="mobile-nav-label">증거</span>
         </button>
         <button
           className="mobile-board"
-          onClick={() => open("@conclusion")}
+          onClick={() =>
+            state.mode === "ENDED" ? setEndVisible(true) : open("@conclusion")
+          }
           aria-label="결론 작성"
         >
           <ClipboardCheck size={18} />
+          <span className="mobile-nav-label">결론</span>
+        </button>
+        <button
+          className="mobile-board"
+          aria-label="단계별 힌트"
+          disabled={!c.puzzles.length}
+          onClick={() => setHintId(nextHint)}
+        >
+          <Lightbulb size={18} />
+          <span className="mobile-nav-label">힌트</span>
         </button>
         <button
           className="message-task"
+          aria-label={
+            unread ? `메신저 · 읽지 않은 메시지 ${unread}개` : "메신저 열기"
+          }
           onClick={() => {
             const f = c.files.find((x) => x.type === "CHAT_LINK");
             if (f) open(f.id);
           }}
         >
           <MessageSquare size={17} />
+          <span className="mobile-nav-label">대화</span>
           {unread > 0 && <b>{unread}</b>}
         </button>
         <span className="task-clock">
-          03:17 <small>사건 속 PC 시각</small>
+          {entry.display} <small>{entry.location}</small>
         </span>
       </footer>
       {toast && (

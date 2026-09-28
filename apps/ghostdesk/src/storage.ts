@@ -30,10 +30,10 @@ function db() {
     const r = indexedDB.open("ghostdesk-local-v1", 1);
     r.onupgradeneeded = () => r.result.createObjectStore("records");
     r.onsuccess = () => resolve(r.result);
-    r.onerror = () => {
-      dbPromise = undefined;
-      reject(r.error);
-    };
+    r.onerror = () => reject(r.error);
+  }).catch((error) => {
+    dbPromise = undefined;
+    throw error;
   }));
 }
 export async function read<T>(key: string): Promise<T | undefined> {
@@ -45,13 +45,52 @@ export async function read<T>(key: string): Promise<T | undefined> {
   });
 }
 export async function write(key: string, value: unknown): Promise<void> {
+  return writeRecords([[key, value]]);
+}
+export async function writePlay(save: Save): Promise<void> {
+  return writeRecords(
+    [
+      ["play", save],
+      ["play:" + save.case.caseId, save],
+    ],
+    save.case.caseId,
+  );
+}
+async function writeRecords(
+  records: [string, unknown][],
+  nextCaseId?: string,
+): Promise<void> {
   const d = await db();
   return new Promise((resolve, reject) => {
     const t = d.transaction("records", "readwrite");
-    t.objectStore("records").put(value, key);
     t.oncomplete = () => resolve();
     t.onerror = () => reject(t.error);
     t.onabort = () => reject(t.error);
+    const store = t.objectStore("records");
+    const putAll = (previous?: unknown) => {
+      try {
+        // Preserve the old single-slot save before the first case switch.
+        // Read and both writes share one transaction, including rollback.
+        let previousCaseId: string | undefined;
+        if (previous) {
+          try {
+            previousCaseId = parseSave(previous).case.caseId;
+          } catch {
+            /* A damaged recent slot must not block other valid cases. */
+          }
+        }
+        if (previousCaseId && previousCaseId !== nextCaseId)
+          store.put(previous, "play:" + previousCaseId);
+        for (const [key, value] of records) store.put(value, key);
+      } catch (error) {
+        t.abort();
+        reject(error);
+      }
+    };
+    if (nextCaseId) {
+      const recent = store.get("play");
+      recent.onsuccess = () => putAll(recent.result);
+    } else putAll();
   });
 }
 export function parseSave(raw: unknown): Save {

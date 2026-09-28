@@ -2,6 +2,7 @@ import {
   lazy,
   Suspense,
   useEffect,
+  useId,
   useRef,
   useState,
   type ReactNode,
@@ -24,10 +25,11 @@ import {
   initialState,
   type State,
 } from "../../../packages/engine-ghostdesk/src";
-import { sample } from "./sample";
+import { caseLibrary, caseEntry } from "./cases";
 import {
   read,
   write,
+  writePlay,
   parseSave,
   download,
   importJson,
@@ -46,6 +48,7 @@ export function Modal({
   onClose: () => void;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
+  const titleId = useId();
   useEffect(() => {
     const previous = document.activeElement as HTMLElement | null;
     ref.current?.showModal();
@@ -58,13 +61,14 @@ export function Modal({
     <dialog
       ref={ref}
       className="modal"
+      aria-labelledby={titleId}
       onCancel={(e) => {
         e.preventDefault();
         onClose();
       }}
     >
       <div className="modal-head">
-        <h2>{title}</h2>
+        <h2 id={titleId}>{title}</h2>
         <button onClick={onClose} aria-label="대화상자 닫기">
           ×
         </button>
@@ -85,7 +89,9 @@ export function Brand() {
 }
 export default function App() {
   const [view, setView] = useState<"home" | "play" | "studio">("home"),
-    [saved, setSaved] = useState<Save | null>(null),
+    [saves, setSaves] = useState<Record<string, Save>>({}),
+    [selectedCaseId, setSelectedCaseId] = useState(caseLibrary[0].case.caseId),
+    [importedCase, setImportedCase] = useState<CasePackage | null>(null),
     [active, setActive] = useState<Save | null>(null),
     [test, setTest] = useState(false),
     [ready, setReady] = useState(false),
@@ -95,28 +101,74 @@ export default function App() {
     [motion, setMotion] = useState(false),
     [restart, setRestart] = useState(false);
   const file = useRef<HTMLInputElement>(null);
-  const [publishedCase, setPublishedCase] = useState(sample);
+  const [remotePackages, setRemotePackages] = useState<
+    Record<string, CasePackage>
+  >({});
+  const entries =
+    importedCase &&
+    !caseLibrary.some((entry) => entry.case.caseId === importedCase.caseId)
+      ? [...caseLibrary, caseEntry(importedCase)]
+      : caseLibrary;
+  const selectedEntry =
+    entries.find((entry) => entry.case.caseId === selectedCaseId) || entries[0];
+  const chosen =
+    remotePackages[selectedEntry.case.caseId] || selectedEntry.case;
+  const saved = saves[chosen.caseId] || null;
+  function remember(s: Save) {
+    setSaves((previous) => ({ ...previous, [s.case.caseId]: s }));
+    if (!caseLibrary.some((entry) => entry.case.caseId === s.case.caseId))
+      setImportedCase(s.case);
+  }
   useEffect(() => {
     const base = import.meta.env.VITE_API_BASE_URL;
-    if (!base) return;
+    if (
+      !base ||
+      !caseLibrary.some((entry) => entry.case.caseId === chosen.caseId)
+    )
+      return;
     const controller = new AbortController();
-    loadPublishedCase(base, sample.versionId, controller.signal)
-      .then(setPublishedCase)
+    loadPublishedCase(base, chosen.versionId, controller.signal)
+      .then((c) =>
+        setRemotePackages((previous) => ({ ...previous, [c.caseId]: c })),
+      )
       .catch(() => {
-        /* The bundled case remains immediately playable offline. */
+        /* Every shipped case also works from its offline package. */
       });
     return () => controller.abort();
-  }, []);
+  }, [chosen.versionId]);
   useEffect(() => {
-    read<unknown>("play")
-      .then((x) => {
-        if (x) setSaved(parseSave(x));
+    const keys = [
+      "play",
+      ...caseLibrary.map((entry) => "play:" + entry.case.caseId),
+    ];
+    Promise.allSettled(
+      keys.map(async (key) => {
+        const raw = await read<unknown>(key);
+        return raw ? parseSave(raw) : null;
+      }),
+    )
+      .then((results) => {
+        const restored: Record<string, Save> = Object.create(null);
+        for (const result of results) {
+          if (result.status === "fulfilled" && result.value)
+            restored[result.value.case.caseId] = result.value;
+        }
+        setSaves(restored);
+        const recent = results[0];
+        if (recent.status === "fulfilled" && recent.value) {
+          setSelectedCaseId(recent.value.case.caseId);
+          if (
+            !caseLibrary.some(
+              (entry) => entry.case.caseId === recent.value!.case.caseId,
+            )
+          )
+            setImportedCase(recent.value.case);
+        }
+        if (results.some((result) => result.status === "rejected"))
+          setNotice(
+            "일부 저장을 읽지 못했습니다. 다른 사건은 계속 플레이하거나 내보낸 JSON을 가져올 수 있습니다.",
+          );
       })
-      .catch(() =>
-        setNotice(
-          "이 기기의 저장을 읽지 못했습니다. 내보낸 JSON을 가져오거나 새 조사를 시작할 수 있습니다.",
-        ),
-      )
       .finally(() => setReady(true));
     read<{ font: number; motion: boolean }>("settings")
       .then((x) => {
@@ -127,7 +179,7 @@ export default function App() {
       })
       .catch(() => {});
   }, []);
-  function start(c = publishedCase, isTest = false) {
+  function start(c = chosen, isTest = false) {
     setActive({
       format: "ghostdesk-save-1",
       case: structuredClone(c),
@@ -176,7 +228,7 @@ export default function App() {
             else goHome();
           }}
           onSaved={(s) => {
-            if (!test) setSaved(s);
+            if (!test) remember(s);
           }}
           onSettings={() => setSettings(true)}
         />
@@ -185,7 +237,7 @@ export default function App() {
           <header className="topbar">
             <Brand />
             <nav>
-              <span className="pill">GHOSTDESK · 0.2</span>
+              <span className="pill">INTERACTIVE MYSTERY</span>
               <button
                 className="icon-button"
                 onClick={() => setSettings(true)}
@@ -196,33 +248,72 @@ export default function App() {
             </nav>
           </header>
           <main className="launch">
+            <section className="case-library" aria-label="사건 선택">
+              <div className="library-heading">
+                <div>
+                  <span className="section-kicker">CASE ARCHIVE</span>
+                  <h2>어떤 기록부터 열어볼까요?</h2>
+                </div>
+                <span className="library-count">{entries.length}개의 사건</span>
+              </div>
+              <div className="case-cards">
+                {entries.map((entry) => {
+                  const progress = saves[entry.case.caseId];
+                  return (
+                    <button
+                      key={entry.case.caseId}
+                      className={
+                        "case-card " +
+                        (entry.case.caseId === chosen.caseId
+                          ? "selected-case"
+                          : "")
+                      }
+                      aria-label={
+                        "사건 " + entry.number + " " + entry.case.title
+                      }
+                      aria-pressed={entry.case.caseId === chosen.caseId}
+                      onClick={() => setSelectedCaseId(entry.case.caseId)}
+                    >
+                      <span className="case-card-top">
+                        <span>{entry.number}</span>
+                        <span>
+                          {progress?.state.mode === "ENDED"
+                            ? "조사 완료"
+                            : progress
+                              ? "진행 중"
+                              : entry.difficulty}
+                        </span>
+                      </span>
+                      <b>{entry.case.title}</b>
+                      <small>
+                        {entry.theme} · 약 {entry.case.estimatedMinutes}분
+                      </small>
+                    </button>
+                  );
+                })}
+              </div>
+            </section>
             <div className="case-intro">
               <div className="eyebrow">
-                <span className="square" /> CASE FILE / 001
+                <span className="square" /> 사건 {selectedEntry.number} ·{" "}
+                {selectedEntry.theme}
               </div>
               <h1>
-                03:17에
-                <br />
-                멈춘 전송<span className="title-dot">.</span>
+                {chosen.title}
+                <span className="title-dot">.</span>
               </h1>
-              <p>
-                사라진 기록 담당자.
-                <br />
-                남겨진 컴퓨터. 그리고 전송 기록 한 줄.
-                <br />
-                당신은 무엇을 믿을 것인가.
-              </p>
+              <p>{chosen.description}</p>
               <div className="case-meta">
                 <span>
-                  <Clock3 size={16} /> 약 10–15분
+                  <Clock3 size={16} /> 약 {chosen.estimatedMinutes}분
                 </span>
                 <span>
-                  <FileCheck2 size={16} /> 추리 · 기록 대조
+                  <FileCheck2 size={16} /> {selectedEntry.difficulty}
                 </span>
               </div>
               <div className="launch-actions">
                 <button
-                  className="primary"
+                  className={saved ? "secondary" : "primary"}
                   disabled={!ready}
                   onClick={() => (saved ? setRestart(true) : start())}
                 >
@@ -231,7 +322,7 @@ export default function App() {
                 </button>
                 {saved && (
                   <button
-                    className="secondary"
+                    className="primary"
                     onClick={() => {
                       setActive(saved);
                       setTest(false);
@@ -242,33 +333,44 @@ export default function App() {
                   </button>
                 )}
               </div>
+              {saved && (
+                <div className="resume-summary">
+                  <FileCheck2 size={16} />
+                  <span>
+                    {saved.state.mode === "ENDED"
+                      ? "완료한 조사"
+                      : "진행 중인 조사"}{" "}
+                    · 단서 {saved.state.clueIds.length}/
+                    {saved.case.clues.length}
+                  </span>
+                </div>
+              )}
               <p className="small muted">
                 이곳은 가상의 컴퓨터입니다. 실제 파일에는 접근하지 않습니다.
               </p>
             </div>
             <div className="case-visual" aria-label="사건 기록 미리보기">
               <div className="visual-top">
-                <span>RESEARCH ARCHIVE</span>
-                <span>TERMINAL 04</span>
+                <span>사건 기록 / {selectedEntry.location}</span>
+                <span className="file-status">미해결</span>
               </div>
-              <div className="big-clock">
-                03<span>:</span>17
+              <div
+                className={
+                  "big-clock" +
+                  (selectedEntry.display.length > 5 ? " word-clock" : "")
+                }
+              >
+                {selectedEntry.display}
               </div>
-              <div className="signal-lines">
-                <i />
-                <i />
-                <i />
-                <i />
-                <i />
-              </div>
+              <p className="preview-caption">{selectedEntry.caption}</p>
               <div className="log-preview">
-                <span className="amber">SEND_REQUEST</span>
-                <span>TX-0917</span>
+                <span className="amber">{selectedEntry.previewKey}</span>
+                <span>CASE {selectedEntry.number}</span>
                 <div>
-                  상태 <b>QUEUED</b>
+                  화면 표시 <b>{selectedEntry.previewValue}</b>
                 </div>
                 <div>
-                  완료 시각 <b>—</b>
+                  확인 상태 <b>조사 필요</b>
                 </div>
               </div>
               <div className="visual-bottom">
@@ -285,8 +387,16 @@ export default function App() {
                 </span>
                 <ArrowUpRight size={20} />
               </button>
-              <button className="quiet" onClick={() => file.current?.click()}>
-                <Upload size={16} /> 저장 파일 가져오기
+              <button
+                className="import-link"
+                onClick={() => file.current?.click()}
+              >
+                <Upload size={22} />
+                <span>
+                  <b>저장 파일 가져오기</b>
+                  <small>내보낸 진행으로 조사를 이어가세요</small>
+                </span>
+                <ArrowUpRight size={20} />
               </button>
             </footer>
           </main>
@@ -303,8 +413,9 @@ export default function App() {
           if (!f) return;
           try {
             const s = parseSave(await importJson(f));
-            await write("play", s);
-            setSaved(s);
+            await writePlay(s);
+            remember(s);
+            setSelectedCaseId(s.case.caseId);
             setActive(s);
             setTest(false);
             setView("play");
@@ -322,8 +433,8 @@ export default function App() {
       {restart && (
         <Modal title="새 조사를 시작할까요?" onClose={() => setRestart(false)}>
           <p>
-            현재 진행 슬롯이 새 조사로 바뀝니다. 이어서 조사하거나 기존 진행을
-            먼저 내보낼 수 있습니다.
+            이 사건의 기존 진행이 새 조사로 바뀝니다. 다른 사건의 진행은
+            유지됩니다. 기존 진행을 먼저 내보낼 수도 있습니다.
           </p>
           <div className="button-row">
             <button

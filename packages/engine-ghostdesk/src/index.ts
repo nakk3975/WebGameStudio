@@ -196,7 +196,7 @@ export function transition(
           return {
             state: previous,
             message:
-              "필수 근거가 부족합니다. 전송 요청과 실제 처리 결과를 함께 선택해 주세요.",
+              "필수 근거가 부족합니다. 아직 선택하지 않은 핵심 기록을 확인해 주세요.",
           };
         s.endingId = h.endingId;
         s.mode = "ENDED";
