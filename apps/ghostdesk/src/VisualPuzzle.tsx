@@ -177,7 +177,7 @@ const stamp = (t: number) => `00:${String(t).padStart(2, "0")}`;
 const sceneDescriptions = [
   "카트가 복도 안쪽 문 앞에 있습니다.",
   "카트가 복도 가운데에 있습니다.",
-  "카트가 화면 오른쪽 가장자리로 빠져나가고 있습니다.",
+  "카트가 화면 아래쪽 가까운 복도 바닥에 있습니다.",
 ];
 
 function VideoComparison({

@@ -14,3 +14,13 @@ as provenance of the superseded experiment and are not shipped by Vite.
 
 Generation prompts are in `assets/MEDIA_PROMPTS.md`. Observation times and
 sampled scene indices are shared in `apps/ghostdesk/src/cctv.ts`.
+
+## Corridor path correction — 2026-09-29
+
+The middle and final frames were replaced after the final trolley appeared to
+travel through the right-hand construction partition. The trolley now approaches
+along the grey corridor floor, staying within the black floor borders. The final
+frame keeps the trolley and its visible wheel contacts in view near the lower
+middle of the picture. `hotel-frame-exit.webp` retains its asset filename but no
+longer depicts a right-edge exit. The camera stays fixed and A/B/C timing is
+unchanged; captions and accessible scene descriptions match the new position.
