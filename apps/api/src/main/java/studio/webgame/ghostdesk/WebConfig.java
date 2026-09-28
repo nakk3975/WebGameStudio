@@ -13,7 +13,7 @@ public class WebConfig implements WebMvcConfigurer {
         this.origins = Arrays.stream(origins.split(",")).map(String::trim).filter(s -> !s.isEmpty()).toArray(String[]::new);
     }
     @Override public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/api/**").allowedOrigins(origins).allowedMethods("GET", "HEAD", "OPTIONS")
-            .allowedHeaders("Accept", "Content-Type").allowCredentials(false).maxAge(3600);
+        registry.addMapping("/api/**").allowedOrigins(origins).allowedMethods("GET", "HEAD", "OPTIONS", "PUT")
+            .allowedHeaders("Accept", "Content-Type", "Authorization", "X-GhostDesk-Account").allowCredentials(false).maxAge(3600);
     }
 }

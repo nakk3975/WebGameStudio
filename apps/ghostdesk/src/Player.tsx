@@ -66,12 +66,16 @@ export default function Player({
   onExit,
   onSaved,
   onSettings,
+  persistSave = writePlay,
+  cloudStatus,
 }: {
   initial: Save;
   isTest: boolean;
   onExit: () => void;
   onSaved: (s: Save) => void;
   onSettings: () => void;
+  persistSave?: (s: Save) => Promise<void>;
+  cloudStatus?: string;
 }) {
   const c = initial.case,
     [state, setState] = useState(initial.state),
@@ -92,7 +96,7 @@ export default function Player({
   const player = useRef<HTMLDivElement>(null),
     area = useRef<HTMLDivElement>(null),
     latest = useRef<Save>(initial),
-    saveQueue = useRef(createSaveQueue<Save>(writePlay)),
+    saveQueue = useRef(createSaveQueue<Save>(persistSave)),
     leaving = useRef(false),
     drag = useRef<{ id: string; dx: number; dy: number } | null>(null),
     previousSolved = useRef(state.solvedPuzzleIds.length);
@@ -686,7 +690,9 @@ export default function Player({
         </div>
         <nav>
           <span className="save-state" role="status">
-            {saveStatus}
+            {saveStatus.startsWith("저장 실패") || saveStatus === "저장 중"
+              ? saveStatus
+              : cloudStatus || saveStatus}
           </span>
           <button
             className="icon-button"

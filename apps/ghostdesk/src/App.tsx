@@ -36,6 +36,8 @@ import {
   type Save,
 } from "./storage";
 import Player from "./Player";
+import { AccountProvider, AccountButton, type Account } from "./Account";
+import { CloudSaves, cloudTransport } from "./cloud";
 const Studio = lazy(() => import("./Studio"));
 import { loadPublishedCase } from "./catalog";
 export function Modal({
@@ -88,6 +90,15 @@ export function Brand() {
   );
 }
 export default function App() {
+  return (
+    <AccountProvider>
+      {(account) => (
+        <Workspace key={account.user?.id || "guest"} account={account} />
+      )}
+    </AccountProvider>
+  );
+}
+function Workspace({ account }: { account: Account }) {
   const [view, setView] = useState<"home" | "play" | "studio">("home"),
     [saves, setSaves] = useState<Record<string, Save>>({}),
     [selectedCaseId, setSelectedCaseId] = useState(caseLibrary[0].case.caseId),
@@ -114,6 +125,82 @@ export default function App() {
   const chosen =
     remotePackages[selectedEntry.case.caseId] || selectedEntry.case;
   const saved = saves[chosen.caseId] || null;
+  const [cloudStatus, setCloudStatus] = useState("");
+  const [cloud, setCloud] = useState<CloudSaves | null>(null);
+  const [syncBusy, setSyncBusy] = useState(false);
+  const accountRef = useRef(account);
+  accountRef.current = account;
+  useEffect(() => {
+    if (!account.user) return;
+    const c = new CloudSaves(
+      account.user.id,
+      cloudTransport(
+        import.meta.env.VITE_API_BASE_URL || "",
+        account.user.id,
+        () => accountRef.current.token(),
+      ),
+      () => {
+        setSaves(c.saves());
+        setCloudStatus(c.status);
+      },
+    );
+    setCloud(c);
+    void c.initialize().finally(() => setReady(true));
+    return () => c.close();
+  }, [account.user?.id]);
+  useEffect(() => {
+    if (cloud) cloud.playing = view === "play";
+    if (!cloud || view !== "home") return;
+    const refresh = () => {
+      void cloud.refresh();
+    };
+    window.addEventListener("focus", refresh);
+    return () => window.removeEventListener("focus", refresh);
+  }, [cloud, view]);
+  async function syncNow() {
+    if (!cloud || syncBusy) return;
+    setSyncBusy(true);
+    try {
+      await cloud.refresh();
+    } finally {
+      setSyncBusy(false);
+    }
+  }
+  async function importGuest() {
+    if (!cloud || syncBusy) return;
+    setSyncBusy(true);
+    try {
+      const keys = ["play", ...caseLibrary.map((e) => "play:" + e.case.caseId)];
+      const records: Record<string, Save> = Object.create(null);
+      for (const key of keys) {
+        const raw = await read<unknown>(key);
+        if (raw) {
+          const s = parseSave(raw);
+          records[s.case.caseId] = s;
+        }
+      }
+      let count = 0;
+      for (const s of Object.values(records))
+        if (!cloud.records[s.case.caseId]) {
+          await cloud.persist(s);
+          count++;
+        }
+      await cloud.flush();
+      setNotice(
+        `${count}개 사건의 비회원 진행을 가져왔습니다. 계정에 이미 있는 사건은 유지했습니다.`,
+      );
+    } catch {
+      setNotice("진행을 가져오지 못했습니다. 비회원 저장은 그대로 유지됩니다.");
+    } finally {
+      setSyncBusy(false);
+    }
+  }
+  const persistSave = (s: Save) =>
+    cloud
+      ? cloud.persist(s)
+      : account.user
+        ? Promise.reject(Error("계정 저장을 준비 중입니다."))
+        : writePlay(s);
   function remember(s: Save) {
     setSaves((previous) => ({ ...previous, [s.case.caseId]: s }));
     if (!caseLibrary.some((entry) => entry.case.caseId === s.case.caseId))
@@ -137,6 +224,7 @@ export default function App() {
     return () => controller.abort();
   }, [chosen.versionId]);
   useEffect(() => {
+    if (account.user) return;
     const keys = [
       "play",
       ...caseLibrary.map((entry) => "play:" + entry.case.caseId),
@@ -170,6 +258,8 @@ export default function App() {
           );
       })
       .finally(() => setReady(true));
+  }, []);
+  useEffect(() => {
     read<{ font: number; motion: boolean }>("settings")
       .then((x) => {
         if (x) {
@@ -230,6 +320,8 @@ export default function App() {
           onSaved={(s) => {
             if (!test) remember(s);
           }}
+          persistSave={persistSave}
+          cloudStatus={test ? undefined : cloudStatus}
           onSettings={() => setSettings(true)}
         />
       ) : view === "home" ? (
@@ -238,6 +330,7 @@ export default function App() {
             <Brand />
             <nav>
               <span className="pill">INTERACTIVE MYSTERY</span>
+              <AccountButton account={account} />
               <button
                 className="icon-button"
                 onClick={() => setSettings(true)}
@@ -248,6 +341,93 @@ export default function App() {
             </nav>
           </header>
           <main className="launch">
+            {account.enabled && (
+              <section className="account-strip" aria-label="진행 저장">
+                <div>
+                  <b>
+                    {account.user
+                      ? `${account.user.name}의 조사 기록`
+                      : "비회원 · 이 브라우저에 자동 저장"}
+                  </b>
+                  <p role="status">
+                    {account.user
+                      ? cloudStatus || "계정 저장 준비 중"
+                      : "로그인하면 폰과 컴퓨터에서 이어 할 수 있어요."}
+                  </p>
+                </div>
+                {account.user ? (
+                  <div className="button-row">
+                    <button disabled={!ready || syncBusy} onClick={syncNow}>
+                      {syncBusy ? "동기화 중…" : "계정 저장 새로고침"}
+                    </button>
+                    <button disabled={!ready || syncBusy} onClick={importGuest}>
+                      비회원 진행 가져오기
+                    </button>
+                  </div>
+                ) : (
+                  <AccountButton account={account} />
+                )}
+              </section>
+            )}
+            {cloud &&
+              Object.entries(cloud.records)
+                .filter(([, r]) => r.conflict !== undefined)
+                .map(([id, r]) => (
+                  <section key={id} className="save-conflict" role="alert">
+                    <b>{r.save.case.title} · 다른 기기의 진행이 있습니다</b>
+                    <p>
+                      자동 덮어쓰기를 멈췄습니다. 이어갈 기록을 선택하세요. 선택
+                      전 두 기록을 이 기기에 백업합니다.
+                    </p>
+                    <p>
+                      이 기기 단서 {r.save.state.clueIds.length}개 · 계정 단서{" "}
+                      {r.conflict?.save.state.clueIds.length ?? 0}개
+                    </p>
+                    <div className="button-row">
+                      <button
+                        disabled={syncBusy || !r.conflict}
+                        onClick={async () => {
+                          setSyncBusy(true);
+                          try {
+                            await cloud.resolve(id, "cloud");
+                          } catch {
+                            setNotice(
+                              "기록 선택에 실패했습니다. 다시 시도해 주세요.",
+                            );
+                          } finally {
+                            setSyncBusy(false);
+                          }
+                        }}
+                      >
+                        계정 기록으로 이어가기
+                      </button>
+                      <button
+                        disabled={syncBusy}
+                        onClick={async () => {
+                          setSyncBusy(true);
+                          try {
+                            await cloud.resolve(id, "device");
+                          } catch {
+                            setNotice(
+                              "기록 선택에 실패했습니다. 다시 시도해 주세요.",
+                            );
+                          } finally {
+                            setSyncBusy(false);
+                          }
+                        }}
+                      >
+                        이 기기 기록을 계정에 저장
+                      </button>
+                      <button
+                        onClick={() =>
+                          download("ghostdesk-device-backup.json", r.save)
+                        }
+                      >
+                        이 기기 기록 내보내기
+                      </button>
+                    </div>
+                  </section>
+                ))}
             <section className="case-library" aria-label="사건 선택">
               <div className="library-heading">
                 <div>
@@ -314,7 +494,7 @@ export default function App() {
               <div className="launch-actions">
                 <button
                   className={saved ? "secondary" : "primary"}
-                  disabled={!ready}
+                  disabled={!ready || !account.ready}
                   onClick={() => (saved ? setRestart(true) : start())}
                 >
                   <Play size={18} /> {saved ? "새 조사 시작" : "사건 조사 시작"}
@@ -323,6 +503,7 @@ export default function App() {
                 {saved && (
                   <button
                     className="primary"
+                    disabled={!ready || !account.ready}
                     onClick={() => {
                       setActive(saved);
                       setTest(false);
@@ -413,7 +594,7 @@ export default function App() {
           if (!f) return;
           try {
             const s = parseSave(await importJson(f));
-            await writePlay(s);
+            await persistSave(s);
             remember(s);
             setSelectedCaseId(s.case.caseId);
             setActive(s);

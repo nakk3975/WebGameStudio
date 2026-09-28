@@ -2959,3 +2959,93 @@ button:not(:disabled):active {
   word-break: keep-all;
   overflow-wrap: anywhere;
 }
+
+/* Account progress stays clear on both phone and desktop. */
+.account-strip,
+.save-conflict {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border: 1px solid #314353;
+  border-radius: 16px;
+  padding: 18px 22px;
+  background: #152231;
+}
+.account-strip p {
+  margin: 6px 0 0;
+  color: #a8b7c7;
+  font-size: 0.875rem;
+}
+.account-button {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  white-space: nowrap;
+}
+.account-form {
+  display: grid;
+  gap: 16px;
+}
+.account-form p {
+  margin: 0;
+  line-height: 1.65;
+  word-break: keep-all;
+}
+.account-form input {
+  width: 100%;
+  min-height: 46px;
+  font-size: 16px;
+}
+.account-form small,
+.account-form .muted {
+  color: #a8b7c7;
+  font-size: 0.875rem;
+}
+.account-links {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.account-links button {
+  font-size: 0.875rem;
+}
+.account-message {
+  padding: 12px;
+  background: #283948;
+  border-radius: 8px;
+  line-height: 1.6;
+}
+.save-conflict {
+  display: block;
+  border-color: #c2a16d;
+}
+.save-conflict p {
+  line-height: 1.65;
+}
+@media (max-width: 760px) {
+  .account-strip {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 16px;
+    gap: 12px;
+  }
+  .account-strip .button-row {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .account-button {
+    font-size: 0.8125rem;
+    padding: 8px 10px;
+  }
+  .topbar:has(.account-button) {
+    padding-inline: 12px;
+  }
+  .topbar:has(.account-button) .brand {
+    font-size: 0.875rem;
+  }
+  .topbar:has(.account-button) nav {
+    gap: 6px;
+  }
+}

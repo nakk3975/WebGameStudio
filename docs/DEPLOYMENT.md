@@ -37,7 +37,7 @@ The read role has SELECT permission, no INSERT/UPDATE/DELETE permission, and no 
 
 Only the API receives `DB_PASSWORD`, `DB_USERNAME=ghostdesk_app`, and a `JDBC_DATABASE_URL` using the pooled Neon host. JDBC uses TLS `verify-full` and `/etc/ssl/certs/ca-certificates.crt`. The password is a separate environment variable, never embedded in a URL or committed.
 
-The app role is an ordinary SQL login: no database/role creation, no RLS bypass, no Neon superuser membership. It receives only CONNECT, schema USAGE, and SELECT on the case table. Transactions default to read-only with a 10 second statement timeout. MyBatis binds version IDs as parameters. API query paths always filter `published = true`.
+The app role is an ordinary SQL login: no database/role creation, no RLS bypass, no Neon superuser membership. It receives CONNECT, schema USAGE, SELECT on the case table, and SELECT/INSERT/UPDATE on user_saves. V003 permits read-write transactions with a 10 second statement timeout; catalog grants remain SELECT-only. MyBatis binds version IDs as parameters. API query paths always filter `published = true`.
 
 `ALLOWED_ORIGINS` is the exact frontend origin. `VITE_API_BASE_URL` is the public API origin only. CORS allows GET/HEAD/OPTIONS without credentials; no API mutation routes exist in this release.
 
@@ -59,7 +59,7 @@ Render liveness uses `/health/live` and does not touch the database. Do not sche
 
 ## Scope
 
-This deployment serves a public sample catalog. Personal progress, notes, and editor drafts stay in IndexedDB on the user's device. GitHub OAuth, cloud saves, draft ownership, creator publishing and invitations are not implemented. JSON export remains the available backup. There is no production monitoring or recovery drill yet.
+This deployment serves a public catalog and private account saves. Guest progress and editor drafts stay in IndexedDB. Official-case progress and notes sync to Neon after email/password sign-in. GitHub OAuth, cloud editor drafts, creator publishing and invitations are not implemented. JSON export remains a backup. There is no production monitoring or recovery drill yet.
 
 ## 다섯 사건 업데이트 / 2026-09-28
 
@@ -68,3 +68,12 @@ This deployment serves a public sample catalog. Personal progress, notes, and ed
 - GitHub Actions: https://github.com/nakk3975/WebGameStudio/actions/runs/36407043046 성공.
 - API 재배포 없이 새 사건 4개 조회 가능. 네 패키지는 번들 원본과 일치하며 웹은 서버가 늦어도 내장된 다섯 사건을 바로 제공.
 - 실제 운영에서 기존 001 진행 보존 및 002의 별도 저장·재로딩 확인. 세부 검사와 실기기 Safari 미검증 범위는 VERIFICATION.md 참고.
+
+## Account saves (0.3)
+
+- Enable managed Neon Auth on the GhostDesk branch. Set the app name to GhostDesk and trust `https://ghostdesk-p24l.onrender.com`. Existing default email/password signup is enabled; email verification is not required. Password recovery uses managed email OTP. Shared email delivery is subject to Neon limits; no inbox-delivery test or custom SMTP setup has been performed.
+- Apply V003 transactionally. It adds `user_saves`, optimistic revisions and forced RLS. Each API transaction sets its verified JWT subject using transaction-local `app.user_id`; the app role cannot bypass RLS. Existing catalog content remains immutable/read-only.
+- API env `NEON_AUTH_URL` points to the actual branch Auth URL. Verify Ed25519 against managed JWKS and require its exact issuer/audience, expiry, subject and matching account header. Passwords and sessions are never stored in the GhostDesk API. An issued JWT may remain valid for its short lifetime after sign-out.
+- Frontend env `VITE_AUTH_URL=/auth`. Render rewrite `/auth/*` to the production Neon Auth endpoint shown in render.yaml must precede any catch-all route. Both GET and POST are proxied; secure HttpOnly session cookies stay on the app origin. This avoids relying on third-party cookies. Auth responses and save API responses must not be cached.
+- The client keeps a per-user IndexedDB upload queue. The server accepts a save only at its expected revision; stale writes return 409. Switching accounts unmounts the player, isolates local saves, and the API additionally rejects mismatched account headers.
+- The standalone HTML always disables Auth/API even if build env variables are present. Local development without an Auth endpoint remains guest-only. For local auth testing supply the verification branch URL and add the development origin to its trusted domains.

@@ -135,3 +135,12 @@
 - Render `dep-dat3lgp42hec73fc9ju0`: LIVE, 완료 2026-09-28T10:01:32Z.
 - 운영 웹 HTTP 200, 새 제목/새 JS, CSP 유지 확인. 근거는 `docs/evidence/five-case-release-2026-09-28.json`.
 - 운영 HTTPS의 기존 001 저장(단서 1/4)을 복원한 뒤 002 시작 → 첫 메모 → 홈 이동 → 재로딩을 수행했다. 002의 1/6과 기존 001의 1/4가 모두 유지됐다. 운영 Uncaught 오류 필터 결과 0개.
+
+## 0.3 계정 저장 검증 — 2026-09-28
+
+- 프런트엔드 84개, Java API 16개 자동 검사 통과. `npm ci`, typecheck, build, standalone, Maven verify 통과.
+- 두 기기의 업로드 경합, 409 충돌 및 양쪽 기록 백업/선택, 업로드 중 새 편집 보존, 오프라인 큐 재시작/복구, 플레이 중 원격 기록 교체 방지, 계정별 로컬 캐시 분리 검사.
+- 실제 Ed25519 서명 검증, 잘못된 서명·issuer·audience·만료·banned·계정 전환·미인증 거부 검사.
+- API의 저장 본문 크기/형식 제한, no-store, 409 응답, 인증 PUT CORS 검사.
+- Neon 검증 브랜치에서 실제 ghostdesk_app 역할로 RLS 확인: 자기 기록 1개, 다른 계정 기록 조회 0개/수정 0개, 오래된 revision 갱신 0개/유효 revision 갱신 1개.
+- 실제 iPhone Safari 및 실제 휴대전화 간 전환은 여전히 미검증. HTTP의 독립 세션 검사는 OS/브라우저의 저장 제한 검사를 대체하지 않는다.

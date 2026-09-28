@@ -22,7 +22,7 @@ spring:
       connection-timeout: 15000
       initialization-fail-timeout: -1
       keepalive-time: 0
-      read-only: true
+      read-only: false
       data-source-properties:
         connectTimeout: 10
         socketTimeout: 15
@@ -32,4 +32,5 @@ mybatis:
     default-statement-timeout: 10
     arg-name-based-constructor-auto-mapping: true
 app:
+  auth-url: ${NEON_AUTH_URL:}
   allowed-origins: ${ALLOWED_ORIGINS:http://localhost:4173,http://terminal.local:4173}
