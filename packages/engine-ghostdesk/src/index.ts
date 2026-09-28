@@ -157,9 +157,13 @@ export function transition(
         };
         if (normalize(event.answer) === normalize(p.answer)) {
           add(s.solvedPuzzleIds, p.id);
-          message = "잠금이 해제되었습니다.";
+          message = p.stageTitle
+            ? "기록 확인을 마쳤습니다. 다음 자료가 열렸어요."
+            : "잠금이 해제되었습니다.";
         } else
-          message = "암호가 맞지 않아요. 단서를 다시 확인하고 입력해 주세요.";
+          message = p.stageTitle
+            ? "아직 기록과 맞지 않아요. 자료를 다시 대조해 보세요."
+            : "암호가 맞지 않아요. 단서를 다시 확인하고 입력해 주세요.";
         break;
       }
       case "TICK":
@@ -184,6 +188,14 @@ export function transition(
         break;
       }
       case "CONCLUDE": {
+        if (
+          c.puzzles.some((p) => p.stageTitle) &&
+          c.puzzles.some((p) => !s.solvedPuzzleIds.includes(p.id))
+        )
+          return {
+            state: previous,
+            message: "조사 단계를 모두 확인한 뒤 결론을 제출해 주세요.",
+          };
         const h = c.hypotheses.find((x) => x.id === event.id);
         if (!h) return { state: previous, message: "가설을 선택해 주세요." };
         if (event.evidence.some((id) => !s.clueIds.includes(id)))

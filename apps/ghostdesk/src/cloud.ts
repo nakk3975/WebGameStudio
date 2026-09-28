@@ -1,6 +1,6 @@
 import { UserMessage, userMessage } from "./feedback";
 import { parseSave, read, write, createSaveQueue, type Save } from "./storage";
-import { caseLibrary } from "./cases";
+import { isOfficialCaseVersion } from "./cases";
 export type RemoteSave = {
   caseId: string;
   save: Save;
@@ -185,9 +185,7 @@ export class CloudSaves {
     if (this.closed) throw new UserMessage("계정이 변경되었습니다.");
     const id = save.case.caseId,
       old = this.records[id];
-    const official = caseLibrary.some(
-      (e) => e.case.versionId === save.case.versionId,
-    );
+    const official = isOfficialCaseVersion(save.case);
     this.records[id] = {
       ...old,
       save: structuredClone(save),

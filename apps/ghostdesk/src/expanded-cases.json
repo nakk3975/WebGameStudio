@@ -1,0 +1,2570 @@
+[
+  {
+    "schemaVersion": 1,
+    "engineVersion": "ghostdesk-core-1",
+    "caseId": "demo-0317",
+    "versionId": "demo-0317-v2",
+    "title": "03:17에 멈춘 전송",
+    "description": "기록 담당자가 사라진 새벽. 남겨진 컴퓨터에는 외부 전송 기록 한 줄이 남아 있다. 기록을 대조해 그날의 일을 재구성하라.",
+    "estimatedMinutes": 25,
+    "contentWarning": "실종을 암시하는 허구의 이야기. 공포 이미지·점프 스케어 없음.",
+    "files": [
+      {
+        "id": "f-handover",
+        "type": "TEXT",
+        "title": "인수인계.txt",
+        "parentId": null,
+        "visible": true,
+        "clueId": "c-clock",
+        "text": "다음 근무자에게 / 기록 담당 윤서\n\n기록용 PC는 벽시계보다 7분 빠릅니다. 휴지통의 마지막 전송 요청부터 확인해 주세요.\n\n실제 시각을 맞추고, 요청 접수표·처리 순서·전송량·영수증을 차례로 대조해야 합니다. 보관함을 한 번 여는 것만으로는 조사가 끝나지 않습니다.\n\n첫 확인: 요청이 남은 실제 시각을 시·분 네 자리로 적어 주세요. 새벽 3시 5분은 0305입니다."
+      },
+      {
+        "id": "f-chat",
+        "type": "CHAT_LINK",
+        "title": "메신저",
+        "parentId": null,
+        "visible": true,
+        "text": ""
+      },
+      {
+        "id": "f-photo",
+        "type": "IMAGE",
+        "title": "작업실_기록.img",
+        "parentId": null,
+        "visible": true,
+        "assetId": "clock-comparison",
+        "alt": "같은 순간을 기록한 작업실 자료. 벽시계는 03:10, PC 화면의 시계는 03:17을 가리킨다.",
+        "text": "야간 점검 담당자가 같은 순간에 기록한 두 시계.",
+        "clueId": "c-photo"
+      },
+      {
+        "id": "trash",
+        "type": "FOLDER",
+        "title": "휴지통",
+        "parentId": null,
+        "visible": true,
+        "text": "삭제된 기록도 흔적을 남깁니다."
+      },
+      {
+        "id": "f-queue",
+        "type": "TEXT",
+        "title": "transfer_queue.log",
+        "parentId": "trash",
+        "visible": true,
+        "clueId": "c-queue",
+        "text": "ARCHIVE NODE / OUTBOUND QUEUE\n──────────────────────────\n시각 기준: 기록용 PC\n\n[03:17:00] SEND_REQUEST\n요청 ID      : TX-0917\n목적지       : EXTERNAL_ARCHIVE\n상태         : QUEUED\n완료 시각    : —\n\nQUEUED = 승인 대기열 등록\n전송 완료는 별도 영수증에서 확인합니다.\n──────────────────────────\n이 로그는 요청 사실만 기록합니다."
+      },
+      {
+        "id": "f-receipt",
+        "type": "TEXT",
+        "title": "전송_처리_영수증.txt",
+        "parentId": "demo-0317-stage-5",
+        "visible": false,
+        "clueId": "c-receipt",
+        "text": "OUTBOUND TRANSFER RECEIPT\n──────────────────────────\n요청 ID      : TX-0917\n승인 처리    : CANCELLED\n최종 상태    : 전송 승인 취소\n전송 완료    : 0건\n외부 전송량  : 0 bytes\n\n승인이 취소되어 대기열의 요청은 실행되지 않았습니다.\n\n이 영수증의 요청 ID와 큐 로그의 요청 ID를 대조하세요."
+      },
+      {
+        "id": "demo-0317-scene",
+        "type": "IMAGE",
+        "title": "연구실_점검사진",
+        "parentId": null,
+        "visible": true,
+        "text": "점검 담당자가 남긴 현장 사진.",
+        "assetId": "lab",
+        "alt": "야간 연구실의 책상과 두 컴퓨터, 기록 보관 장치.",
+        "observations": [
+          {
+            "label": "촬영 시각",
+            "text": "점검 촬영: 벽시계 기준 03:20. 두 컴퓨터와 보관 장치, 분리된 연결선이 보입니다."
+          },
+          {
+            "label": "시계 대조표",
+            "text": "동시 측정 / 벽시계 03:10 / 기록용 PC 03:17. 사진 속 작은 문자 대신 점검표에 옮긴 측정값입니다."
+          }
+        ]
+      },
+      {
+        "id": "demo-0317-stage-1",
+        "type": "FOLDER",
+        "title": "1단계 · 시각 맞추기",
+        "parentId": null,
+        "visible": true,
+        "text": "이 단계의 확인을 마쳤습니다. 조사 단계에서 다음 기록을 열어 주세요.",
+        "puzzleId": "demo-0317-p1-v2"
+      },
+      {
+        "id": "demo-0317-record-2",
+        "type": "TEXT",
+        "title": "요청 연결하기_자료.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "분리된 접수표 / 시각은 모두 PC 기준\n\n접수표 A · TX-0916 · 03:16:00 · 외부 보관소\n접수표 B · TX-0917 · 03:17:00 · 내부 복제본\n접수표 C · TX-0917 · 03:17:00 · 외부 보관소\n\n한 요청을 외부 전송과 내부 복제에 각각 사용한 기록입니다. 요청 번호와 목적지가 모두 같은 접수표를 찾아야 합니다.",
+        "clueId": "demo-0317-record-clue-2"
+      },
+      {
+        "id": "demo-0317-stage-2",
+        "type": "FOLDER",
+        "title": "2단계 · 요청 연결하기",
+        "parentId": null,
+        "visible": false,
+        "text": "이 단계의 확인을 마쳤습니다. 조사 단계에서 다음 기록을 열어 주세요.",
+        "puzzleId": "demo-0317-p2-v2"
+      },
+      {
+        "id": "demo-0317-record-3",
+        "type": "TEXT",
+        "title": "처리 순서 복원_자료.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "처리 단편 / 모두 같은 PC 시각\n\n단편 1 · 03:17:09 · 승인 취소 접수\n단편 2 · 03:17:00 · 요청 생성\n단편 3 · 03:17:11 · 처리 내역 보관\n단편 4 · 03:17:02 · 승인 대기 등록\n\n사진은 03:20 점검 때 촬영되었습니다. 사진 속 선의 연결 상태만으로 그 이전 작업을 판단할 수는 없습니다.",
+        "clueId": "demo-0317-record-clue-3"
+      },
+      {
+        "id": "demo-0317-stage-3",
+        "type": "FOLDER",
+        "title": "3단계 · 처리 순서 복원",
+        "parentId": null,
+        "visible": false,
+        "text": "이 단계의 확인을 마쳤습니다. 조사 단계에서 다음 기록을 열어 주세요.",
+        "puzzleId": "demo-0317-p3-v2"
+      },
+      {
+        "id": "demo-0317-record-4",
+        "type": "TEXT",
+        "title": "전송량 대조_자료.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "네트워크 계량기 / 03:16:50 → 03:17:20\n\n외부 회선 누적량: 8192 → 8192 바이트\n내부 복제 누적량: 4096 → 6144 바이트\n\n두 계량기는 서로 다른 회선입니다. 누적량은 초기화되지 않았습니다. 해당 구간에 다른 외부 작업은 없었습니다.",
+        "clueId": "demo-0317-record-clue-4"
+      },
+      {
+        "id": "demo-0317-stage-4",
+        "type": "FOLDER",
+        "title": "4단계 · 전송량 대조",
+        "parentId": null,
+        "visible": false,
+        "text": "이 단계의 확인을 마쳤습니다. 조사 단계에서 다음 기록을 열어 주세요.",
+        "puzzleId": "demo-0317-p4-v2"
+      },
+      {
+        "id": "demo-0317-record-5",
+        "type": "TEXT",
+        "title": "최종 영수증 찾기_자료.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "보관소 영수증 색인\n\nA · TX-0917 · 외부 보관소 · 완료 1건 · 2048바이트\nB · TX-0917 · 외부 보관소 · 승인 취소 · 0바이트\nC · TX-0916 · 외부 보관소 · 승인 취소 · 0바이트\n\n선택한 색인을 원본 영수증과 대조합니다.",
+        "clueId": "demo-0317-record-clue-5"
+      },
+      {
+        "id": "demo-0317-stage-5",
+        "type": "FOLDER",
+        "title": "5단계 · 최종 영수증 찾기",
+        "parentId": null,
+        "visible": false,
+        "text": "다섯 확인을 마쳤습니다. 아래의 최종 원본 자료를 읽고 증거를 대조해 결론을 작성하세요.",
+        "puzzleId": "demo-0317-p5-v2"
+      }
+    ],
+    "clues": [
+      {
+        "id": "c-clock",
+        "title": "인수인계.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "c-photo",
+        "title": "작업실_기록.img",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "c-queue",
+        "title": "transfer_queue.log",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "c-receipt",
+        "title": "전송_처리_영수증.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "demo-0317-record-clue-2",
+        "title": "요청 연결하기_자료.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "demo-0317-record-clue-3",
+        "title": "처리 순서 복원_자료.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "demo-0317-record-clue-4",
+        "title": "전송량 대조_자료.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "demo-0317-record-clue-5",
+        "title": "최종 영수증 찾기_자료.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      }
+    ],
+    "puzzles": [
+      {
+        "id": "demo-0317-p1-v2",
+        "title": "마지막 전송 요청의 실제 시각은? 시·분 네 자리로 입력하세요.",
+        "answer": "0310",
+        "ignoreCase": true,
+        "hints": [
+          "두 시계가 같은 시각을 가리키는지 살펴보세요.",
+          "요청 기록은 PC 시각입니다. 인수인계의 오차를 적용하세요.",
+          "03:17에서 7분을 빼세요.",
+          "정답: 0310"
+        ],
+        "stageTitle": "시각 맞추기",
+        "evidenceIds": [
+          "f-handover",
+          "f-photo",
+          "f-queue",
+          "demo-0317-scene"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "demo-0317-p2-v2",
+        "title": "대기열 기록과 같은 요청을 처리한 접수표를 고르세요.",
+        "answer": "C",
+        "ignoreCase": true,
+        "hints": [
+          "요청 번호만으로 고르면 다른 작업이 섞일 수 있어요.",
+          "대기열의 목적지는 외부 보관소입니다.",
+          "TX-0917과 외부 보관소가 함께 적힌 접수표를 찾으세요.",
+          "정답: C"
+        ],
+        "stageTitle": "요청 연결하기",
+        "evidenceIds": [
+          "demo-0317-record-2",
+          "f-queue"
+        ],
+        "inputMode": "choice",
+        "choices": [
+          {
+            "value": "A",
+            "label": "접수표 A"
+          },
+          {
+            "value": "B",
+            "label": "접수표 B"
+          },
+          {
+            "value": "C",
+            "label": "접수표 C"
+          }
+        ]
+      },
+      {
+        "id": "demo-0317-p3-v2",
+        "title": "외부 요청 TX-0917의 기록을 이른 시각부터 배열하세요.",
+        "answer": "2413",
+        "ignoreCase": true,
+        "hints": [
+          "단편 번호는 순서를 뜻하지 않습니다.",
+          "같은 시계로 기록된 시각을 정렬하세요.",
+          "00초, 02초, 09초, 11초 순서입니다.",
+          "정답: 2413"
+        ],
+        "stageTitle": "처리 순서 복원",
+        "evidenceIds": [
+          "demo-0317-record-3"
+        ],
+        "inputMode": "sequence",
+        "choices": [
+          {
+            "value": "1",
+            "label": "승인 취소 접수"
+          },
+          {
+            "value": "2",
+            "label": "요청 생성"
+          },
+          {
+            "value": "3",
+            "label": "처리 내역 보관"
+          },
+          {
+            "value": "4",
+            "label": "승인 대기 등록"
+          }
+        ]
+      },
+      {
+        "id": "demo-0317-p4-v2",
+        "title": "이번 점검 구간에서 증가한 외부 전송량은 몇 바이트인가요? 숫자로 입력하세요.",
+        "answer": "0",
+        "ignoreCase": true,
+        "hints": [
+          "누적량 전체가 이번 요청의 전송량은 아닙니다.",
+          "내부 복제 회선과 외부 회선을 나누어 보세요.",
+          "외부 회선의 마지막 값에서 처음 값을 빼세요.",
+          "정답: 0"
+        ],
+        "stageTitle": "전송량 대조",
+        "evidenceIds": [
+          "demo-0317-record-4"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "demo-0317-p5-v2",
+        "title": "지금까지 확인한 요청·처리·계량기 기록에 모두 맞는 영수증을 고르세요.",
+        "answer": "B",
+        "ignoreCase": true,
+        "hints": [
+          "같은 결과라도 다른 요청의 영수증이면 근거가 될 수 없습니다.",
+          "요청 번호, 취소 처리, 외부 회선 증가량을 함께 비교하세요.",
+          "TX-0917의 취소 처리와 0바이트가 동시에 맞아야 합니다.",
+          "정답: B"
+        ],
+        "stageTitle": "최종 영수증 찾기",
+        "evidenceIds": [
+          "demo-0317-record-5",
+          "f-queue"
+        ],
+        "inputMode": "choice",
+        "choices": [
+          {
+            "value": "A",
+            "label": "색인 A"
+          },
+          {
+            "value": "B",
+            "label": "색인 B"
+          },
+          {
+            "value": "C",
+            "label": "색인 C"
+          }
+        ]
+      }
+    ],
+    "messages": [
+      {
+        "id": "m-1",
+        "author": "민재",
+        "time": "03:24",
+        "text": "아직 연구실이야? 기록 담당자에게 연락이 안 돼.",
+        "initial": true
+      },
+      {
+        "id": "m-2",
+        "author": "민재",
+        "time": "03:25",
+        "text": "난 03:10에는 이미 밖에 있었어. 근데 컴퓨터에 전송 기록이 남아 있다며?",
+        "initial": true
+      },
+      {
+        "id": "m-3",
+        "author": "민재",
+        "time": "03:27",
+        "text": "혹시 그거 실제로 전송된 게 맞아? 대기열에 들어간 것과 완료된 건 다를 수 있어.",
+        "initial": false
+      },
+      {
+        "id": "m-4",
+        "author": "민재",
+        "time": "03:28",
+        "text": "보관함이 열렸구나. 영수증의 요청 번호도 꼭 확인해 줘.",
+        "initial": false
+      }
+    ],
+    "rules": [
+      {
+        "id": "demo-0317-advance-1",
+        "priority": 1,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "demo-0317-p1-v2"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "demo-0317-stage-2"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "demo-0317-record-2"
+          },
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "m-3"
+          }
+        ]
+      },
+      {
+        "id": "demo-0317-advance-2",
+        "priority": 2,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "demo-0317-p2-v2"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "demo-0317-stage-3"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "demo-0317-record-3"
+          }
+        ]
+      },
+      {
+        "id": "demo-0317-advance-3",
+        "priority": 3,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "demo-0317-p3-v2"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "demo-0317-stage-4"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "demo-0317-record-4"
+          }
+        ]
+      },
+      {
+        "id": "demo-0317-advance-4",
+        "priority": 4,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "demo-0317-p4-v2"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "demo-0317-stage-5"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "demo-0317-record-5"
+          }
+        ]
+      },
+      {
+        "id": "demo-0317-advance-5",
+        "priority": 5,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "demo-0317-p5-v2"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "f-receipt"
+          },
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "m-4"
+          }
+        ]
+      }
+    ],
+    "endings": [
+      {
+        "id": "ending-a",
+        "title": "전송은 완료되지 않았다",
+        "text": "03:17은 7분 빠른 PC에 남은 요청 시각이었다. 실제 시각은 03:10.\n\n같은 요청 번호의 영수증은 승인이 취소되었고 외부 전송이 0건이었다는 사실을 보여준다. 전송을 요청한 흔적은 있었지만, 자료는 밖으로 나가지 않았다.\n\n민재의 발언만으로 누군가를 범인이라 단정할 수는 없다. 당신은 추측 대신 기록으로 결론을 완성했다.",
+        "revisitable": false
+      },
+      {
+        "id": "ending-b",
+        "title": "기록보다 앞선 의심",
+        "text": "민재가 자리를 떠났다는 말과 PC의 시각만으로 자료 유출을 단정했습니다. 하지만 시계의 오차와 실제 전송 결과가 확인되지 않았습니다.\n\n이 결론에는 근거가 부족합니다. 조사로 돌아가 요청 로그와 처리 영수증을 대조하세요.",
+        "revisitable": true
+      }
+    ],
+    "hypotheses": [
+      {
+        "id": "h-no-transfer",
+        "label": "전송은 요청됐지만 완료되지 않았다.",
+        "endingId": "ending-a",
+        "requiredClues": [
+          "c-queue",
+          "c-receipt"
+        ]
+      },
+      {
+        "id": "h-accuse",
+        "label": "민재가 자료를 외부로 전송했다.",
+        "endingId": "ending-b",
+        "requiredClues": []
+      }
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "engineVersion": "ghostdesk-core-1",
+    "caseId": "hotel-404",
+    "versionId": "hotel-404-v2",
+    "title": "자정의 404호",
+    "description": "폐쇄된 호텔 4층에서 문이 열렸다. 프런트 화면에는 체크아웃한 손님이 다시 나타나는데…",
+    "estimatedMinutes": 25,
+    "contentWarning": "허구의 사건입니다. 긴장감 있는 상황·실종 암시가 있지만 잔혹한 묘사나 점프 스케어는 없습니다.",
+    "files": [
+      {
+        "id": "hotel-404-f0",
+        "type": "TEXT",
+        "title": "야간_인계.txt",
+        "parentId": null,
+        "visible": true,
+        "text": "야간 인계 / 프런트 담당 서린\n\n00:04, 폐쇄된 4층의 404호 앞에 흰 형체가 지나갔습니다. 화면에는 LIVE 표시가 켜져 있었어요. 객실 키는 모두 프런트에 있습니다.\n\n먼저 실제로 열린 문부터 찾고, 녹화 장면과 오늘의 위치·재고 기록을 각각 대조해 주세요. 다섯 확인이 끝나면 재생 진단서와 배송 완료증을 함께 검토할 수 있습니다.",
+        "clueId": "hotel-404-c0"
+      },
+      {
+        "id": "hotel-404-f1",
+        "type": "TEXT",
+        "title": "출입_이벤트.log",
+        "parentId": null,
+        "visible": true,
+        "text": "호텔 출입 제어기 / 오늘의 원본 이벤트\n\n00:03:58  장치 D-07  원격 개방 요청\n00:04:00  장치 D-07  개방 성공\n00:04:12  장치 D-07  자동 잠금\n\n오늘 4층 객실 장치 D-41~D-48의 개방 이벤트는 0건입니다.\n\n주의: 프런트에 보이는 카메라 이름은 출입 장치의 위치를 뜻하지 않습니다.",
+        "clueId": "hotel-404-c1"
+      },
+      {
+        "id": "hotel-404-f2",
+        "type": "TEXT",
+        "title": "시설_장치대장.txt",
+        "parentId": null,
+        "visible": true,
+        "text": "시설팀 장치 대장 / 개보수 반영본\n\nD-03 → 0103 / 1층 창고\nD-07 → B204 / 지하 2층 세탁물 통로\nD-41 → 0401 / 4층 401호\nD-44 → 0404 / 4층 404호\n\n지하 통로는 배송 로봇 R17도 이용합니다. 층수 표시의 B는 지하층을 뜻하며 암호에 포함합니다.",
+        "clueId": "hotel-404-c2"
+      },
+      {
+        "id": "hotel-404-f3",
+        "type": "IMAGE",
+        "title": "CAM-404_녹화장면",
+        "parentId": null,
+        "visible": true,
+        "text": "프런트 화면에서 보관한 한 장면. 표시와 원본 기록을 살펴보세요.",
+        "clueId": "hotel-404-c3",
+        "assetId": "hotel",
+        "alt": "호텔 복도의 카트 위에 흰 시트가 접혀 있고 오른쪽에 노란 공사 덮개가 있는 녹화 장면.",
+        "observations": [
+          {
+            "label": "원본 기록",
+            "text": "06-12 14:32 / F-8821"
+          },
+          {
+            "label": "복도 우측",
+            "text": "복도 오른쪽에 노란 공사용 덮개가 있습니다."
+          },
+          {
+            "label": "중앙 카트",
+            "text": "접힌 흰 시트가 금속 카트에 여러 겹 놓여 있습니다."
+          }
+        ]
+      },
+      {
+        "id": "hotel-404-f4",
+        "type": "TEXT",
+        "title": "재생_진단서.txt",
+        "parentId": "hotel-404-stage-5",
+        "visible": false,
+        "text": "CAM-404 재생 진단\n\n실시간 입력: 연결 끊김\n대체 소스: 06-12 보수공사 녹화\n재생 방식: 마지막 정상 영상 반복\n화면 위 LIVE 표지: 연결 상태와 무관하게 고정 표시\n\n오늘 00:04에도 F-8821 프레임이 재생됐습니다. 고정 표지 때문에 프런트 직원이 현재 영상으로 오인했습니다.",
+        "clueId": "hotel-404-c4"
+      },
+      {
+        "id": "hotel-404-f5",
+        "type": "TEXT",
+        "title": "배송_완료증.txt",
+        "parentId": "hotel-404-stage-5",
+        "visible": false,
+        "text": "세탁 배송 로봇 R17\n\n작업 번호: LINEN-0928\n00:04:00 B204 개방 신호 확인\n00:04:08 지하 세탁물 통로 통과\n00:06:21 세탁실 도착 / 시트 12묶음 인계\n\n오늘 4층 운행 명령 없음. 객실 손님 인식 기록 없음.\n\n프런트의 오래된 영상과 오늘의 문 개방은 별개의 사건이었습니다.",
+        "clueId": "hotel-404-c5"
+      },
+      {
+        "id": "hotel-404-chat",
+        "type": "CHAT_LINK",
+        "title": "메신저",
+        "parentId": null,
+        "visible": true,
+        "text": ""
+      },
+      {
+        "id": "hotel-404-stage-1",
+        "type": "FOLDER",
+        "title": "1단계 · 열린 문 추적",
+        "parentId": null,
+        "visible": true,
+        "text": "이 단계의 확인을 마쳤습니다. 조사 단계에서 다음 기록을 열어 주세요.",
+        "puzzleId": "hotel-404-p1-v2"
+      },
+      {
+        "id": "hotel-404-record-2",
+        "type": "TEXT",
+        "title": "화면 속 날짜_자료.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "시설 점검 메모\n\n오늘: 09-28\n6월 보수공사: 06-10 시작 / 06-15 종료\n복도 우측 노란 덮개: 보수공사 종료일 철거\n\n캡처에서 원본 기록과 프런트 화면 표지를 각각 확인하세요.",
+        "clueId": "hotel-404-record-clue-2"
+      },
+      {
+        "id": "hotel-404-stage-2",
+        "type": "FOLDER",
+        "title": "2단계 · 화면 속 날짜",
+        "parentId": null,
+        "visible": false,
+        "text": "이 단계의 확인을 마쳤습니다. 조사 단계에서 다음 기록을 열어 주세요.",
+        "puzzleId": "hotel-404-p2-v2"
+      },
+      {
+        "id": "hotel-404-record-3",
+        "type": "TEXT",
+        "title": "반복 구간 찾기_자료.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "프런트 모니터 점검 / 관찰 시각은 오늘의 프런트 시계\n\n00:04:00 · 원본 F-8821 · 카트 앞바퀴가 문턱에 닿음\n00:04:04 · 원본 F-8822 · 카트가 복도 가운데에 있음\n00:04:08 · 원본 F-8823 · 카트가 우측으로 빠져나감\n00:04:12 · 원본 F-8821 · 카트 앞바퀴가 문턱에 닿음\n\n원본 장면 번호는 촬영 때 붙은 번호입니다.",
+        "clueId": "hotel-404-record-clue-3"
+      },
+      {
+        "id": "hotel-404-stage-3",
+        "type": "FOLDER",
+        "title": "3단계 · 반복 구간 찾기",
+        "parentId": null,
+        "visible": false,
+        "text": "이 단계의 확인을 마쳤습니다. 조사 단계에서 다음 기록을 열어 주세요.",
+        "puzzleId": "hotel-404-p3-v2"
+      },
+      {
+        "id": "hotel-404-record-4",
+        "type": "TEXT",
+        "title": "오늘의 이동 경로_자료.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "배송 장치 R17 / 09-28 위치 기록\n\n지점 1 · B204 문 · 00:04:08\n지점 2 · 세탁실 · 00:06:21\n지점 3 · 지하 적재대 · 00:03:42\n지점 4 · 지하 연결 통로 · 00:05:10\n\n모두 오늘의 장치 시계로 기록했습니다. 지점 번호는 지도에 붙인 번호이며 이동 순서가 아닙니다.",
+        "clueId": "hotel-404-record-clue-4"
+      },
+      {
+        "id": "hotel-404-stage-4",
+        "type": "FOLDER",
+        "title": "4단계 · 오늘의 이동 경로",
+        "parentId": null,
+        "visible": false,
+        "text": "이 단계의 확인을 마쳤습니다. 조사 단계에서 다음 기록을 열어 주세요.",
+        "puzzleId": "hotel-404-p4-v2"
+      },
+      {
+        "id": "hotel-404-record-5",
+        "type": "TEXT",
+        "title": "배송 수량 검산_자료.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "야간 세탁물 재고표 / 09-28\n\n적재 전 지하 창고: 20묶음\nR17 출발 후 창고: 8묶음\n세탁실 인수 전: 3묶음\n세탁실 인수 후: 15묶음\n\n점검 구간에 다른 반출입은 없었습니다. 창고 감소량과 세탁실 증가량이 일치하는지 확인한 뒤 완료증을 열어 주세요.",
+        "clueId": "hotel-404-record-clue-5"
+      },
+      {
+        "id": "hotel-404-stage-5",
+        "type": "FOLDER",
+        "title": "5단계 · 배송 수량 검산",
+        "parentId": null,
+        "visible": false,
+        "text": "다섯 확인을 마쳤습니다. 아래의 최종 원본 자료를 읽고 증거를 대조해 결론을 작성하세요.",
+        "puzzleId": "hotel-404-p5-v2"
+      }
+    ],
+    "clues": [
+      {
+        "id": "hotel-404-c0",
+        "title": "야간_인계.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "hotel-404-c1",
+        "title": "출입_이벤트.log",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "hotel-404-c2",
+        "title": "시설_장치대장.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "hotel-404-c3",
+        "title": "CAM-404_녹화장면",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "hotel-404-c4",
+        "title": "재생_진단서.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "hotel-404-c5",
+        "title": "배송_완료증.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "hotel-404-record-clue-2",
+        "title": "화면 속 날짜_자료.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "hotel-404-record-clue-3",
+        "title": "반복 구간 찾기_자료.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "hotel-404-record-clue-4",
+        "title": "오늘의 이동 경로_자료.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "hotel-404-record-clue-5",
+        "title": "배송 수량 검산_자료.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      }
+    ],
+    "puzzles": [
+      {
+        "id": "hotel-404-p1-v2",
+        "title": "마지막으로 열린 장치의 실제 문 번호는? 영문과 숫자 네 글자로 입력하세요.",
+        "answer": "B204",
+        "ignoreCase": true,
+        "hints": [
+          "카메라 이름과 출입 장치 이름을 구분하세요.",
+          "출입 이벤트의 장치 번호를 대장에서 찾으세요.",
+          "D-07의 연결 위치를 영문까지 입력하세요.",
+          "정답: B204"
+        ],
+        "stageTitle": "열린 문 추적",
+        "evidenceIds": [
+          "hotel-404-f1",
+          "hotel-404-f2",
+          "hotel-404-f3"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "hotel-404-p2-v2",
+        "title": "모니터 안쪽 원본 기록의 촬영일은? 월·일 네 자리로 입력하세요.",
+        "answer": "0612",
+        "ignoreCase": true,
+        "hints": [
+          "화면의 큰 표지 외에 원본 기록을 살펴보세요.",
+          "장면 아래쪽에 촬영 날짜가 남아 있습니다.",
+          "06-12를 월·일 네 자리로 쓰세요.",
+          "정답: 0612"
+        ],
+        "stageTitle": "화면 속 날짜",
+        "evidenceIds": [
+          "hotel-404-record-2",
+          "hotel-404-f3"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "hotel-404-p3-v2",
+        "title": "F-8821 장면이 다시 나타나기까지 몇 초가 지났나요?",
+        "answer": "12",
+        "ignoreCase": true,
+        "hints": [
+          "관찰 시각과 원본 장면 번호를 따로 읽으세요.",
+          "같은 장면 번호가 나오는 두 줄을 찾으세요.",
+          "00:04:00과 00:04:12의 차이를 계산하세요.",
+          "정답: 12"
+        ],
+        "stageTitle": "반복 구간 찾기",
+        "evidenceIds": [
+          "hotel-404-record-3",
+          "hotel-404-f3"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "hotel-404-p4-v2",
+        "title": "오늘 남은 R17의 위치 기록을 시간순으로 배열하세요.",
+        "answer": "3142",
+        "ignoreCase": true,
+        "hints": [
+          "오늘의 위치 기록만으로 경로를 만들어 보세요.",
+          "지점 번호보다 시각을 먼저 비교하세요.",
+          "적재대에서 시작해 세탁실에서 끝납니다.",
+          "정답: 3142"
+        ],
+        "stageTitle": "오늘의 이동 경로",
+        "evidenceIds": [
+          "hotel-404-record-4"
+        ],
+        "inputMode": "sequence",
+        "choices": [
+          {
+            "value": "1",
+            "label": "B204 문"
+          },
+          {
+            "value": "2",
+            "label": "세탁실"
+          },
+          {
+            "value": "3",
+            "label": "지하 적재대"
+          },
+          {
+            "value": "4",
+            "label": "지하 연결 통로"
+          }
+        ]
+      },
+      {
+        "id": "hotel-404-p5-v2",
+        "title": "오늘 R17이 인계한 시트는 몇 묶음인가요?",
+        "answer": "12",
+        "ignoreCase": true,
+        "hints": [
+          "출발지와 도착지의 재고 변화를 각각 구하세요.",
+          "창고의 20과 8, 세탁실의 3과 15를 대조하세요.",
+          "20−8과 15−3이 같은지 확인하세요.",
+          "정답: 12"
+        ],
+        "stageTitle": "배송 수량 검산",
+        "evidenceIds": [
+          "hotel-404-record-5"
+        ],
+        "inputMode": "text"
+      }
+    ],
+    "messages": [
+      {
+        "id": "hotel-404-m0",
+        "author": "서린",
+        "time": "00:07",
+        "text": "키는 전부 여기 있어. 그럼 저 복도에 있는 건 누구지?",
+        "initial": true
+      },
+      {
+        "id": "hotel-404-m1",
+        "author": "서린",
+        "time": "00:08",
+        "text": "LIVE라는 글자를 믿어도 되는 걸까?",
+        "initial": true
+      },
+      {
+        "id": "hotel-404-m2",
+        "author": "시설팀",
+        "time": "00:09",
+        "text": "카메라 이름과 출입 제어기 번호를 혼동하지 마세요. 대장을 다시 보냈습니다.",
+        "initial": false
+      },
+      {
+        "id": "hotel-404-m3",
+        "author": "서린",
+        "time": "00:11",
+        "text": "진단서가 열렸네. 흰 형체보다 화면 구석의 날짜가 더 중요했구나.",
+        "initial": false
+      }
+    ],
+    "rules": [
+      {
+        "id": "hotel-404-advance-1",
+        "priority": 1,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "hotel-404-p1-v2"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-stage-2"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-record-2"
+          },
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "hotel-404-m2"
+          }
+        ]
+      },
+      {
+        "id": "hotel-404-advance-2",
+        "priority": 2,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "hotel-404-p2-v2"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-stage-3"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-record-3"
+          }
+        ]
+      },
+      {
+        "id": "hotel-404-advance-3",
+        "priority": 3,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "hotel-404-p3-v2"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-stage-4"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-record-4"
+          }
+        ]
+      },
+      {
+        "id": "hotel-404-advance-4",
+        "priority": 4,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "hotel-404-p4-v2"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-stage-5"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-record-5"
+          }
+        ]
+      },
+      {
+        "id": "hotel-404-advance-5",
+        "priority": 5,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "hotel-404-p5-v2"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-f4"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-f5"
+          },
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "hotel-404-m3"
+          }
+        ]
+      }
+    ],
+    "endings": [
+      {
+        "id": "hotel-404-good",
+        "title": "유령은 화면 밖에 없었다",
+        "text": "404호에서 돌아온 손님은 없었습니다. 실시간 연결이 끊긴 카메라가 6월의 세탁물 영상을 반복했고 LIVE 표지가 그 위에 남아 있었습니다.\n\n같은 시각 실제로 열린 D-07은 지하 B204였습니다. 배송 완료증은 세탁 로봇 R17이 그 문을 통과했음을 확인합니다.\n\n서린은 모니터의 LIVE 스티커를 떼고 쪽지를 붙였습니다. “연결 확인 후 판단할 것.” 복도는 다시 조용해졌습니다.",
+        "revisitable": false
+      },
+      {
+        "id": "hotel-404-retry",
+        "title": "객실 번호가 만든 유령",
+        "text": "CAM-404라는 이름과 LIVE 표시만으로 손님이 돌아왔다고 판단했습니다. 하지만 화면의 원본 날짜와 출입 장치 번호가 맞지 않습니다.\n\n재생 진단서와 배송 완료증을 함께 확인하고 다시 결론을 내려 주세요.",
+        "revisitable": true
+      }
+    ],
+    "hypotheses": [
+      {
+        "id": "hotel-404-truth",
+        "label": "옛 영상이 반복됐고, 실제로 열린 문은 지하 배송 통로였다.",
+        "endingId": "hotel-404-good",
+        "requiredClues": [
+          "hotel-404-c1",
+          "hotel-404-c4",
+          "hotel-404-c5"
+        ]
+      },
+      {
+        "id": "hotel-404-guess",
+        "label": "체크아웃한 손님이 404호로 몰래 돌아왔다.",
+        "endingId": "hotel-404-retry",
+        "requiredClues": []
+      }
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "engineVersion": "ghostdesk-core-1",
+    "caseId": "auction-seven",
+    "versionId": "auction-seven-v2",
+    "title": "낙찰 7초 전",
+    "description": "최고가를 부른 MOTH가 낙찰 직전 사라졌다. 화면에 남은 승자와 봉인된 입찰 원장이 서로 다르다.",
+    "estimatedMinutes": 30,
+    "contentWarning": "허구의 사건입니다. 긴장감 있는 상황·실종 암시가 있지만 잔혹한 묘사나 점프 스케어는 없습니다.",
+    "files": [
+      {
+        "id": "auction-seven-f0",
+        "type": "TEXT",
+        "title": "운영자_요청.txt",
+        "parentId": null,
+        "visible": true,
+        "text": "밤의 경매 / LOT-27 “푸른 궤도”\n\n마감 7초 전 MOTH가 접속을 끊었습니다. 전광판에는 MOTH가 남아 있는데 ORBIT는 자신이 낙찰자라고 주장합니다.\n\n마감 이후 입찰은 무효입니다. 가격이 같으면 접수 순번이 빠른 사람이 우선이며 취소는 개별 입찰 번호에 적용합니다.\n\n유효 입찰자를 찾은 뒤 봉투·정산·화면 갱신·접수 순서를 대조하고 봉인 원장을 확인해 주세요.",
+        "clueId": "auction-seven-c0"
+      },
+      {
+        "id": "auction-seven-f1",
+        "type": "TEXT",
+        "title": "입찰_접수표.csv",
+        "parentId": null,
+        "visible": true,
+        "text": "LOT-27 / 마감 접수 순번 120까지 유효\n단위: 만 원 / 시간 표시는 참고용\n\n순번 115 / B-71 / ORBIT / 240\n순번 116 / B-72 / MOTH  / 310\n순번 118 / B-73 / LARK  / 240\n순번 120 / B-74 / PEARL / 235\n순번 121 / B-75 / MOTH  / 400\n\n화면 가격은 마지막 수신 값이며 최종 낙찰 처리가 아닙니다.",
+        "clueId": "auction-seven-c1"
+      },
+      {
+        "id": "auction-seven-f2",
+        "type": "TEXT",
+        "title": "취소_요청함.txt",
+        "parentId": null,
+        "visible": true,
+        "text": "유효 취소 접수 / 마감 전 처리 완료\n\nC-19 → 입찰 B-72 전액 취소 / 본인 확인 완료\nC-20 → 다른 물품 LOT-11의 입찰 X-04 취소\n\n취소 대상은 닉네임 전체가 아니라 개별 입찰 번호입니다.\nMOTH의 접속 종료 자체는 입찰 취소 근거가 아닙니다.",
+        "clueId": "auction-seven-c2"
+      },
+      {
+        "id": "auction-seven-f3",
+        "type": "TEXT",
+        "title": "경매_규칙.txt",
+        "parentId": null,
+        "visible": true,
+        "text": "낙찰 판정 순서\n\n1. 현재 물품 LOT-27만 본다.\n2. 접수 순번 120 뒤에 들어온 입찰을 제외한다.\n3. 유효 취소 접수에 적힌 입찰 번호를 제외한다.\n4. 남은 입찰 중 가격이 가장 높은 것을 고른다.\n5. 같은 가격이면 접수 순번이 빠른 입찰을 고른다.\n\n전광판의 순위는 지연될 수 있습니다. 낙찰 확정서의 입찰 번호가 최종 근거입니다.",
+        "clueId": "auction-seven-c3"
+      },
+      {
+        "id": "auction-seven-f4",
+        "type": "TEXT",
+        "title": "낙찰_확정서.txt",
+        "parentId": "auction-seven-stage-5",
+        "visible": false,
+        "text": "LOT-27 봉인 원장 / 검증 완료\n\n유효 최고가: 240만 원\n선정 입찰: B-71\n낙찰자: ORBIT\n동률 제외: B-73 / 더 늦은 접수\n취소 제외: B-72\n마감 뒤 제외: B-75\n\n확정서는 경매 종료 뒤 생성됐습니다. 접수표·취소 접수·경매 규칙을 모두 반영한 결과입니다.",
+        "clueId": "auction-seven-c4"
+      },
+      {
+        "id": "auction-seven-f5",
+        "type": "TEXT",
+        "title": "전광판_갱신기록.log",
+        "parentId": "auction-seven-stage-5",
+        "visible": false,
+        "text": "전광판 표시 기록\n\n마지막 반영: B-72 / MOTH / 310\n취소 알림 C-19: 전광판 대기열에 남음\n종료 뒤 화면 잠금: 이전 최고가 유지\n\n결제 요청 생성: B-71 / ORBIT\nMOTH에게 생성된 결제 요청: 없음\n\n빈 자리는 음모가 아니라 표시 지연을 남겼습니다.",
+        "clueId": "auction-seven-c5"
+      },
+      {
+        "id": "auction-seven-chat",
+        "type": "CHAT_LINK",
+        "title": "메신저",
+        "parentId": null,
+        "visible": true,
+        "text": ""
+      },
+      {
+        "id": "auction-seven-scene",
+        "type": "IMAGE",
+        "title": "경매_검수대_사진",
+        "parentId": null,
+        "visible": true,
+        "text": "사건 자료에 첨부된 현장 사진.",
+        "assetId": "auction",
+        "alt": "경매 검수대 위 봉투 세 개와 포장된 그림.",
+        "observations": [
+          {
+            "label": "검수대",
+            "text": "봉투 세 개와 포장된 작품, 입찰 접수표가 놓여 있습니다. 봉인표는 다음 조사 단계의 검수 기록에서 확대해 확인합니다."
+          }
+        ]
+      },
+      {
+        "id": "auction-seven-stage-1",
+        "type": "FOLDER",
+        "title": "1단계 · 유효 입찰 선별",
+        "parentId": null,
+        "visible": true,
+        "text": "이 단계의 확인을 마쳤습니다. 조사 단계에서 다음 기록을 열어 주세요.",
+        "puzzleId": "auction-seven-p1-v2"
+      },
+      {
+        "id": "auction-seven-record-2",
+        "type": "TEXT",
+        "title": "봉인표 대조_자료.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "봉투 검수대 / 촬영 사진의 봉인표 확대 기록\n\n봉투 A · 물품 LOT-11 · 입찰 B-71 · 봉인 손상 없음\n봉투 B · 물품 LOT-27 · 입찰 B-71 · 봉인 손상 없음\n봉투 C · 물품 LOT-27 · 입찰 B-73 · 봉인 손상 없음\n\n입찰 번호는 경매 회차마다 다시 사용됩니다. 물품 번호와 입찰 번호를 함께 확인합니다.",
+        "clueId": "auction-seven-record-clue-2"
+      },
+      {
+        "id": "auction-seven-stage-2",
+        "type": "FOLDER",
+        "title": "2단계 · 봉인표 대조",
+        "parentId": null,
+        "visible": false,
+        "text": "이 단계의 확인을 마쳤습니다. 조사 단계에서 다음 기록을 열어 주세요.",
+        "puzzleId": "auction-seven-p2-v2"
+      },
+      {
+        "id": "auction-seven-record-3",
+        "type": "TEXT",
+        "title": "정산 금액 확인_자료.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "LOT-27 정산 규정\n\n유효 낙찰가: 입찰 접수표 참조\n구매 수수료: 낙찰가의 5%\n이미 낸 보증금: 30만 원\n추가 납부액 = 낙찰가 + 수수료 − 보증금\n\n추가 세금과 배송비는 없습니다. 모두 만 원 단위입니다.",
+        "clueId": "auction-seven-record-clue-3"
+      },
+      {
+        "id": "auction-seven-stage-3",
+        "type": "FOLDER",
+        "title": "3단계 · 정산 금액 확인",
+        "parentId": null,
+        "visible": false,
+        "text": "이 단계의 확인을 마쳤습니다. 조사 단계에서 다음 기록을 열어 주세요.",
+        "puzzleId": "auction-seven-p3-v2"
+      },
+      {
+        "id": "auction-seven-record-4",
+        "type": "TEXT",
+        "title": "화면 갱신 추적_자료.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "전광판 갱신 점검 / 서버 시각\n\n21:59:53 · MOTH 접속 종료\n21:59:53 · 전광판 마지막 수신값 유지\n22:00:00 · 마감 처리 후 전광판 갱신\n\n접속 상태 기록은 입찰 원장과 별도로 남습니다. 두 시각 사이에 전광판 갱신은 없었습니다.",
+        "clueId": "auction-seven-record-clue-4"
+      },
+      {
+        "id": "auction-seven-stage-4",
+        "type": "FOLDER",
+        "title": "4단계 · 화면 갱신 추적",
+        "parentId": null,
+        "visible": false,
+        "text": "이 단계의 확인을 마쳤습니다. 조사 단계에서 다음 기록을 열어 주세요.",
+        "puzzleId": "auction-seven-p4-v2"
+      },
+      {
+        "id": "auction-seven-record-5",
+        "type": "TEXT",
+        "title": "접수 순서 재구성_자료.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "LOT-27 접수 조각\n\n조각 1 · 순번 120 · PEARL 입찰\n조각 2 · 순번 115 · ORBIT 입찰\n조각 3 · 순번 121 · MOTH 재입찰\n조각 4 · 순번 117 · B-72 취소 처리\n\n취소 처리도 접수 순번을 사용합니다. 마감 이후 기록까지 포함해 원장의 순서를 복원하세요.",
+        "clueId": "auction-seven-record-clue-5"
+      },
+      {
+        "id": "auction-seven-stage-5",
+        "type": "FOLDER",
+        "title": "5단계 · 접수 순서 재구성",
+        "parentId": null,
+        "visible": false,
+        "text": "다섯 확인을 마쳤습니다. 아래의 최종 원본 자료를 읽고 증거를 대조해 결론을 작성하세요.",
+        "puzzleId": "auction-seven-p5-v2"
+      }
+    ],
+    "clues": [
+      {
+        "id": "auction-seven-c0",
+        "title": "운영자_요청.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "auction-seven-c1",
+        "title": "입찰_접수표.csv",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "auction-seven-c2",
+        "title": "취소_요청함.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "auction-seven-c3",
+        "title": "경매_규칙.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "auction-seven-c4",
+        "title": "낙찰_확정서.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "auction-seven-c5",
+        "title": "전광판_갱신기록.log",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "auction-seven-record-clue-2",
+        "title": "봉인표 대조_자료.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "auction-seven-record-clue-3",
+        "title": "정산 금액 확인_자료.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "auction-seven-record-clue-4",
+        "title": "화면 갱신 추적_자료.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "auction-seven-record-clue-5",
+        "title": "접수 순서 재구성_자료.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      }
+    ],
+    "puzzles": [
+      {
+        "id": "auction-seven-p1-v2",
+        "title": "마감과 취소를 반영한 최종 유효 최고 입찰자의 닉네임은?",
+        "answer": "ORBIT",
+        "ignoreCase": true,
+        "hints": [
+          "최고 금액부터 바로 고르지 말고 무효 입찰을 제외하세요.",
+          "B-72는 취소됐고, 마감은 접수 순번 120입니다.",
+          "남은 최고 금액이 같으면 먼저 접수된 입찰을 고르세요.",
+          "정답: ORBIT"
+        ],
+        "stageTitle": "유효 입찰 선별",
+        "evidenceIds": [
+          "auction-seven-f0",
+          "auction-seven-f1",
+          "auction-seven-f2",
+          "auction-seven-f3",
+          "auction-seven-scene"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "auction-seven-p2-v2",
+        "title": "유효 최고 입찰 B-71의 원본 봉투를 고르세요.",
+        "answer": "B",
+        "ignoreCase": true,
+        "hints": [
+          "봉투의 물품 번호도 확인해야 합니다.",
+          "이번 사건은 LOT-27 경매입니다.",
+          "LOT-27과 B-71이 함께 적힌 봉투를 찾으세요.",
+          "정답: B"
+        ],
+        "stageTitle": "봉인표 대조",
+        "evidenceIds": [
+          "auction-seven-record-2",
+          "auction-seven-scene"
+        ],
+        "inputMode": "choice",
+        "choices": [
+          {
+            "value": "A",
+            "label": "봉투 A"
+          },
+          {
+            "value": "B",
+            "label": "봉투 B"
+          },
+          {
+            "value": "C",
+            "label": "봉투 C"
+          }
+        ]
+      },
+      {
+        "id": "auction-seven-p3-v2",
+        "title": "낙찰자가 추가로 낼 금액은 몇 만 원인가요?",
+        "answer": "222",
+        "ignoreCase": true,
+        "hints": [
+          "유효 낙찰가에 수수료를 더한 뒤 보증금을 빼세요.",
+          "240만 원의 5%를 먼저 계산하세요.",
+          "240 + 12 − 30을 계산하세요.",
+          "정답: 222"
+        ],
+        "stageTitle": "정산 금액 확인",
+        "evidenceIds": [
+          "auction-seven-record-3",
+          "auction-seven-f1"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "auction-seven-p4-v2",
+        "title": "MOTH의 접속 종료 뒤 화면 값이 바뀌기까지 걸린 시간은 몇 초인가요?",
+        "answer": "7",
+        "ignoreCase": true,
+        "hints": [
+          "59분에서 다음 분으로 넘어가는 구간입니다.",
+          "21:59:53부터 22:00:00까지 세어 보세요.",
+          "60초에서 53초를 빼세요.",
+          "정답: 7"
+        ],
+        "stageTitle": "화면 갱신 추적",
+        "evidenceIds": [
+          "auction-seven-record-4"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "auction-seven-p5-v2",
+        "title": "같은 물품의 접수 조각을 순번이 빠른 순서대로 배열하세요.",
+        "answer": "2413",
+        "ignoreCase": true,
+        "hints": [
+          "조각 번호가 아니라 접수 순번으로 정렬하세요.",
+          "115, 117, 120, 121 순서입니다.",
+          "ORBIT의 입찰 다음에 취소 처리가 옵니다.",
+          "정답: 2413"
+        ],
+        "stageTitle": "접수 순서 재구성",
+        "evidenceIds": [
+          "auction-seven-record-5"
+        ],
+        "inputMode": "sequence",
+        "choices": [
+          {
+            "value": "1",
+            "label": "PEARL 입찰"
+          },
+          {
+            "value": "2",
+            "label": "ORBIT 입찰"
+          },
+          {
+            "value": "3",
+            "label": "MOTH 재입찰"
+          },
+          {
+            "value": "4",
+            "label": "B-72 취소 처리"
+          }
+        ]
+      }
+    ],
+    "messages": [
+      {
+        "id": "auction-seven-m0",
+        "author": "경매 운영자",
+        "time": "22:00",
+        "text": "전광판은 MOTH인데 ORBIT에게 결제 요청이 갔어요. 누구에게 작품을 줘야 하죠?",
+        "initial": true
+      },
+      {
+        "id": "auction-seven-m1",
+        "author": "ORBIT",
+        "time": "22:01",
+        "text": "전 마지막에 더 높은 가격을 쓴 적 없어요. 처음 접수한 입찰 그대로예요.",
+        "initial": true
+      },
+      {
+        "id": "auction-seven-m2",
+        "author": "경매 운영자",
+        "time": "22:02",
+        "text": "취소는 닉네임이 아니라 입찰 번호에 붙습니다. 다른 물품 기록도 섞여 있으니 조심해요.",
+        "initial": false
+      },
+      {
+        "id": "auction-seven-m3",
+        "author": "ORBIT",
+        "time": "22:03",
+        "text": "봉인 원장까지 확인됐나요? 이제 다른 참가자들에게 설명할 수 있겠네요.",
+        "initial": false
+      }
+    ],
+    "rules": [
+      {
+        "id": "auction-seven-advance-1",
+        "priority": 1,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "auction-seven-p1-v2"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-stage-2"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-record-2"
+          },
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "auction-seven-m2"
+          }
+        ]
+      },
+      {
+        "id": "auction-seven-advance-2",
+        "priority": 2,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "auction-seven-p2-v2"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-stage-3"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-record-3"
+          }
+        ]
+      },
+      {
+        "id": "auction-seven-advance-3",
+        "priority": 3,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "auction-seven-p3-v2"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-stage-4"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-record-4"
+          }
+        ]
+      },
+      {
+        "id": "auction-seven-advance-4",
+        "priority": 4,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "auction-seven-p4-v2"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-stage-5"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-record-5"
+          }
+        ]
+      },
+      {
+        "id": "auction-seven-advance-5",
+        "priority": 5,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "auction-seven-p5-v2"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-f4"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-f5"
+          },
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "auction-seven-m3"
+          }
+        ]
+      }
+    ],
+    "endings": [
+      {
+        "id": "auction-seven-good",
+        "title": "숫자보다 먼저 도착한 이름",
+        "text": "MOTH의 310만 원 입찰은 취소됐고, 400만 원 입찰은 마감 뒤였습니다. 남은 최고가는 ORBIT와 LARK의 240만 원. 먼저 접수된 B-71의 ORBIT가 낙찰자입니다.\n\n전광판은 취소 알림을 처리하지 못해 오래된 순위를 보여줬습니다. ORBIT의 결제 요청과 봉인 확정서가 일치합니다.\n\nORBIT가 메시지를 남겼습니다. “가격 말고 순서를 봐줘서 고마워요.”",
+        "revisitable": false
+      },
+      {
+        "id": "auction-seven-retry",
+        "title": "가장 큰 숫자의 함정",
+        "text": "전광판의 310이나 뒤늦은 400을 그대로 믿었습니다. 높은 가격이라도 취소됐거나 마감 뒤라면 낙찰 대상이 아닙니다.\n\n접수 순번과 취소 입찰 번호를 대조한 뒤 봉인 확정서를 확인해 주세요.",
+        "revisitable": true
+      }
+    ],
+    "hypotheses": [
+      {
+        "id": "auction-seven-truth",
+        "label": "취소·마감·동률 규칙을 적용하면 ORBIT가 정당한 낙찰자다.",
+        "endingId": "auction-seven-good",
+        "requiredClues": [
+          "auction-seven-c1",
+          "auction-seven-c2",
+          "auction-seven-c4"
+        ]
+      },
+      {
+        "id": "auction-seven-guess",
+        "label": "MOTH가 가장 큰 금액을 적었으므로 정당한 낙찰자다.",
+        "endingId": "auction-seven-retry",
+        "requiredClues": []
+      }
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "engineVersion": "ghostdesk-core-1",
+    "caseId": "encore-last",
+    "versionId": "encore-last-v2",
+    "title": "마지막 앙코르",
+    "description": "무대는 비었는데 노래는 계속됐다. 사라진 보컬과 네 장의 큐시트가 공연장의 마지막 3분을 숨긴다.",
+    "estimatedMinutes": 30,
+    "contentWarning": "허구의 사건입니다. 긴장감 있는 상황·실종 암시가 있지만 잔혹한 묘사나 점프 스케어는 없습니다.",
+    "files": [
+      {
+        "id": "encore-last-f0",
+        "type": "TEXT",
+        "title": "무대감독_메모.txt",
+        "parentId": null,
+        "visible": true,
+        "text": "공연 뒤 남겨진 의뢰\n\n앵콜은 계속 들렸는데 해온은 무대에서 보이지 않았습니다. 정문으로 나가는 모습도 찍히지 않았어요.\n\n실제 실행된 조명의 카드 번호부터 복원해 주세요. 음원 흔적, 재생 시간, 이동 기록과 카메라 범위를 차례로 확인하면 최종 음향 기록과 인계서를 대조할 수 있습니다.",
+        "clueId": "encore-last-c0"
+      },
+      {
+        "id": "encore-last-f1",
+        "type": "TEXT",
+        "title": "실행_큐_로그.log",
+        "parentId": null,
+        "visible": true,
+        "text": "공연 제어기 / 실행 완료 항목\n\n21:56:04  AMBER 실행\n21:56:18  BLUE 실행\n21:56:31  WHITE 실행\n21:56:45  RED 실행\n\n21:56:52  대기 큐 GREEN 취소\n21:57:00  무대 암전\n\n취소된 큐는 실행 순서에 넣지 않습니다.",
+        "clueId": "encore-last-c1"
+      },
+      {
+        "id": "encore-last-f2",
+        "type": "TEXT",
+        "title": "카드별_큐시트.txt",
+        "parentId": null,
+        "visible": true,
+        "text": "조명 카드 대조표\n\n카드 1 / WHITE / 객석 방향 빛\n카드 2 / AMBER / 무대 뒤 통로\n카드 3 / RED / 암전 직전 안전 표시\n카드 4 / BLUE / 중앙 스포트라이트\n카드 5 / GREEN / 사용 취소\n\n당초 예정: BLUE → WHITE → AMBER → RED\n무대감독 메모: 공연 중 순서 변경 있음. 실제 실행 로그 우선.",
+        "clueId": "encore-last-c2"
+      },
+      {
+        "id": "encore-last-f3",
+        "type": "TEXT",
+        "title": "관객_제보.txt",
+        "parentId": null,
+        "visible": true,
+        "text": "관객 A: 앵콜 첫 소절이 끝날 때 노래가 조금 더 또렷해졌어요.\n관객 B: 정문 쪽에는 아무도 지나가지 않았어요.\n객석 녹음 비교 메모: 21:56:52 이후 들린 기침 소리까지 전날 리허설 녹음과 같은 간격입니다.\n\n제보만으로 누군가가 어디에 있었는지 확정할 수는 없습니다. 공연장에는 정문 외에 무대 뒤 안전 통로도 있습니다.",
+        "clueId": "encore-last-c3"
+      },
+      {
+        "id": "encore-last-f4",
+        "type": "TEXT",
+        "title": "음향_라우팅.log",
+        "parentId": "encore-last-stage-5",
+        "visible": false,
+        "text": "음향 장치 / 입력 전환 기록\n\n21:56:52 보컬 무선 마이크 입력 차단\n21:56:52 비상 트랙 REHEARSAL-06 재생 시작\n21:59:10 비상 트랙 재생 완료\n\n담당자 확인: 녹음 파일에는 리허설 때 해온의 기침도 포함됨.\n관객에게 들린 마지막 앵콜은 이 비상 트랙이었습니다.",
+        "clueId": "encore-last-c4"
+      },
+      {
+        "id": "encore-last-f5",
+        "type": "TEXT",
+        "title": "안전통로_인계서.txt",
+        "parentId": "encore-last-stage-5",
+        "visible": false,
+        "text": "무대 뒤 안전 통로 / 인계 기록\n\n21:56:49 해온이 현기증을 호소함\n21:56:54 스태프 유진과 안전 통로 통과\n21:57:21 휴게실 도착, 보호자 연락\n22:05:00 회복 후 귀가 안내\n\n서명: 해온 / 유진\n\n정문 카메라에는 이 통로가 찍히지 않습니다. 해온은 무대 위에 남아 있지도, 건물에서 실종되지도 않았습니다.",
+        "clueId": "encore-last-c5"
+      },
+      {
+        "id": "encore-last-chat",
+        "type": "CHAT_LINK",
+        "title": "메신저",
+        "parentId": null,
+        "visible": true,
+        "text": ""
+      },
+      {
+        "id": "encore-last-scene",
+        "type": "IMAGE",
+        "title": "공연장_현장사진",
+        "parentId": null,
+        "visible": true,
+        "text": "사건 자료에 첨부된 현장 사진.",
+        "assetId": "stage",
+        "alt": "닫힌 커튼 앞의 빈 마이크 스탠드와 객석 쪽 음향 장비.",
+        "observations": [
+          {
+            "label": "무대",
+            "text": "마이크 스탠드와 닫힌 커튼, 앰버색과 파란색 조명이 보입니다."
+          },
+          {
+            "label": "촬영 시각",
+            "text": "공연 종료 후 22:03 촬영. 이 사진만으로 공연 중 사람의 위치를 확정할 수 없습니다."
+          }
+        ]
+      },
+      {
+        "id": "encore-last-stage-1",
+        "type": "FOLDER",
+        "title": "1단계 · 조명 큐 복원",
+        "parentId": null,
+        "visible": true,
+        "text": "이 단계의 확인을 마쳤습니다. 조사 단계에서 다음 기록을 열어 주세요.",
+        "puzzleId": "encore-last-p1-v2"
+      },
+      {
+        "id": "encore-last-record-2",
+        "type": "TEXT",
+        "title": "음원 흔적 비교_자료.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "음향팀 파형 측정표 / 첫 기침부터 잰 간격\n\n객석 녹음: 4.2초 / 6.8초\n리허설 05: 4.2초 / 7.1초\n리허설 06: 4.2초 / 6.8초\n리허설 07: 3.9초 / 6.8초\n\n두 간격을 모두 비교합니다. 이 비교만으로 사람의 위치까지 알 수는 없습니다.",
+        "clueId": "encore-last-record-clue-2"
+      },
+      {
+        "id": "encore-last-stage-2",
+        "type": "FOLDER",
+        "title": "2단계 · 음원 흔적 비교",
+        "parentId": null,
+        "visible": false,
+        "text": "이 단계의 확인을 마쳤습니다. 조사 단계에서 다음 기록을 열어 주세요.",
+        "puzzleId": "encore-last-p2-v2"
+      },
+      {
+        "id": "encore-last-record-3",
+        "type": "TEXT",
+        "title": "앵콜 길이 계산_자료.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "음향 재생 시각표\n\n비상 재생 시작: 21:56:52\n비상 재생 종료: 21:59:10\n\n장치 시계는 중간에 조정되지 않았고 일시정지도 없었습니다. 전체 길이를 초로 환산하세요.",
+        "clueId": "encore-last-record-clue-3"
+      },
+      {
+        "id": "encore-last-stage-3",
+        "type": "FOLDER",
+        "title": "3단계 · 앵콜 길이 계산",
+        "parentId": null,
+        "visible": false,
+        "text": "이 단계의 확인을 마쳤습니다. 조사 단계에서 다음 기록을 열어 주세요.",
+        "puzzleId": "encore-last-p3-v2"
+      },
+      {
+        "id": "encore-last-record-4",
+        "type": "TEXT",
+        "title": "안전 통로 연결_자료.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "스태프 동행 이동 / 센서 시계 일치 확인\n\n지점 1 · 휴게실 · 21:57:21\n지점 2 · 안전 통로 입구 · 21:56:54\n지점 3 · 무대 뒤 · 21:56:50\n지점 4 · 통로 중간 · 21:57:05\n\n센서는 출입 위치만 기록하며 신원은 최종 인계서에서 확인합니다.",
+        "clueId": "encore-last-record-clue-4"
+      },
+      {
+        "id": "encore-last-stage-4",
+        "type": "FOLDER",
+        "title": "4단계 · 안전 통로 연결",
+        "parentId": null,
+        "visible": false,
+        "text": "이 단계의 확인을 마쳤습니다. 조사 단계에서 다음 기록을 열어 주세요.",
+        "puzzleId": "encore-last-p4-v2"
+      },
+      {
+        "id": "encore-last-record-5",
+        "type": "TEXT",
+        "title": "카메라 범위 대조_자료.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "공연장 촬영 구역 안내\n\n정문 카메라: 정문 계단과 매표소만 촬영\n무대 뒤 안전 통로: 카메라 촬영 범위 밖\n휴게실: 건물 내부, 촬영하지 않음\n\n확인 구간 21:56:49~21:57:21의 정문 영상에는 출입자가 없습니다. 센서 기록과 함께 해석하세요.",
+        "clueId": "encore-last-record-clue-5"
+      },
+      {
+        "id": "encore-last-stage-5",
+        "type": "FOLDER",
+        "title": "5단계 · 카메라 범위 대조",
+        "parentId": null,
+        "visible": false,
+        "text": "다섯 확인을 마쳤습니다. 아래의 최종 원본 자료를 읽고 증거를 대조해 결론을 작성하세요.",
+        "puzzleId": "encore-last-p5-v2"
+      }
+    ],
+    "clues": [
+      {
+        "id": "encore-last-c0",
+        "title": "무대감독_메모.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "encore-last-c1",
+        "title": "실행_큐_로그.log",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "encore-last-c2",
+        "title": "카드별_큐시트.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "encore-last-c3",
+        "title": "관객_제보.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "encore-last-c4",
+        "title": "음향_라우팅.log",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "encore-last-c5",
+        "title": "안전통로_인계서.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "encore-last-record-clue-2",
+        "title": "음원 흔적 비교_자료.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "encore-last-record-clue-3",
+        "title": "앵콜 길이 계산_자료.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "encore-last-record-clue-4",
+        "title": "안전 통로 연결_자료.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "encore-last-record-clue-5",
+        "title": "카메라 범위 대조_자료.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      }
+    ],
+    "puzzles": [
+      {
+        "id": "encore-last-p1-v2",
+        "title": "실제로 실행된 조명의 카드 번호를 순서대로 입력하세요. 취소된 색은 제외합니다.",
+        "answer": "2413",
+        "ignoreCase": true,
+        "hints": [
+          "예정표와 실제 실행 기록을 구분하세요.",
+          "실행된 색을 카드 번호로 바꾸세요.",
+          "AMBER → BLUE → WHITE → RED 순서입니다.",
+          "정답: 2413"
+        ],
+        "stageTitle": "조명 큐 복원",
+        "evidenceIds": [
+          "encore-last-f1",
+          "encore-last-f2",
+          "encore-last-scene"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "encore-last-p2-v2",
+        "title": "객석 녹음과 기침 간격 두 개가 모두 같은 음원은?",
+        "answer": "B",
+        "ignoreCase": true,
+        "hints": [
+          "한 구간이 같은 것만으로 고르지 마세요.",
+          "객석 기록의 두 간격이 모두 맞아야 합니다.",
+          "4.2초와 6.8초를 함께 가진 음원을 찾으세요.",
+          "정답: B"
+        ],
+        "stageTitle": "음원 흔적 비교",
+        "evidenceIds": [
+          "encore-last-record-2"
+        ],
+        "inputMode": "choice",
+        "choices": [
+          {
+            "value": "A",
+            "label": "리허설 05"
+          },
+          {
+            "value": "B",
+            "label": "리허설 06"
+          },
+          {
+            "value": "C",
+            "label": "리허설 07"
+          }
+        ]
+      },
+      {
+        "id": "encore-last-p3-v2",
+        "title": "비상 재생 구간의 길이는 총 몇 초인가요?",
+        "answer": "138",
+        "ignoreCase": true,
+        "hints": [
+          "분과 초를 나누어 계산해도 됩니다.",
+          "21:56:52부터 21:58:52까지는 120초입니다.",
+          "남은 18초를 더하세요.",
+          "정답: 138"
+        ],
+        "stageTitle": "앵콜 길이 계산",
+        "evidenceIds": [
+          "encore-last-record-3"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "encore-last-p4-v2",
+        "title": "센서에 남은 이동 지점을 시간순으로 배열하세요.",
+        "answer": "3241",
+        "ignoreCase": true,
+        "hints": [
+          "각 센서의 시각을 비교하세요.",
+          "무대 뒤가 가장 이르고 휴게실이 가장 늦습니다.",
+          "무대 뒤 → 입구 → 중간 → 휴게실 순서입니다.",
+          "정답: 3241"
+        ],
+        "stageTitle": "안전 통로 연결",
+        "evidenceIds": [
+          "encore-last-record-4"
+        ],
+        "inputMode": "sequence",
+        "choices": [
+          {
+            "value": "1",
+            "label": "휴게실"
+          },
+          {
+            "value": "2",
+            "label": "안전 통로 입구"
+          },
+          {
+            "value": "3",
+            "label": "무대 뒤"
+          },
+          {
+            "value": "4",
+            "label": "통로 중간"
+          }
+        ]
+      },
+      {
+        "id": "encore-last-p5-v2",
+        "title": "정문 영상에 사람이 없었다는 사실만으로 확인할 수 있는 것은?",
+        "answer": "C",
+        "ignoreCase": true,
+        "hints": [
+          "카메라가 실제로 보는 구역을 확인하세요.",
+          "찍히지 않는 통로의 이동까지 부정할 수 있을까요?",
+          "정문 영상은 정문 촬영 구역에 대해서만 말해 줍니다.",
+          "정답: C"
+        ],
+        "stageTitle": "카메라 범위 대조",
+        "evidenceIds": [
+          "encore-last-record-5"
+        ],
+        "inputMode": "choice",
+        "choices": [
+          {
+            "value": "A",
+            "label": "건물 안에서 아무도 이동하지 않았다"
+          },
+          {
+            "value": "B",
+            "label": "누구도 휴게실에 갈 수 없었다"
+          },
+          {
+            "value": "C",
+            "label": "촬영 구역인 정문으로 출입한 사람은 없었다"
+          }
+        ]
+      }
+    ],
+    "messages": [
+      {
+        "id": "encore-last-m0",
+        "author": "유진",
+        "time": "22:06",
+        "text": "사람들은 해온이 갑자기 사라졌대. 내가 설명해도 믿질 않아.",
+        "initial": true
+      },
+      {
+        "id": "encore-last-m1",
+        "author": "음향 기사",
+        "time": "22:07",
+        "text": "앵콜 때 입력이 전환됐습니다. 비공개 기록에 로그가 있어요.",
+        "initial": true
+      },
+      {
+        "id": "encore-last-m2",
+        "author": "유진",
+        "time": "22:08",
+        "text": "예정 큐가 아니라 실제 실행 순서를 봐 줘. 공연 중에 순서가 바뀌었어.",
+        "initial": false
+      },
+      {
+        "id": "encore-last-m3",
+        "author": "해온",
+        "time": "22:10",
+        "text": "저는 괜찮아요. 유진이 데려다줬어요. 그때 무대에서 들린 노래는 저도 나중에 들었고요.",
+        "initial": false
+      }
+    ],
+    "rules": [
+      {
+        "id": "encore-last-advance-1",
+        "priority": 1,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "encore-last-p1-v2"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-stage-2"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-record-2"
+          },
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "encore-last-m2"
+          }
+        ]
+      },
+      {
+        "id": "encore-last-advance-2",
+        "priority": 2,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "encore-last-p2-v2"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-stage-3"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-record-3"
+          }
+        ]
+      },
+      {
+        "id": "encore-last-advance-3",
+        "priority": 3,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "encore-last-p3-v2"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-stage-4"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-record-4"
+          }
+        ]
+      },
+      {
+        "id": "encore-last-advance-4",
+        "priority": 4,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "encore-last-p4-v2"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-stage-5"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-record-5"
+          }
+        ]
+      },
+      {
+        "id": "encore-last-advance-5",
+        "priority": 5,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "encore-last-p5-v2"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-f4"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-f5"
+          },
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "encore-last-m3"
+          }
+        ]
+      }
+    ],
+    "endings": [
+      {
+        "id": "encore-last-good",
+        "title": "무대에 남아 있던 것은 목소리",
+        "text": "관객은 해온의 목소리를 들었지만, 그 순간 해온이 무대에서 노래한 것은 아니었습니다. 마이크는 차단됐고 리허설 트랙이 대신 재생됐습니다. 반복된 기침도 그 안에 있었습니다.\n\n해온은 유진의 도움으로 안전 통로를 지나 휴게실에 도착했습니다. 카메라에 찍히지 않은 통로와 서명된 인계서가 동선을 설명합니다.\n\n해온은 다음 공연 공지에 한 문장을 더했습니다. “앙코르보다 사람의 안전이 먼저입니다.”",
+        "revisitable": false
+      },
+      {
+        "id": "encore-last-retry",
+        "title": "목소리를 사람으로 착각하다",
+        "text": "노래가 들렸다는 사실만으로 해온이 무대에 남아 있다고 판단했습니다. 소리가 난 위치와 실제 사람의 위치는 같지 않을 수 있습니다.\n\n음향 라우팅 기록과 안전 통로 인계서를 함께 확인하세요.",
+        "revisitable": true
+      }
+    ],
+    "hypotheses": [
+      {
+        "id": "encore-last-truth",
+        "label": "녹음된 앵콜이 재생되는 동안 해온은 안전 통로로 휴게실에 이동했다.",
+        "endingId": "encore-last-good",
+        "requiredClues": [
+          "encore-last-c4",
+          "encore-last-c5"
+        ]
+      },
+      {
+        "id": "encore-last-guess",
+        "label": "노래가 계속 들렸으므로 해온은 끝까지 무대에 남아 있었다.",
+        "endingId": "encore-last-retry",
+        "requiredClues": []
+      }
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "engineVersion": "ghostdesk-core-1",
+    "caseId": "monday-loop",
+    "versionId": "monday-loop-v2",
+    "title": "월요일이 두 번 온 날",
+    "description": "섬의 관측소는 사흘째 월요일이다. 같은 문장으로 깨어나는 기록 장치와 바다에 남은 신호를 해독하라.",
+    "estimatedMinutes": 30,
+    "contentWarning": "허구의 사건입니다. 긴장감 있는 상황·실종 암시가 있지만 잔혹한 묘사나 점프 스케어는 없습니다.",
+    "files": [
+      {
+        "id": "monday-loop-f0",
+        "type": "TEXT",
+        "title": "세_번째_월요일.txt",
+        "parentId": null,
+        "visible": true,
+        "text": "관측 담당 나루의 메모\n\n아침마다 “오늘은 월요일”이라는 문장과 9월 14일 달력이 나옵니다. 하지만 우유는 줄고 파란 밧줄에는 해초가 붙었어요.\n\n먼저 세 묶음의 수신 신호를 통신 카드로 해독해 주세요. 마지막 관측 번호와 실제 날짜, 독립된 기록, 아침에 일어난 순서를 차례로 확인한 뒤 작업일지를 검토해야 합니다.",
+        "clueId": "monday-loop-c0"
+      },
+      {
+        "id": "monday-loop-f1",
+        "type": "TEXT",
+        "title": "수신_신호.txt",
+        "parentId": null,
+        "visible": true,
+        "text": "야간 수신기 / 짧음은 점, 길음은 선\n\n... / --- / ...\n\n각 빗금은 글자 사이의 간격입니다. 점과 선을 개별 글자로 읽지 마세요.\n\n수신기 전원은 별도 배터리라 관측용 PC의 정전 영향을 받지 않습니다.",
+        "clueId": "monday-loop-c1"
+      },
+      {
+        "id": "monday-loop-f2",
+        "type": "TEXT",
+        "title": "통신_카드.txt",
+        "parentId": null,
+        "visible": true,
+        "text": "자주 쓰는 모스 부호\n\nA  .-\nN  -.\nO  ---\nS  ...\nT  -\n\n예: ... / .- 는 SA입니다.\n영문으로 해독한 뒤 글자 사이의 공백은 빼세요.",
+        "clueId": "monday-loop-c2"
+      },
+      {
+        "id": "monday-loop-f3",
+        "type": "TEXT",
+        "title": "관측_메모.txt",
+        "parentId": null,
+        "visible": true,
+        "text": "종이 노트 / 나루의 필기\n\n첫 번째 월요일: 부표 수신 번호 1084, 파란 밧줄 마름\n두 번째 월요일: 부표 수신 번호 1085, 밧줄 젖음\n세 번째 월요일: 부표 수신 번호 1086, 밧줄에 해초\n\n매번 화면 날짜만 같습니다. 독립된 부표의 번호는 한 번 관측할 때마다 1씩 증가합니다. 왜 종이에는 다음 날이 남는 걸까요?",
+        "clueId": "monday-loop-c3"
+      },
+      {
+        "id": "monday-loop-f4",
+        "type": "TEXT",
+        "title": "복원_작업일지.log",
+        "parentId": "monday-loop-stage-5",
+        "visible": false,
+        "text": "관측 PC 자동 복원 설정\n\n정전 후 동작: 백업 SNAP-MONDAY 복원\n복원 대상: 달력 화면, 시작 안내문, 로컬 작업 목록\n복원하지 않는 대상: 종이 노트, 독립 배터리 부표, 실제 시계\n\n정전 감지: 3회\n각 부팅마다 같은 월요일 화면을 다시 불러왔습니다.",
+        "clueId": "monday-loop-c4"
+      },
+      {
+        "id": "monday-loop-f5",
+        "type": "TEXT",
+        "title": "보내지_못한_쪽지.txt",
+        "parentId": "monday-loop-stage-5",
+        "visible": false,
+        "text": "정비 담당자가 남긴 쪽지\n\n장치가 계속 재시작하면 화면의 달력을 믿지 마세요. 외부 부표 기록에는 실제 관측 날짜가 남습니다.\n\n종이 노트의 마지막 번호로 외부 관측함을 열면 이 세 번이 같은 날인지 다른 날인지 확인할 수 있습니다.\n\n신호는 제가 정비선에서 보낸 SOS였습니다. 통신이 복구된 뒤에는 구조 요청을 이미 전달했습니다. 누구도 섬에 혼자 남겨두지 않았습니다.",
+        "clueId": "monday-loop-c5"
+      },
+      {
+        "id": "monday-loop-chat",
+        "type": "CHAT_LINK",
+        "title": "메신저",
+        "parentId": null,
+        "visible": true,
+        "text": ""
+      },
+      {
+        "id": "monday-loop-final",
+        "type": "TEXT",
+        "title": "부표_원본_기록.txt",
+        "parentId": "monday-loop-stage-5",
+        "visible": false,
+        "text": "독립 배터리 관측 부표 / 원본 수신 기록\n\n09-14 월요일 / 1084 / 정상 수신\n09-15 화요일 / 1085 / 정상 수신\n09-16 수요일 / 1086 / 정상 수신\n\n관측 PC와 전원·저장장치를 공유하지 않습니다. 세 기록은 서로 다른 날에 생성됐고 재전송이 아닙니다.\n\n종이 노트의 번호와 순서가 일치합니다. 바다는 세 번의 아침을 기록했습니다.",
+        "clueId": "monday-loop-final-clue"
+      },
+      {
+        "id": "monday-loop-scene",
+        "type": "IMAGE",
+        "title": "관측소_현장사진",
+        "parentId": null,
+        "visible": true,
+        "text": "사건 자료에 첨부된 현장 사진.",
+        "assetId": "island",
+        "alt": "비 오는 바다를 향한 관측소 책상 위 노트와 무전기, 창밖의 부표.",
+        "observations": [
+          {
+            "label": "관측 책상",
+            "text": "종이 노트, 무전기, 파란 밧줄과 별도 배터리가 놓여 있습니다."
+          },
+          {
+            "label": "창밖",
+            "text": "관측 부표가 바다 위에 떠 있습니다. 장치별 전원과 저장 위치는 연결 대장에 따로 기록되어 있습니다."
+          }
+        ]
+      },
+      {
+        "id": "monday-loop-stage-1",
+        "type": "FOLDER",
+        "title": "1단계 · 수신 신호 해독",
+        "parentId": null,
+        "visible": true,
+        "text": "이 단계의 확인을 마쳤습니다. 조사 단계에서 다음 기록을 열어 주세요.",
+        "puzzleId": "monday-loop-p1-v2"
+      },
+      {
+        "id": "monday-loop-stage-2",
+        "type": "FOLDER",
+        "title": "2단계 · 마지막 관측 찾기",
+        "parentId": null,
+        "visible": false,
+        "text": "이 단계의 확인을 마쳤습니다. 조사 단계에서 다음 기록을 열어 주세요.",
+        "puzzleId": "monday-loop-p2-v2"
+      },
+      {
+        "id": "monday-loop-record-3",
+        "type": "TEXT",
+        "title": "날짜 조각 맞추기_자료.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "정비선 수신 대장 / 하루 한 번 새벽 관측, 누락 없음\n\n09-14 · 월요일 · 첫 번호 1084\n09-15 · 화요일 · 다음 번호 1085\n09-?? · 수요일 · 마지막 번호 1086\n\n마지막 날짜의 끝 두 숫자는 물에 번졌습니다. 이 세 기록은 재전송이 아니며 연속한 사흘 동안 수신했습니다.",
+        "clueId": "monday-loop-record-clue-3"
+      },
+      {
+        "id": "monday-loop-stage-3",
+        "type": "FOLDER",
+        "title": "3단계 · 날짜 조각 맞추기",
+        "parentId": null,
+        "visible": false,
+        "text": "이 단계의 확인을 마쳤습니다. 조사 단계에서 다음 기록을 열어 주세요.",
+        "puzzleId": "monday-loop-p3-v2"
+      },
+      {
+        "id": "monday-loop-record-4",
+        "type": "TEXT",
+        "title": "독립 기록 고르기_자료.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "관측소 연결 대장\n\nPC 달력 / 본체 전원 / 본체 저장장치\n외부 모니터 / 별도 전원 / PC 화면을 그대로 표시\n관측 부표 / 독립 배터리 / 부표 내부 저장장치\n종이 노트 / 전원 없음 / 직접 필기\n\n전원만 별개인 것으로는 부족합니다. 기록을 보관하는 곳도 비교하세요.",
+        "clueId": "monday-loop-record-clue-4"
+      },
+      {
+        "id": "monday-loop-stage-4",
+        "type": "FOLDER",
+        "title": "4단계 · 독립 기록 고르기",
+        "parentId": null,
+        "visible": false,
+        "text": "이 단계의 확인을 마쳤습니다. 조사 단계에서 다음 기록을 열어 주세요.",
+        "puzzleId": "monday-loop-p4-v2"
+      },
+      {
+        "id": "monday-loop-record-5",
+        "type": "TEXT",
+        "title": "아침의 순서 복원_자료.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "외부 점검 장치 / 09-16 아침 기록\n\n조각 1 · 07:59:55 · PC 다시 켜짐\n조각 2 · 08:00:02 · 월요일 안내문 표시\n조각 3 · 07:59:40 · PC 전원 끊김\n조각 4 · 07:59:58 · SNAP-MONDAY 불러오기 완료\n\n점검 장치는 별도 배터리로 작동합니다. 순서를 복원하면 정비 담당자의 작업일지와 대조할 수 있습니다.",
+        "clueId": "monday-loop-record-clue-5"
+      },
+      {
+        "id": "monday-loop-stage-5",
+        "type": "FOLDER",
+        "title": "5단계 · 아침의 순서 복원",
+        "parentId": null,
+        "visible": false,
+        "text": "다섯 확인을 마쳤습니다. 아래의 최종 원본 자료를 읽고 증거를 대조해 결론을 작성하세요.",
+        "puzzleId": "monday-loop-p5-v2"
+      }
+    ],
+    "clues": [
+      {
+        "id": "monday-loop-c0",
+        "title": "세_번째_월요일.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "monday-loop-c1",
+        "title": "수신_신호.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "monday-loop-c2",
+        "title": "통신_카드.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "monday-loop-c3",
+        "title": "관측_메모.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "monday-loop-c4",
+        "title": "복원_작업일지.log",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "monday-loop-c5",
+        "title": "보내지_못한_쪽지.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "monday-loop-final-clue",
+        "title": "부표_원본_기록.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "monday-loop-record-clue-3",
+        "title": "날짜 조각 맞추기_자료.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "monday-loop-record-clue-4",
+        "title": "독립 기록 고르기_자료.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      },
+      {
+        "id": "monday-loop-record-clue-5",
+        "title": "아침의 순서 복원_자료.txt",
+        "description": "확인한 원본 자료. 기록 사이의 관계는 직접 대조해 보세요."
+      }
+    ],
+    "puzzles": [
+      {
+        "id": "monday-loop-p1-v2",
+        "title": "세 묶음의 수신 신호를 영문으로 해독하세요. 글자 사이에 공백은 넣지 않습니다.",
+        "answer": "SOS",
+        "ignoreCase": true,
+        "hints": [
+          "빗금 하나마다 글자가 나뉩니다.",
+          "점 세 개와 선 세 개를 통신 카드에서 찾으세요.",
+          "첫 글자와 마지막 글자는 S입니다.",
+          "정답: SOS"
+        ],
+        "stageTitle": "수신 신호 해독",
+        "evidenceIds": [
+          "monday-loop-f1",
+          "monday-loop-f2",
+          "monday-loop-scene"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "monday-loop-p2-v2",
+        "title": "종이 노트에서 가장 나중에 남긴 관측 번호 네 자리는?",
+        "answer": "1086",
+        "ignoreCase": true,
+        "hints": [
+          "화면의 달력 대신 필기의 순서를 확인하세요.",
+          "첫 번째부터 세 번째 관측까지 번호를 비교하세요.",
+          "세 번째 관측에 적힌 번호를 입력하세요.",
+          "정답: 1086"
+        ],
+        "stageTitle": "마지막 관측 찾기",
+        "evidenceIds": [
+          "monday-loop-f3"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "monday-loop-p3-v2",
+        "title": "마지막 관측의 실제 날짜는? 월·일 네 자리로 입력하세요.",
+        "answer": "0916",
+        "ignoreCase": true,
+        "hints": [
+          "번호의 증가와 날짜의 순서를 함께 확인하세요.",
+          "9월 14일과 15일 다음 날입니다.",
+          "9월 16일을 네 자리로 입력하세요.",
+          "정답: 0916"
+        ],
+        "stageTitle": "날짜 조각 맞추기",
+        "evidenceIds": [
+          "monday-loop-record-3",
+          "monday-loop-f3"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "monday-loop-p4-v2",
+        "title": "PC 전원과 저장장치를 모두 공유하지 않는 기록 묶음은?",
+        "answer": "B",
+        "ignoreCase": true,
+        "hints": [
+          "별도 전원과 별도 저장은 다른 조건입니다.",
+          "외부 모니터가 보여 주는 내용은 어디에서 오나요?",
+          "PC 화면을 복사하지 않는 두 기록을 찾으세요.",
+          "정답: B"
+        ],
+        "stageTitle": "독립 기록 고르기",
+        "evidenceIds": [
+          "monday-loop-record-4",
+          "monday-loop-scene"
+        ],
+        "inputMode": "choice",
+        "choices": [
+          {
+            "value": "A",
+            "label": "PC 달력과 외부 모니터"
+          },
+          {
+            "value": "B",
+            "label": "관측 부표와 종이 노트"
+          },
+          {
+            "value": "C",
+            "label": "외부 모니터와 관측 부표"
+          }
+        ]
+      },
+      {
+        "id": "monday-loop-p5-v2",
+        "title": "점검 장치에 남은 사건을 발생 순서대로 배열하세요.",
+        "answer": "3142",
+        "ignoreCase": true,
+        "hints": [
+          "외부 장치의 시각으로 정렬하세요.",
+          "전원이 끊긴 뒤 다시 켜지는 부분을 먼저 놓으세요.",
+          "다시 켜진 후 백업을 불러오고 안내문이 표시됩니다.",
+          "정답: 3142"
+        ],
+        "stageTitle": "아침의 순서 복원",
+        "evidenceIds": [
+          "monday-loop-record-5"
+        ],
+        "inputMode": "sequence",
+        "choices": [
+          {
+            "value": "1",
+            "label": "PC 다시 켜짐"
+          },
+          {
+            "value": "2",
+            "label": "월요일 안내문 표시"
+          },
+          {
+            "value": "3",
+            "label": "PC 전원 끊김"
+          },
+          {
+            "value": "4",
+            "label": "백업 불러오기 완료"
+          }
+        ]
+      }
+    ],
+    "messages": [
+      {
+        "id": "monday-loop-m0",
+        "author": "나루",
+        "time": "08:00",
+        "text": "또 월요일이야. 어제도 이 대화를 했던 것 같은데.",
+        "initial": true
+      },
+      {
+        "id": "monday-loop-m1",
+        "author": "정비선",
+        "time": "08:02",
+        "text": "우리 쪽 수신 번호는 계속 늘고 있어요. 별도 배터리 장치를 확인해 보세요.",
+        "initial": true
+      },
+      {
+        "id": "monday-loop-m2",
+        "author": "나루",
+        "time": "08:04",
+        "text": "점과 선을 한 덩어리로 읽는 게 아니었네. 빗금이 글자를 나눠 주는구나.",
+        "initial": false
+      },
+      {
+        "id": "monday-loop-m3",
+        "author": "정비선",
+        "time": "08:06",
+        "text": "다섯 기록을 모두 확인했군요. 작업일지와 부표 원본을 보내 드립니다.",
+        "initial": false
+      }
+    ],
+    "rules": [
+      {
+        "id": "monday-loop-advance-1",
+        "priority": 1,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "monday-loop-p1-v2"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-stage-2"
+          },
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "monday-loop-m2"
+          }
+        ]
+      },
+      {
+        "id": "monday-loop-advance-2",
+        "priority": 2,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "monday-loop-p2-v2"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-stage-3"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-record-3"
+          }
+        ]
+      },
+      {
+        "id": "monday-loop-advance-3",
+        "priority": 3,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "monday-loop-p3-v2"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-stage-4"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-record-4"
+          }
+        ]
+      },
+      {
+        "id": "monday-loop-advance-4",
+        "priority": 4,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "monday-loop-p4-v2"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-stage-5"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-record-5"
+          }
+        ]
+      },
+      {
+        "id": "monday-loop-advance-5",
+        "priority": 5,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "monday-loop-p5-v2"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-f4"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-f5"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-final"
+          },
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "monday-loop-m3"
+          }
+        ]
+      }
+    ],
+    "endings": [
+      {
+        "id": "monday-loop-good",
+        "title": "다음 날은 이미 와 있었다",
+        "text": "반복된 것은 하루가 아니라 월요일의 화면이었습니다. 정전마다 복원 작업이 오래된 달력과 안내문을 다시 불러왔습니다.\n\n독립 배터리 부표는 9월 14일, 15일, 16일을 차례로 기록했습니다. 관측 번호도 1084에서 1086으로 증가했습니다. 종이 노트와 외부 원본이 같은 방향을 가리킵니다.\n\n나루는 모니터 옆에 새 쪽지를 붙였습니다. “오늘 날짜는 바다와 함께 확인할 것.” 그리고 처음으로 수요일의 기록을 저장했습니다.",
+        "revisitable": false
+      },
+      {
+        "id": "monday-loop-retry",
+        "title": "같은 문장이 같은 하루는 아니다",
+        "text": "같은 인사와 날짜를 보고 시간이 반복된다고 판단했습니다. 하지만 그 결론은 줄어든 우유와 달라진 관측 번호를 설명하지 못합니다.\n\n비공개 기록의 복원 작업일지와 외부 관측함의 원본 날짜를 끝까지 대조해 주세요.",
+        "revisitable": true
+      }
+    ],
+    "hypotheses": [
+      {
+        "id": "monday-loop-truth",
+        "label": "하루가 반복된 것이 아니라, 정전마다 월요일 화면이 백업에서 복원됐다.",
+        "endingId": "monday-loop-good",
+        "requiredClues": [
+          "monday-loop-c3",
+          "monday-loop-c4",
+          "monday-loop-final-clue"
+        ]
+      },
+      {
+        "id": "monday-loop-guess",
+        "label": "섬의 시간 자체가 월요일에 갇혀 같은 하루가 반복되고 있다.",
+        "endingId": "monday-loop-retry",
+        "requiredClues": []
+      }
+    ]
+  }
+]

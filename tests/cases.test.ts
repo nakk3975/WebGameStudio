@@ -11,7 +11,13 @@ import {
 } from "../packages/engine-ghostdesk/src";
 import { parseSave } from "../apps/ghostdesk/src/storage";
 
-const solutions = [["0310"], ["B204"], ["ORBIT"], ["2413"], ["SOS", "1086"]];
+const solutions = [
+  ["0310", "C", "2413", "0", "B"],
+  ["B204", "0612", "12", "3142", "12"],
+  ["ORBIT", "B", "222", "7", "2413"],
+  ["2413", "B", "138", "3241", "C"],
+  ["SOS", "1086", "0916", "B", "3142"],
+];
 
 describe.each(
   caseLibrary.map((entry, index) => ({ ...entry, answers: solutions[index] })),
@@ -34,6 +40,51 @@ describe.each(
     }
     return s;
   }
+  it("requires all five stages in order and resumes at every stage", () => {
+    expect(c.puzzles).toHaveLength(5);
+    let s = initialState(c);
+    for (let i = 0; i < 5; i++) {
+      for (let future = i + 1; future < 5; future++) {
+        const blocked = transition(c, s, {
+          type: "SOLVE",
+          id: c.puzzles[future].id,
+          answer: answers[future],
+        });
+        expect(blocked.state.solvedPuzzleIds).toEqual(s.solvedPuzzleIds);
+      }
+      expect(
+        transition(c, s, {
+          type: "CONCLUDE",
+          id: c.hypotheses[1].id,
+          evidence: [],
+        }).state.mode,
+      ).toBe("RUNNING");
+      const wrong = transition(c, s, {
+        type: "SOLVE",
+        id: c.puzzles[i].id,
+        answer: "WRONG",
+      }).state;
+      expect(wrong.solvedPuzzleIds).toHaveLength(i);
+      s = transition(c, wrong, {
+        type: "SOLVE",
+        id: c.puzzles[i].id,
+        answer: answers[i],
+      }).state;
+      const restored = parseSave({
+        format: "ghostdesk-save-1",
+        case: c,
+        state: s,
+        notes: "진행 중인 추리",
+        checkpoint: null,
+      });
+      expect(restored.state.solvedPuzzleIds).toHaveLength(i + 1);
+      s = transition(c, restored.state, { type: "RESUME" }).state;
+      for (const f of c.files)
+        if (canOpen(c, s, f.id))
+          s = transition(c, s, { type: "OPEN_FILE", id: f.id }).state;
+    }
+    expect(s.solvedPuzzleIds).toHaveLength(5);
+  });
   it("passes package validation and solves using the authored walkthrough", () => {
     expect(validateCase(c).errors).toEqual([]);
     const s = investigate();

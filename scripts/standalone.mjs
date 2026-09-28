@@ -4,8 +4,12 @@ import { build } from "vite";
 // The hosted app splits the editor. Offline HTML needs a separate, single bundle.
 const dir = path.resolve("output/standalone-dist");
 await build({
-  define: { "import.meta.env.VITE_API_BASE_URL": "undefined", "import.meta.env.VITE_AUTH_URL": "undefined" },
+  define: {
+    "import.meta.env.VITE_API_BASE_URL": "undefined",
+    "import.meta.env.VITE_AUTH_URL": "undefined",
+  },
   build: {
+    assetsInlineLimit: Infinity,
     outDir: dir,
     cssCodeSplit: false,
     rolldownOptions: { output: { codeSplitting: false } },

@@ -88,8 +88,21 @@ export const caseSchema = z
             visible: z.boolean(),
             puzzleId: id.optional(),
             clueId: id.optional(),
-            assetId: z.literal("clock-comparison").optional(),
+            assetId: z
+              .enum([
+                "clock-comparison",
+                "lab",
+                "hotel",
+                "auction",
+                "stage",
+                "island",
+              ])
+              .optional(),
             alt: plain(1000).optional(),
+            observations: z
+              .array(z.object({ label: plain(80), text: plain(2000) }).strict())
+              .max(8)
+              .optional(),
           })
           .strict(),
       )
@@ -109,6 +122,21 @@ export const caseSchema = z
             answer: plain(100).min(1),
             ignoreCase: z.boolean(),
             hints: z.array(plain(1000)).min(1).max(4),
+            stageTitle: plain(80).optional(),
+            evidenceIds: z.array(id).max(8).optional(),
+            inputMode: z.enum(["text", "choice", "sequence"]).optional(),
+            choices: z
+              .array(
+                z
+                  .object({
+                    value: z.string().regex(/^[A-Z0-9]$/),
+                    label: plain(160),
+                  })
+                  .strict(),
+              )
+              .min(2)
+              .max(8)
+              .optional(),
           })
           .strict(),
       )
@@ -287,6 +315,27 @@ export function validateCase(input: unknown): {
         message: "번들 이미지와 대체 설명이 필요합니다.",
       });
   });
+  c.puzzles.forEach((p, i) => {
+    p.evidenceIds?.forEach((ref) =>
+      has("files", ref, `puzzles.${i}.evidenceIds`),
+    );
+    if (p.inputMode === "choice" || p.inputMode === "sequence") {
+      const values = p.choices?.map((x) => x.value) || [];
+      if (
+        !values.length ||
+        new Set(values).size !== values.length ||
+        (p.inputMode === "choice"
+          ? !values.includes(p.answer)
+          : p.answer.length !== values.length ||
+            new Set(p.answer).size !== values.length ||
+            [...p.answer].some((v) => !values.includes(v)))
+      )
+        errors.push({
+          path: `puzzles.${i}.choices`,
+          message: "선택지와 정답 구성을 확인해 주세요.",
+        });
+    }
+  });
   const timerIds = new Set<string>();
   c.rules.forEach((r, i) =>
     r.then.forEach((e, j) => {
@@ -434,6 +483,7 @@ export function duplicateCase(c: CasePackage, suffix: string): CasePackage {
         "clueId",
         "endingId",
         "requiredClues",
+        "evidenceIds",
       ].includes(key)
     )
       return map.get(v) || v;

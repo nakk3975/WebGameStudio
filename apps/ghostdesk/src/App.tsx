@@ -26,7 +26,8 @@ import {
   initialState,
   type State,
 } from "../../../packages/engine-ghostdesk/src";
-import { caseLibrary, caseEntry } from "./cases";
+import { caseLibrary, caseEntry, isOfficialCaseVersion } from "./cases";
+import { investigationStatus } from "./presentation";
 import {
   read,
   write,
@@ -136,6 +137,34 @@ function Workspace({ account }: { account: Account }) {
   const chosen =
     remotePackages[selectedEntry.case.caseId] || selectedEntry.case;
   const saved = saves[chosen.caseId] || null;
+  const status = investigationStatus(saved);
+  const archiveKey = `previous-investigation:${account.user?.id || "guest"}:${chosen.caseId}`;
+  const [archived, setArchived] = useState<Save | null>(null);
+  useEffect(() => {
+    let current = true;
+    setArchived(null);
+    read<Save>(archiveKey)
+      .then((s) => {
+        if (current && s) setArchived(parseSave(s));
+      })
+      .catch(() => {});
+    return () => {
+      current = false;
+    };
+  }, [archiveKey]);
+  async function restartInvestigation() {
+    try {
+      if (saved) {
+        await write(archiveKey, saved);
+        setArchived(saved);
+      }
+      start();
+    } catch {
+      setNotice(
+        "기존 조사를 보관하지 못해 새 조사를 시작하지 않았어요. 다시 시도해 주세요.",
+      );
+    }
+  }
   const [cloudStatus, setCloudStatus] = useState("");
   const [cloud, setCloud] = useState<CloudSaves | null>(null);
   const [syncBusy, setSyncBusy] = useState(false);
@@ -335,10 +364,7 @@ function Workspace({ account }: { account: Account }) {
           cloudStatus={
             test
               ? undefined
-              : account.user &&
-                  !caseLibrary.some(
-                    (e) => e.case.versionId === active.case.versionId,
-                  )
+              : account.user && !isOfficialCaseVersion(active.case)
                 ? "직접 만든 사건 · 이 기기에 저장됨"
                 : cloudStatus
           }
@@ -483,11 +509,9 @@ function Workspace({ account }: { account: Account }) {
                       <span className="case-card-top">
                         <span>{entry.number}</span>
                         <span>
-                          {progress?.state.mode === "ENDED"
-                            ? "조사 완료"
-                            : progress
-                              ? "진행 중"
-                              : entry.difficulty}
+                          {progress
+                            ? investigationStatus(progress)
+                            : entry.difficulty}
                         </span>
                       </span>
                       <b>{entry.case.title}</b>
@@ -514,7 +538,7 @@ function Workspace({ account }: { account: Account }) {
                   <Clock3 size={16} /> 약 {chosen.estimatedMinutes}분
                 </span>
                 <span>
-                  <FileCheck2 size={16} /> {selectedEntry.difficulty}
+                  <FileCheck2 size={16} /> {selectedEntry.difficulty} · 5단계
                 </span>
               </div>
               <div className="launch-actions">
@@ -536,7 +560,7 @@ function Workspace({ account }: { account: Account }) {
                       setView("play");
                     }}
                   >
-                    이어서 조사
+                    {status === "조사 완료" ? "결과 보기" : "이어서 조사"}
                   </button>
                 )}
               </div>
@@ -544,13 +568,29 @@ function Workspace({ account }: { account: Account }) {
                 <div className="resume-summary">
                   <FileCheck2 size={16} />
                   <span>
-                    {saved.state.mode === "ENDED"
-                      ? "완료한 조사"
-                      : "진행 중인 조사"}{" "}
-                    · 단서 {saved.state.clueIds.length}/
+                    {status} · 단서 {saved.state.clueIds.length}/
                     {saved.case.clues.length}
                   </span>
                 </div>
+              )}
+              {saved && saved.case.versionId !== chosen.versionId && (
+                <p className="edition-notice">
+                  다섯 단계로 확장된 새 조사가 있어요. ‘이어서 조사’는 기존
+                  기록을 유지하며, ‘새 조사 시작’에서 확장판을 시작할 수 있어요.
+                </p>
+              )}
+              {archived && (
+                <button
+                  className="quiet"
+                  onClick={() =>
+                    download(
+                      "ghostdesk-previous-investigation.gdsave",
+                      archived,
+                    )
+                  }
+                >
+                  이 기기의 이전 조사 파일 저장
+                </button>
               )}
               <p className="small muted">
                 이곳은 가상의 컴퓨터입니다. 실제 파일에는 접근하지 않습니다.
@@ -559,7 +599,7 @@ function Workspace({ account }: { account: Account }) {
             <div className="case-visual" aria-label="사건 기록 미리보기">
               <div className="visual-top">
                 <span>사건 기록 / {selectedEntry.location}</span>
-                <span className="file-status">미해결</span>
+                <span className="file-status">{status}</span>
               </div>
               <div
                 className={
@@ -577,12 +617,18 @@ function Workspace({ account }: { account: Account }) {
                   화면 표시 <b>{selectedEntry.previewValue}</b>
                 </div>
                 <div>
-                  확인 상태 <b>조사 필요</b>
+                  확인 상태 <b>{status}</b>
                 </div>
               </div>
               <div className="visual-bottom">
                 <LockKeyhole size={16} />
-                <span>기록은 남았다. 진실은 아직.</span>
+                <span>
+                  {status === "조사 완료"
+                    ? "기록을 대조하고 조사를 마쳤습니다."
+                    : status === "재조사 필요"
+                      ? "기록을 다시 살펴볼 수 있습니다."
+                      : "기록은 남았다. 진실은 아직."}
+                </span>
               </div>
             </div>
             <footer className="launch-footer">
@@ -646,8 +692,9 @@ function Workspace({ account }: { account: Account }) {
       {restart && (
         <Modal title="새 조사를 시작할까요?" onClose={() => setRestart(false)}>
           <p>
-            이 사건의 기존 진행이 새 조사로 바뀝니다. 다른 사건의 진행은
-            유지됩니다. 기존 진행을 먼저 내보낼 수도 있습니다.
+            이 사건을 첫 단계부터 다시 시작합니다. 기존 진행은 이 기기에 별도로
+            보관하며, 홈에서 이전 조사 파일로 저장해 다시 불러올 수 있어요.
+            계정에는 새 조사가 저장됩니다.
           </p>
           <div className="button-row">
             <button
@@ -657,7 +704,7 @@ function Workspace({ account }: { account: Account }) {
             >
               <Download size={16} /> 기존 진행 파일 저장
             </button>
-            <button className="primary" onClick={() => start()}>
+            <button className="primary" onClick={restartInvestigation}>
               새 조사 시작
             </button>
           </div>

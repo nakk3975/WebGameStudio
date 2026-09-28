@@ -7,7 +7,7 @@ import {
   type RemoteSave,
   type SaveTransport,
 } from "../apps/ghostdesk/src/cloud";
-import { caseLibrary } from "../apps/ghostdesk/src/cases";
+import { caseLibrary, legacyCases } from "../apps/ghostdesk/src/cases";
 import { initialState } from "../packages/engine-ghostdesk/src";
 import { read, type Save } from "../apps/ghostdesk/src/storage";
 const c = caseLibrary[0].case;
@@ -242,3 +242,20 @@ it.each([
     ).rejects.toThrow("이 기기의 진행은 유지");
   },
 );
+
+it("still uploads immutable v1 progress after the five-stage release", async () => {
+  const { transport, rows } = server();
+  const a = device(transport, "legacy-edition");
+  for (const old of legacyCases) {
+    await a.persist({
+      format: "ghostdesk-save-1",
+      case: old,
+      state: initialState(old),
+      notes: "이전 조사",
+      checkpoint: null,
+    });
+    await a.flush();
+    expect(rows[old.caseId].save.case).toEqual(old);
+    expect(a.records[old.caseId].dirty).toBe(false);
+  }
+});

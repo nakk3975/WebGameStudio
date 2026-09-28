@@ -40,6 +40,9 @@ import {
 } from "../../../packages/engine-ghostdesk/src";
 import { writePlay, download, createSaveQueue, type Save } from "./storage";
 import { caseEntry } from "./cases";
+import { boardRecord } from "./presentation";
+import EvidenceView from "./EvidenceView";
+import PuzzleAnswer from "./PuzzleAnswer";
 import { Brand, Modal } from "./App";
 const Icon = ({ file }: { file: CaseFile }) =>
   file.id === "trash" ? (
@@ -400,7 +403,7 @@ export default function Player({
             <LockKeyhole className="lock-badge" size={13} />
           )}
         </span>
-        <span>{f.title}</span>
+        <span className="file-name">{f.title}</span>
         {state.readFileIds.includes(f.id) && (
           <Check className="read-check" size={13} />
         )}
@@ -415,7 +418,10 @@ export default function Player({
             수집한 단서 / {state.clueIds.length}
           </div>
           <h2>기록을 연결해 보세요.</h2>
-          <p className="muted">파일을 읽으면 단서가 자동으로 모입니다.</p>
+          <p className="muted">
+            확인한 자료를 모아 둔 목록입니다. 자료 사이의 관계는 직접 추리해
+            보세요.
+          </p>
           <div className="clue-grid">
             {c.clues
               .filter((x) => state.clueIds.includes(x.id))
@@ -424,8 +430,8 @@ export default function Player({
                   <span className="clue-number">
                     E-{String(i + 1).padStart(2, "0")}
                   </span>
-                  <h3>{cl.title}</h3>
-                  <p>{cl.description}</p>
+                  <h3>{boardRecord(c, cl.id).title}</h3>
+                  <p>{boardRecord(c, cl.id).description}</p>
                   <button
                     className="quiet"
                     onClick={() => {
@@ -468,6 +474,12 @@ export default function Player({
         <div className="conclusion-content">
           <div className="section-kicker">최종 결론</div>
           <h2>그날, 무슨 일이 있었을까?</h2>
+          {c.puzzles.some((p) => p.stageTitle) &&
+            state.solvedPuzzleIds.length < c.puzzles.length && (
+              <p className="stage-notice">
+                다섯 단계의 확인을 마친 뒤 최종 결론을 제출할 수 있어요.
+              </p>
+            )}
           <p className="muted">
             가설 하나와 그것을 뒷받침하는 근거를 선택하세요.
           </p>
@@ -500,7 +512,7 @@ export default function Player({
                     )
                   }
                 />
-                {cl.title}
+                {boardRecord(c, cl.id).title}
               </label>
             ))}
           {!state.clueIds.length && (
@@ -508,7 +520,12 @@ export default function Player({
           )}
           <button
             className="primary"
-            disabled={!hypothesis || state.mode !== "RUNNING"}
+            disabled={
+              !hypothesis ||
+              state.mode !== "RUNNING" ||
+              (c.puzzles.some((p) => p.stageTitle) &&
+                c.puzzles.some((p) => !state.solvedPuzzleIds.includes(p.id)))
+            }
             onClick={() => {
               setToast("");
               setCheckpoint(structuredClone(state));
@@ -526,19 +543,46 @@ export default function Player({
     if (f.puzzleId && !state.solvedPuzzleIds.includes(f.puzzleId)) {
       const p = c.puzzles.find((p) => p.id === f.puzzleId)!;
       return (
-        <div className="vault">
+        <div className={"vault " + (p.stageTitle ? "stage-puzzle" : "")}>
           <div className="vault-lock">
             <LockKeyhole size={32} />
           </div>
-          <div className="section-kicker">잠긴 보관함</div>
-          <h2>보관함이 잠겨 있습니다.</h2>
+          <div className="section-kicker">
+            {p.stageTitle
+              ? `${c.puzzles.indexOf(p) + 1} / ${c.puzzles.length} 단계`
+              : "잠긴 보관함"}
+          </div>
+          <h2>{p.stageTitle || "보관함이 잠겨 있습니다."}</h2>
           <p>{p.title}</p>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              const answer = new FormData(e.currentTarget).get(
-                "answer",
-              ) as string;
+          {!!p.evidenceIds?.length && (
+            <div className="puzzle-sources">
+              <h3>대조할 자료</h3>
+              {p.evidenceIds.map((eid) => {
+                const source = c.files.find((x) => x.id === eid);
+                if (!source || !canOpen(c, state, eid)) return null;
+                return (
+                  <details
+                    key={eid}
+                    onToggle={(e) => {
+                      if (e.currentTarget.open)
+                        send({ type: "OPEN_FILE", id: eid });
+                    }}
+                  >
+                    <summary>{source.title}</summary>
+                    {source.type === "IMAGE" ? (
+                      <EvidenceView file={source} />
+                    ) : (
+                      <pre className="source-text">{source.text}</pre>
+                    )}
+                  </details>
+                );
+              })}
+            </div>
+          )}
+          <PuzzleAnswer
+            key={p.id}
+            puzzle={p}
+            onSubmit={(answer) => {
               const r = transition(c, state, {
                 type: "SOLVE",
                 id: p.id,
@@ -549,28 +593,17 @@ export default function Player({
               if (r.state.solvedPuzzleIds.includes(p.id))
                 send({ type: "OPEN_FILE", id: f.id });
             }}
-          >
-            <label className="field">
-              암호
-              <input
-                name="answer"
-                aria-label="보관함 암호"
-                maxLength={100}
-                autoComplete="off"
-                placeholder="암호 입력"
-                className="code-input"
-              />
-            </label>
-            <button className="primary" type="submit">
-              보관함 열기 <ChevronRight size={17} />
-            </button>
-          </form>
+          />
           <p className="small muted">
-            답 앞뒤의 빈칸은 무시합니다.{" "}
-            {p.ignoreCase
-              ? "영문 대소문자는 상관없어요."
-              : "영문 대소문자를 구분해 주세요."}
-            <br />
+            {(!p.inputMode || p.inputMode === "text") && (
+              <>
+                답 앞뒤의 빈칸은 무시합니다.{" "}
+                {p.ignoreCase
+                  ? "영문 대소문자는 상관없어요."
+                  : "영문 대소문자를 구분해 주세요."}
+                <br />
+              </>
+            )}
             시도{" "}
             {Object.hasOwn(state.attempts, p.id) ? state.attempts[p.id] : 0}회 ·
             횟수 제한 없음
@@ -589,14 +622,44 @@ export default function Player({
             {f.title}
           </div>
           {f.text && <p className="muted">{f.text}</p>}
+          {f.puzzleId &&
+            c.puzzles
+              .find((p) => p.id === f.puzzleId)
+              ?.evidenceIds?.map((eid) => {
+                const source = c.files.find((x) => x.id === eid);
+                return source && canInspect(c, state, eid)
+                  ? fileButton(source)
+                  : null;
+              })}
+          {f.puzzleId &&
+            c.puzzles.find((p) => p.id === f.puzzleId)?.stageTitle && (
+              <button
+                className="primary"
+                onClick={() => {
+                  const next = c.files.find(
+                    (x) =>
+                      x.puzzleId &&
+                      !state.solvedPuzzleIds.includes(x.puzzleId) &&
+                      canInspect(c, state, x.id),
+                  );
+                  if (next) open(next.id);
+                  else open("@conclusion");
+                }}
+              >
+                {state.solvedPuzzleIds.length < c.puzzles.length
+                  ? "다음 단계 열기"
+                  : "결론 작성하기"}
+              </button>
+            )}
           {c.files
             .filter(
               (x) => x.parentId === id && state.visibleFileIds.includes(x.id),
             )
             .map((x) => fileButton(x))}
-          {!c.files.some(
-            (x) => x.parentId === id && state.visibleFileIds.includes(x.id),
-          ) && <p className="empty">표시할 파일이 없습니다.</p>}
+          {!f.puzzleId &&
+            !c.files.some(
+              (x) => x.parentId === id && state.visibleFileIds.includes(x.id),
+            ) && <p className="empty">표시할 파일이 없습니다.</p>}
         </div>
       );
     if (f.type === "CHAT_LINK") {
@@ -655,28 +718,8 @@ export default function Player({
         </div>
       );
     }
-    if (f.type === "IMAGE")
-      return (
-        <div className="image-content">
-          <div className="clock-evidence" role="img" aria-label={f.alt}>
-            <div>
-              <span>벽시계</span>
-              <strong>03:10</strong>
-              <small>벽시계</small>
-            </div>
-            <div>
-              <span>기록용 PC</span>
-              <strong>03:17</strong>
-              <small>컴퓨터 시계</small>
-            </div>
-          </div>
-          <p>{f.text}</p>
-          <details open>
-            <summary>이미지 대체 설명</summary>
-            <p>{f.alt}</p>
-          </details>
-        </div>
-      );
+    if (f.type === "IMAGE" || f.id === "hotel-404-f3")
+      return <EvidenceView key={f.id} file={f} />;
     return (
       <article
         className={
@@ -755,6 +798,29 @@ export default function Player({
         <b>{goal}</b>
         <span className="muted">파일 더블클릭 또는 Enter로 열기</span>
       </div>
+      {c.puzzles.some((p) => p.stageTitle) && (
+        <nav className="stage-rail" aria-label="조사 단계">
+          <span>
+            확인 {state.solvedPuzzleIds.length}/{c.puzzles.length}
+          </span>
+          {c.puzzles.map((p, i) => {
+            const f = c.files.find((f) => f.puzzleId === p.id)!;
+            const solved = state.solvedPuzzleIds.includes(p.id);
+            return (
+              <button
+                key={p.id}
+                disabled={!canInspect(c, state, f.id)}
+                aria-label={`${i + 1}단계 ${p.stageTitle}${solved ? " · 완료" : ""}`}
+                onClick={() => open(f.id)}
+                className={solved ? "stage-done" : ""}
+              >
+                <b>{solved ? "✓" : i + 1}</b>
+                <span>{p.stageTitle}</span>
+              </button>
+            );
+          })}
+        </nav>
+      )}
       <div className="desktop-layout">
         <aside className="desktop-files">
           <span className="file-rail-label">사건 자료</span>
@@ -886,7 +952,7 @@ export default function Player({
               .map((cl) => (
                 <button key={cl.id} onClick={() => open("@board")}>
                   <Check size={14} />
-                  {cl.title}
+                  {boardRecord(c, cl.id).title}
                 </button>
               ))}
             {!state.clueIds.length && <p>아직 단서를 발견하지 못했습니다.</p>}

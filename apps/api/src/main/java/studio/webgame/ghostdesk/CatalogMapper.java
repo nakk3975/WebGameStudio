@@ -10,11 +10,11 @@ public interface CatalogMapper {
     record Entry(String caseId, String versionId, String title, String description, int estimatedMinutes) {}
 
     @Select("""
-        SELECT case_id AS "caseId", version_id AS "versionId",
+        SELECT DISTINCT ON (case_id) case_id AS "caseId", version_id AS "versionId",
                package->>'title' AS title, package->>'description' AS description,
                (package->>'estimatedMinutes')::integer AS "estimatedMinutes"
         FROM ghostdesk.case_versions WHERE published = true
-        ORDER BY published_at DESC, version_id ASC LIMIT 50
+        ORDER BY case_id, published_at DESC, version_id DESC LIMIT 50
         """)
     List<Entry> catalog();
 
@@ -24,6 +24,6 @@ public interface CatalogMapper {
         """)
     String packageJson(@Param("versionId") String versionId);
 
-    @Select("SELECT count(*) FROM ghostdesk.case_versions WHERE published = true")
+    @Select("SELECT count(DISTINCT case_id) FROM ghostdesk.case_versions WHERE published = true")
     int publishedCount();
 }

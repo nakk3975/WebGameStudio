@@ -1,5 +1,6 @@
 import type { CasePackage } from "../../../packages/contracts/src";
 import additions from "./additional-cases.json";
+import expanded from "./expanded-cases.json";
 import { sample } from "./sample";
 
 export type CaseEntry = {
@@ -52,7 +53,7 @@ const details = [
   },
   {
     theme: "신호 해독",
-    difficulty: "도전 · 잠금 2개",
+    difficulty: "도전",
     display: "MON",
     location: "섬의 관측소",
     previewKey: "DAY 03",
@@ -60,14 +61,20 @@ const details = [
     caption: "세 번째 월요일. 바다만이 다음 날을 기억한다.",
   },
 ];
-export const caseLibrary: CaseEntry[] = [
-  sample,
-  ...(additions as CasePackage[]),
-].map((c, i) => ({
-  case: c,
-  number: String(i + 1).padStart(3, "0"),
-  ...details[i],
-}));
+export const legacyCases = [sample, ...(additions as CasePackage[])];
+export const caseLibrary: CaseEntry[] = (expanded as CasePackage[]).map(
+  (c, i) => ({
+    case: c,
+    number: String(i + 1).padStart(3, "0"),
+    ...details[i],
+  }),
+);
+export function isOfficialCaseVersion(c: CasePackage) {
+  return [...legacyCases, ...caseLibrary.map((e) => e.case)].some(
+    (official) =>
+      official.caseId === c.caseId && official.versionId === c.versionId,
+  );
+}
 export function caseEntry(c: CasePackage): CaseEntry {
   return (
     caseLibrary.find((entry) => entry.case.caseId === c.caseId) || {
