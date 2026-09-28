@@ -144,7 +144,7 @@ export function transition(
       case "SOLVE": {
         const p = c.puzzles.find((x) => x.id === event.id);
         if (!p || typeof event.answer !== "string" || event.answer.length > 100)
-          return { state: previous, message: "유효하지 않은 암호 입력입니다." };
+          return { state: previous, message: "암호를 다시 입력해 주세요." };
         if (!c.files.some((f) => f.puzzleId === p.id && canInspect(c, s, f.id)))
           return {
             state: previous,
@@ -159,8 +159,7 @@ export function transition(
           add(s.solvedPuzzleIds, p.id);
           message = "잠금이 해제되었습니다.";
         } else
-          message =
-            "암호가 일치하지 않습니다. 선행 0을 포함한 문자열을 확인하세요.";
+          message = "암호가 맞지 않아요. 단서를 다시 확인하고 입력해 주세요.";
         break;
       }
       case "TICK":

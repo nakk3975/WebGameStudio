@@ -60,6 +60,7 @@ type Win = {
   layout: "normal" | "max" | "left" | "right";
   minimized: boolean;
 };
+const isLogFile = (file: CaseFile) => /\.log$/i.test(file.title);
 export default function Player({
   initial,
   isTest,
@@ -598,16 +599,20 @@ export default function Player({
           ) && <p className="empty">표시할 파일이 없습니다.</p>}
         </div>
       );
-    if (f.type === "CHAT_LINK")
+    if (f.type === "CHAT_LINK") {
+      const messages = c.messages.filter((m) =>
+        state.deliveredMessageIds.includes(m.id),
+      );
+      const authors = [...new Set(messages.map((m) => m.author))];
       return (
         <div className="chat-content">
           <div className="chat-person">
-            <div className="avatar">
+            <div className="avatar" aria-hidden="true">
               <MessageSquare size={18} />
             </div>
             <div>
-              <b>사건 대화</b>
-              <span>{entry.location} · 기록된 메시지</span>
+              <b>{entry.location} 대화방</b>
+              <span>{authors.join(" · ") || "아직 도착한 대화가 없어요"}</span>
             </div>
             <button
               className="quiet"
@@ -616,25 +621,40 @@ export default function Player({
               모두 읽음
             </button>
           </div>
-          <div className="chat-date">사건 당시의 대화 기록</div>
-          {c.messages
-            .filter((m) => state.deliveredMessageIds.includes(m.id))
-            .map((m) => (
-              <div className="message" key={m.id}>
-                <span className="message-author">
-                  {m.author} <small>{m.time}</small>
-                  {!state.readMessageIds.includes(m.id) && (
-                    <b className="new-label">새 메시지</b>
-                  )}
+          <div className="chat-date">
+            <span>사건 당시의 대화</span>
+          </div>
+          <ol className="chat-thread" aria-label="대화 기록">
+            {messages.map((m) => (
+              <li className="message" key={m.id}>
+                <span
+                  className={
+                    "message-avatar speaker-" + (authors.indexOf(m.author) % 3)
+                  }
+                  aria-hidden="true"
+                >
+                  {Array.from(m.author)[0]}
                 </span>
-                <p>{m.text}</p>
-              </div>
+                <div className="message-content">
+                  <span className="message-author">{m.author}</span>
+                  <p>{m.text}</p>
+                  <div className="message-meta">
+                    <time>{m.time}</time>
+                    {!state.readMessageIds.includes(m.id) && (
+                      <b className="new-label">새 메시지</b>
+                    )}
+                  </div>
+                </div>
+              </li>
             ))}
+          </ol>
           <p className="chat-note">
-            기록된 대화입니다. 메시지를 직접 전송할 수 없습니다.
+            <LockKeyhole size={14} aria-hidden="true" />
+            보관된 대화예요. 지금은 답장을 보낼 수 없어요.
           </p>
         </div>
       );
+    }
     if (f.type === "IMAGE")
       return (
         <div className="image-content">
@@ -659,18 +679,25 @@ export default function Player({
       );
     return (
       <article
-        className={"document " + (f.id === "f-queue" ? "log-document" : "")}
+        className={
+          "document document-reader " + (isLogFile(f) ? "log-document" : "")
+        }
       >
         <div className="document-meta">
-          <span>{f.id === "f-queue" ? "시스템 기록" : "문서"}</span>
+          <span>
+            <FileText size={16} aria-hidden="true" />
+            {isLogFile(f) ? "시스템 기록" : "메모장"}
+          </span>
           <span>읽기 전용</span>
         </div>
-        <pre>{f.text}</pre>
-        {f.clueId && (
-          <div className="evidence-found">
-            <Check size={16} /> 단서가 증거 보드에 기록되었습니다.
-          </div>
-        )}
+        <div className="document-sheet">
+          <pre>{f.text}</pre>
+          {f.clueId && (
+            <div className="evidence-found">
+              <Check size={16} /> 단서를 증거 보드에 기록했어요.
+            </div>
+          )}
+        </div>
       </article>
     );
   }
@@ -766,6 +793,16 @@ export default function Player({
             <section
               key={w.id}
               aria-label={title(w.id) + " 창"}
+              data-view={(() => {
+                const file = c.files.find((f) => f.id === w.id);
+                return file?.type === "CHAT_LINK"
+                  ? "chat"
+                  : file?.type === "TEXT"
+                    ? isLogFile(file)
+                      ? "log"
+                      : "document"
+                    : undefined;
+              })()}
               className={`os-window ${w.layout} ${i === wins.length - 1 ? "active" : ""}`}
               style={{
                 display: w.minimized ? "none" : undefined,
