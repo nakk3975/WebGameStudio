@@ -42,6 +42,8 @@ import { writePlay, download, createSaveQueue, type Save } from "./storage";
 import { caseEntry } from "./cases";
 import { boardRecord } from "./presentation";
 import EvidenceView from "./EvidenceView";
+import MediaGallery from "./MediaGallery";
+import { availableMedia } from "./case-media";
 import PuzzleAnswer from "./PuzzleAnswer";
 import { Brand, Modal } from "./App";
 const Icon = ({ file }: { file: CaseFile }) =>
@@ -411,6 +413,8 @@ export default function Player({
     );
   }
   function content(id: string) {
+    const mediaPaused =
+      state.mode !== "RUNNING" || !!wins.find((w) => w.id === id)?.minimized;
     if (id === "@board")
       return (
         <div className="board-content">
@@ -566,13 +570,27 @@ export default function Player({
                     onToggle={(e) => {
                       if (e.currentTarget.open)
                         send({ type: "OPEN_FILE", id: eid });
+                      else
+                        e.currentTarget
+                          .querySelectorAll("video")
+                          .forEach((video) => video.pause());
                     }}
                   >
                     <summary>{source.title}</summary>
                     {source.type === "IMAGE" ? (
-                      <EvidenceView file={source} />
+                      <EvidenceView
+                        file={source}
+                        related={availableMedia(c, state)}
+                        paused={mediaPaused}
+                      />
                     ) : (
-                      <pre className="source-text">{source.text}</pre>
+                      <>
+                        <MediaGallery
+                          items={availableMedia(c, state, source.id)}
+                          paused={mediaPaused}
+                        />
+                        <pre className="source-text">{source.text}</pre>
+                      </>
                     )}
                   </details>
                 );
@@ -719,7 +737,14 @@ export default function Player({
       );
     }
     if (f.type === "IMAGE" || f.id === "hotel-404-f3")
-      return <EvidenceView key={f.id} file={f} />;
+      return (
+        <EvidenceView
+          key={f.id}
+          file={f}
+          related={availableMedia(c, state)}
+          paused={mediaPaused}
+        />
+      );
     return (
       <article
         className={
@@ -733,6 +758,11 @@ export default function Player({
           </span>
           <span>읽기 전용</span>
         </div>
+        <MediaGallery
+          key={f.id}
+          items={availableMedia(c, state, f.id)}
+          paused={mediaPaused}
+        />
         <div className="document-sheet">
           <pre>{f.text}</pre>
           {f.clueId && (

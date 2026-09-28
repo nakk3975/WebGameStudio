@@ -3540,6 +3540,94 @@ button:not(:disabled):active {
   height: 100%;
   object-fit: cover;
 }
+.media-gallery {
+  min-width: 0;
+}
+.document-reader > .media-gallery {
+  margin: 0 0 22px;
+  border-radius: 10px;
+}
+.media-thumbnails {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.media-thumbnails button {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-width: 0;
+  padding: 5px;
+  gap: 6px;
+  text-align: left;
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+.media-thumbnails button[aria-pressed="true"] {
+  border-color: #8edbcc;
+  background: #23424a;
+}
+.media-thumbnails img {
+  width: 100%;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  border-radius: 4px;
+}
+.media-thumbnails span {
+  width: 100%;
+  overflow-wrap: anywhere;
+}
+.cctv-screen {
+  overflow: hidden;
+}
+.cctv-screen video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.cctv-screen .cctv-badge,
+.cctv-screen .cctv-stamp,
+.cctv-reconstruction {
+  pointer-events: none;
+}
+.cctv-reconstruction {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #071018d9;
+  color: #c4d0d8;
+  font-size: clamp(9px, 1vw, 11px);
+  padding: 4px 7px;
+}
+.video-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+.video-controls button {
+  font-size: 0.8125rem;
+  padding: 8px 12px;
+}
+.video-controls > span {
+  color: #a5c3cc;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+.video-controls input[type="range"] {
+  width: 100%;
+  min-width: 0;
+  min-height: 32px;
+  padding: 0;
+  accent-color: #8edbcc;
+}
+.media-note {
+  font-size: 0.8125rem;
+  margin: 12px 0 0;
+}
 .evidence-viewport.zoomed img {
   width: 180%;
   height: auto;
