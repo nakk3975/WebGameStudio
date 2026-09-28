@@ -2988,6 +2988,12 @@ button:not(:disabled):active {
   display: grid;
   gap: 16px;
 }
+.modal:has(.account-form) {
+  width: min(440px, calc(100vw - 32px));
+}
+.account-form .field {
+  margin-bottom: 0;
+}
 .account-form p {
   margin: 0;
   line-height: 1.65;
@@ -3004,12 +3010,39 @@ button:not(:disabled):active {
   font-size: 0.875rem;
 }
 .account-links {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
 }
-.account-links button {
+.account-switch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  color: var(--muted);
   font-size: 0.875rem;
+}
+.account-links .account-text-button {
+  min-height: 44px;
+  padding: 8px;
+  border-color: transparent;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+.account-links .account-switch-button {
+  color: var(--accent);
+  font-weight: 700;
+}
+.account-links .account-text-button:hover:not(:disabled) {
+  background: #23384d;
+  color: #b1eee1;
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 .account-message {
   padding: 12px;

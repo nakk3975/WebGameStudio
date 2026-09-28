@@ -251,7 +251,9 @@ export function AccountProvider({
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
-                  <small>가입 비밀번호는 8자 이상으로 입력하세요.</small>
+                  {mode !== "login" && (
+                    <small>비밀번호는 8자 이상으로 입력하세요.</small>
+                  )}
                 </label>
               )}
               {connectionFailed && !client && (
@@ -272,30 +274,40 @@ export function AccountProvider({
                         : "로그인"}
               </button>
               <div className="account-links">
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => {
-                    setMode(mode === "signup" ? "login" : "signup");
-                    setMessage("");
-                    setPassword("");
-                  }}
-                >
-                  {mode === "signup"
-                    ? "이미 계정이 있어요"
-                    : "처음이에요 · 회원가입"}
-                </button>
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => {
-                    setMode("reset");
-                    setMessage("");
-                    setPassword("");
-                  }}
-                >
-                  비밀번호를 잊었어요
-                </button>
+                <div className="account-switch">
+                  {mode === "login" && <span>아직 계정이 없나요?</span>}
+                  {mode === "signup" && <span>이미 계정이 있나요?</span>}
+                  <button
+                    className="account-text-button account-switch-button"
+                    type="button"
+                    disabled={busy}
+                    onClick={() => {
+                      setMode(mode === "login" ? "signup" : "login");
+                      setMessage("");
+                      setPassword("");
+                    }}
+                  >
+                    {mode === "login"
+                      ? "회원가입"
+                      : mode === "signup"
+                        ? "로그인"
+                        : "로그인으로 돌아가기"}
+                  </button>
+                </div>
+                {mode === "login" && (
+                  <button
+                    className="account-text-button"
+                    type="button"
+                    disabled={busy}
+                    onClick={() => {
+                      setMode("reset");
+                      setMessage("");
+                      setPassword("");
+                    }}
+                  >
+                    비밀번호 찾기
+                  </button>
+                )}
               </div>
             </form>
           )}
