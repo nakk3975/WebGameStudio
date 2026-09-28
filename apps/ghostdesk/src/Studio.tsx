@@ -30,7 +30,14 @@ import {
   type Condition,
   type Effect,
 } from "../../../packages/contracts/src";
-import { read, write, download, importJson, type Draft } from "./storage";
+import {
+  read,
+  write,
+  download,
+  importJson,
+  createSaveQueue,
+  type Draft,
+} from "./storage";
 import { sample } from "./sample";
 import { Brand, Modal } from "./App";
 const uid = () =>
@@ -139,78 +146,127 @@ export default function Studio({
     [message, setMessage] = useState(""),
     [deletion, setDeletion] = useState(false),
     [lastTest, setLastTest] = useState<number | null>(null),
-    [readOnly, setReadOnly] = useState(false);
+    [readOnly, setReadOnly] = useState(true),
+    [accessNote, setAccessNote] = useState(""),
+    [busy, setBusy] = useState(false);
   const input = useRef<HTMLInputElement>(null),
-    queue = useRef(Promise.resolve());
+    queue = useRef(createSaveQueue<Draft[]>((value) => write("drafts", value))),
+    leaving = useRef(false);
   const d = drafts[active],
     c = d?.document;
   useEffect(() => {
     let disposed = false;
-    read<Draft[]>("drafts")
-      .then((rows) => {
+    let release = () => {};
+    const access = new Promise<boolean>((resolve) => {
+      if (!navigator.locks) {
+        setAccessNote("다른 탭에서 동시에 편집하지 마세요.");
+        resolve(true);
+        return;
+      }
+      navigator.locks
+        .request(
+          "ghostdesk-studio-editor",
+          { ifAvailable: true },
+          async (lock) => {
+            if (disposed) {
+              resolve(false);
+              return;
+            }
+            if (!lock) {
+              setAccessNote("다른 탭에서 편집 중 · 읽기 전용");
+              resolve(false);
+              return;
+            }
+            resolve(true);
+            await new Promise<void>((done) => {
+              release = done;
+            });
+          },
+        )
+        .catch(() => {
+          if (!disposed)
+            setAccessNote("편집 권한을 확인하지 못했습니다 · 읽기 전용");
+          resolve(false);
+        });
+    });
+    // Acquire the editor lock before reading: a previous editor may still be saving.
+    access
+      .then(async (writable) => {
+        if (disposed) return;
+        const rows = await read<Draft[]>("drafts");
         if (disposed) return;
         if (rows && Array.isArray(rows) && rows.length) {
-          const safe = rows.filter(
-            (r) =>
-              r &&
-              r.document &&
-              typeof r.revision === "number" &&
-              Array.isArray(r.document.files),
-          );
-          if (safe.length) setDrafts(safe);
-          else throw Error();
+          if (
+            !rows.every(
+              (r) =>
+                r &&
+                r.document &&
+                Number.isSafeInteger(r.revision) &&
+                [
+                  "files",
+                  "clues",
+                  "puzzles",
+                  "messages",
+                  "rules",
+                  "endings",
+                  "hypotheses",
+                ].every((key) =>
+                  Array.isArray(r.document[key as keyof CasePackage]),
+                ),
+            )
+          )
+            throw Error("손상된 초안");
+          setDrafts(rows);
         } else
           setDrafts([{ document: duplicateCase(sample, uid()), revision: 1 }]);
+        setReadOnly(!writable);
         setStatus("이 기기에 저장됨");
       })
       .catch(() => {
-        setStatus(
+        if (disposed) return;
+        setAccessNote(
           "초안을 불러오지 못했습니다. 기존 저장을 덮어쓰지 않도록 편집을 잠갔습니다.",
         );
         setReadOnly(true);
         setDrafts([{ document: duplicateCase(sample, uid()), revision: 1 }]);
       })
-      .finally(() => setReady(true));
+      .finally(() => {
+        if (!disposed) setReady(true);
+      });
     return () => {
       disposed = true;
-    };
-  }, []);
-  useEffect(() => {
-    if (!navigator.locks) {
-      setStatus("다른 탭에서 동시에 편집하지 마세요.");
-      return;
-    }
-    let release: () => void = () => {},
-      cancelled = false;
-    navigator.locks.request(
-      "ghostdesk-studio-editor",
-      { ifAvailable: true },
-      async (lock) => {
-        if (cancelled) return;
-        if (!lock) {
-          setReadOnly(true);
-          setStatus("다른 탭에서 편집 중 · 읽기 전용");
-          return;
-        }
-        await new Promise<void>((resolve) => {
-          release = resolve;
-        });
-      },
-    );
-    return () => {
-      cancelled = true;
       release();
     };
   }, []);
+  async function persist(final = false): Promise<boolean> {
+    if (readOnly) return true;
+    if (leaving.current && !final) return false;
+    setStatus("저장 중");
+    try {
+      await queue.current(drafts);
+      setStatus("이 기기에 저장됨");
+      return true;
+    } catch {
+      setStatus("저장 실패 · JSON을 내보내세요");
+      setMessage(
+        "초안을 저장하지 못했습니다. JSON으로 내보내거나 다시 시도하세요.",
+      );
+      return false;
+    }
+  }
+  async function navigate(action: () => void) {
+    if (leaving.current) return;
+    leaving.current = true;
+    setBusy(true);
+    if (await persist(true)) action();
+    leaving.current = false;
+    setBusy(false);
+  }
   useEffect(() => {
     if (!ready || !c || readOnly) return;
     setStatus("저장 중");
     const t = setTimeout(() => {
-      queue.current = queue.current
-        .catch(() => {})
-        .then(() => write("drafts", drafts))
-        .then(() => setStatus("이 기기에 저장됨"))
-        .catch(() => setStatus("저장 실패 · JSON을 내보내세요"));
+      void persist();
     }, 500);
     return () => clearTimeout(t);
   }, [drafts, ready, readOnly]);
@@ -300,12 +356,17 @@ export default function Studio({
             if (type === "ALL" || type === "ANY")
               set({
                 type,
-                conditions: [{ type: "FILE_READ", id: c.files[0].id }],
+                conditions: [
+                  { type: "FILE_READ", id: c.files[0]?.id || "missing" },
+                ],
               });
             else if (type === "NOT")
               set({
                 type,
-                condition: { type: "FILE_READ", id: c.files[0].id },
+                condition: {
+                  type: "FILE_READ",
+                  id: c.files[0]?.id || "missing",
+                },
               });
             else if (type === "FLAG_EQUALS")
               set({ type, id: "flag-new", value: true });
@@ -361,7 +422,7 @@ export default function Studio({
                     ...cond,
                     conditions: [
                       ...cond.conditions,
-                      { type: "FILE_READ", id: c.files[0].id },
+                      { type: "FILE_READ", id: c.files[0]?.id || "missing" },
                     ],
                   })
                 }
@@ -623,35 +684,27 @@ export default function Studio({
       });
     });
   return (
-    <div className="studio">
+    <div className="studio" inert={busy}>
       <header className="topbar">
-        <button
-          className="brand-button"
-          onClick={() => {
-            if (!readOnly)
-              queue.current = queue.current
-                .catch(() => {})
-                .then(() => write("drafts", drafts));
-            onHome();
-          }}
-        >
+        <button className="brand-button" onClick={() => void navigate(onHome)}>
           <Brand />
         </button>
         <b className="studio-name">사건 제작소</b>
         <nav>
           <span className="save-state" role="status">
-            {status}
+            {readOnly ? accessNote || status : status}
           </span>
           <button
-            onClick={() => {
-              queue.current = queue.current
-                .catch(() => {})
-                .then(() => write("drafts", drafts));
-              setLastTest(d.revision);
-              const snap = structuredClone(c);
-              snap.versionId = c.versionId + "-r" + d.revision;
-              onTest(snap);
-            }}
+            onClick={() =>
+              void navigate(() => {
+                setLastTest(d.revision);
+                const snap = structuredClone(c);
+                const suffix = "-r" + d.revision;
+                snap.versionId =
+                  c.versionId.slice(0, 80 - suffix.length) + suffix;
+                onTest(snap);
+              })
+            }
             className="primary"
             disabled={validation.errors.length > 0 || readOnly}
           >
@@ -659,16 +712,9 @@ export default function Studio({
           </button>
         </nav>
       </header>
+      {!readOnly && accessNote && <p className="info-banner">{accessNote}</p>}
       <div className="studio-toolbar">
-        <button
-          onClick={() => {
-            if (!readOnly)
-              queue.current = queue.current
-                .catch(() => {})
-                .then(() => write("drafts", drafts));
-            onHome();
-          }}
-        >
+        <button onClick={() => void navigate(onHome)}>
           <ArrowLeft size={16} /> 돌아가기
         </button>
         <select

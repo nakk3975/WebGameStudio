@@ -39,12 +39,21 @@ export type Result = { state: State; message?: string };
 const add = (a: string[], id: string) => {
   if (!a.includes(id)) a.push(id);
 };
+// IDs are data, including names such as "constructor" and "__proto__".
+// structuredClone restores Object.prototype, so normalize after every clone.
+function records(s: State): State {
+  s.flags = Object.assign(Object.create(null), s.flags);
+  s.timers = Object.assign(Object.create(null), s.timers);
+  s.attempts = Object.assign(Object.create(null), s.attempts);
+  s.hintLevels = Object.assign(Object.create(null), s.hintLevels);
+  return s;
+}
 const order = (
   a: { priority: number; id: string },
   b: { priority: number; id: string },
 ) => a.priority - b.priority || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
 export function initialState(c: CasePackage): State {
-  return {
+  return records({
     caseVersionId: c.versionId,
     schemaVersion: 1,
     engineVersion: ENGINE,
@@ -63,7 +72,7 @@ export function initialState(c: CasePackage): State {
     eventSeq: 0,
     attempts: {},
     hintLevels: {},
-  };
+  });
 }
 export function matches(c: Condition, s: State): boolean {
   switch (c.type) {
@@ -89,13 +98,20 @@ export function matches(c: Condition, s: State): boolean {
 }
 export function canOpen(c: CasePackage, s: State, id: string): boolean {
   const f = c.files.find((x) => x.id === id);
-  if (
-    !f ||
-    !s.visibleFileIds.includes(id) ||
-    (f.puzzleId && !s.solvedPuzzleIds.includes(f.puzzleId))
-  )
-    return false;
-  return !f.parentId || canOpen(c, s, f.parentId);
+  return (
+    !!f &&
+    canInspect(c, s, id) &&
+    (!f.puzzleId || s.solvedPuzzleIds.includes(f.puzzleId))
+  );
+}
+// A file's own lock screen is accessible; hidden files and locked ancestors are not.
+export function canInspect(c: CasePackage, s: State, id: string): boolean {
+  const f = c.files.find((x) => x.id === id);
+  return (
+    !!f &&
+    s.visibleFileIds.includes(id) &&
+    (!f.parentId || canOpen(c, s, f.parentId))
+  );
 }
 export function transition(
   c: CasePackage,
@@ -110,7 +126,7 @@ export function transition(
   if (event.type === "RESUME")
     return { state: { ...previous, mode: "RUNNING" } };
   if (previous.mode !== "RUNNING") return { state: previous };
-  const s = structuredClone(previous);
+  const s = records(structuredClone(previous));
   let message: string | undefined;
   try {
     switch (event.type) {
@@ -129,6 +145,11 @@ export function transition(
         const p = c.puzzles.find((x) => x.id === event.id);
         if (!p || typeof event.answer !== "string" || event.answer.length > 100)
           return { state: previous, message: "유효하지 않은 암호 입력입니다." };
+        if (!c.files.some((f) => f.puzzleId === p.id && canInspect(c, s, f.id)))
+          return {
+            state: previous,
+            message: "먼저 잠긴 파일에 접근해 주세요.",
+          };
         s.attempts[p.id] = (s.attempts[p.id] || 0) + 1;
         const normalize = (v: string) => {
           v = v.trim().normalize("NFC");
@@ -337,8 +358,8 @@ export function restoreState(c: CasePackage, input: unknown): State {
     (s.endingId && !c.endings.some((e) => e.id === s.endingId))
   )
     throw Error("엔딩 저장 오류");
-  return {
+  return records({
     ...structuredClone(s),
     mode: s.mode === "ENDED" ? "ENDED" : "PAUSED",
-  };
+  });
 }

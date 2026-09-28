@@ -42,3 +42,9 @@
 2026-09-28 사용자가 공개 GitHub 저장소·커밋·Neon·Render 생성을 승인했다. 새 WebGameStudio 저장소와 WebGameStudio-GhostDesk DB를 만들고, 공개 사건 카탈로그와 버전 패키지 조회 API를 추가했다. 서버는 SELECT만 가능한 ghostdesk_app 역할을 사용하며, 프런트에는 DB 자격 증명을 포함하지 않는다. 별도 DB 브랜치에서 초기 마이그레이션을 검증했다.
 
 앱 계정 인증, 개인 초안·플레이 저장의 서버 동기화, mutation receipt, draft revision 409, 제작기의 immutable version 발행, 초대·두 사용자 권한 검사는 후속 작업이다. 자세한 배포 구성은 DEPLOYMENT.md를 참고한다.
+
+## 재검증 보완
+
+게임·제작기 화면 이동은 저장 완료를 기다리고 실패 시 현재 화면을 유지한다. 제작기 테스트 동안 초안 선택과 Undo/Redo를 유지하며 Web Locks도 계속 보유한다. 엔진과 UI가 숨김·상위 폴더 잠금 접근 검사를 공유한다. ID는 프로토타입과 분리된 사전에 보관하고, 복제 ID에는 고유 순번을 포함한다.
+
+웹 제작기는 지연 로딩한다. `npm run standalone`은 별도의 단일 번들을 만들어 `output/GhostDesk_Play.html`을 생성하므로 웹 배포용 dist를 변경하지 않는다. CI에서도 이 경로를 검사한다.

@@ -15,6 +15,15 @@ export type Save = {
   checkpoint: State | null;
 };
 export type Draft = { document: CasePackage; revision: number };
+// Serialize snapshots, expose each transaction's failure, and let a retry recover.
+export function createSaveQueue<T>(persist: (snapshot: T) => Promise<void>) {
+  let pending = Promise.resolve();
+  return (value: T): Promise<void> => {
+    const snapshot = structuredClone(value);
+    pending = pending.catch(() => {}).then(() => persist(snapshot));
+    return pending;
+  };
+}
 let dbPromise: Promise<IDBDatabase> | undefined;
 function db() {
   return (dbPromise ??= new Promise<IDBDatabase>((resolve, reject) => {
@@ -59,9 +68,8 @@ export function parseSave(raw: unknown): Save {
   const result = validateCase(p.case);
   if (!result.data) throw Error(result.errors[0]?.message || "사건 검증 실패");
   const state = restoreState(result.data, p.state);
-  const checkpoint = p.checkpoint
-    ? restoreState(result.data, p.checkpoint)
-    : null;
+  const checkpoint =
+    p.checkpoint !== null ? restoreState(result.data, p.checkpoint) : null;
   if (checkpoint?.mode === "ENDED")
     throw Error("조사 복귀 지점이 올바르지 않습니다.");
   return {

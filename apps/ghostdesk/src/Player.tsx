@@ -33,10 +33,11 @@ import {
 import type { CaseFile } from "../../../packages/contracts/src";
 import {
   transition,
+  canInspect,
   type Event,
   type State,
 } from "../../../packages/engine-ghostdesk/src";
-import { write, download, type Save } from "./storage";
+import { write, download, createSaveQueue, type Save } from "./storage";
 import { Brand, Modal } from "./App";
 const Icon = ({ file }: { file: CaseFile }) =>
   file.id === "trash" ? (
@@ -84,10 +85,12 @@ export default function Player({
     [evidence, setEvidence] = useState<string[]>([]),
     [hintId, setHintId] = useState<string | null>(null),
     [reveal, setReveal] = useState(false),
-    [endVisible, setEndVisible] = useState(state.mode === "ENDED");
+    [endVisible, setEndVisible] = useState(state.mode === "ENDED"),
+    [exiting, setExiting] = useState(false);
   const area = useRef<HTMLDivElement>(null),
     latest = useRef<Save>(initial),
-    writeQueue = useRef(Promise.resolve()),
+    saveQueue = useRef(createSaveQueue<Save>((s) => write("play", s))),
+    leaving = useRef(false),
     drag = useRef<{ id: string; dx: number; dy: number } | null>(null),
     previousSolved = useRef(state.solvedPuzzleIds.length);
   latest.current = {
@@ -126,17 +129,36 @@ export default function Player({
       window.removeEventListener("blur", pause);
     };
   }, [send]);
-  function persist(s: Save) {
-    if (isTest || s.state.mode === "ERROR") return;
+  async function persist(s: Save, final = false): Promise<boolean> {
+    if (isTest) return true;
+    if (s.state.mode === "ERROR" || (leaving.current && !final)) return false;
     setSaveStatus("저장 중");
-    writeQueue.current = writeQueue.current
-      .catch(() => {})
-      .then(() => write("play", s))
-      .then(() => {
-        setSaveStatus("이 기기에 저장됨");
-        onSaved(s);
-      })
-      .catch(() => setSaveStatus("저장 실패 · 진행을 내보내세요"));
+    try {
+      await saveQueue.current(s);
+      setSaveStatus("이 기기에 저장됨");
+      onSaved(s);
+      return true;
+    } catch {
+      setSaveStatus("저장 실패 · 진행을 내보내세요");
+      return false;
+    }
+  }
+  async function leave() {
+    if (leaving.current) return;
+    if (isTest) return onExit();
+    leaving.current = true;
+    setExiting(true);
+    const snapshot = structuredClone(latest.current);
+    if (snapshot.state.mode === "RUNNING") snapshot.state.mode = "PAUSED";
+    setState(snapshot.state);
+    if (await persist(snapshot, true)) onExit();
+    else {
+      leaving.current = false;
+      setExiting(false);
+      setToast(
+        "저장에 실패해 이동을 멈췄습니다. 진행을 내보내거나 다시 시도하세요.",
+      );
+    }
   }
   const progressKey = JSON.stringify([
     state.readFileIds,
@@ -188,6 +210,12 @@ export default function Player({
   function open(id: string) {
     const f = c.files.find((x) => x.id === id);
     if (f) {
+      if (!canInspect(c, state, id)) {
+        setToast(
+          "아직 접근할 수 없는 파일입니다. 폴더의 잠금과 공개 조건을 확인하세요.",
+        );
+        return;
+      }
       send({ type: "OPEN_FILE", id });
       if (f.type === "CHAT_LINK") send({ type: "READ_MESSAGES" });
     }
@@ -291,7 +319,11 @@ export default function Player({
   function title(id: string) {
     return (
       c.files.find((f) => f.id === id)?.title ||
-      { board: "증거 보드", conclusion: "결론 작성" }[id] ||
+      (id === "@board"
+        ? "증거 보드"
+        : id === "@conclusion"
+          ? "결론 작성"
+          : "") ||
       id
     );
   }
@@ -329,7 +361,7 @@ export default function Player({
     );
   }
   function content(id: string) {
-    if (id === "board")
+    if (id === "@board")
       return (
         <div className="board-content">
           <div className="section-kicker">
@@ -350,8 +382,11 @@ export default function Player({
                   <button
                     className="quiet"
                     onClick={() => {
-                      const f = c.files.find((f) => f.clueId === cl.id);
+                      const f = c.files.find(
+                        (f) => f.clueId === cl.id && canInspect(c, state, f.id),
+                      );
                       if (f) open(f.id);
+                      else setToast("원본 파일은 아직 접근할 수 없습니다.");
                     }}
                   >
                     원본 열기 <ArrowLeft size={14} />
@@ -381,7 +416,7 @@ export default function Player({
           </small>
         </div>
       );
-    if (id === "conclusion")
+    if (id === "@conclusion")
       return (
         <div className="conclusion-content">
           <div className="section-kicker">FINAL DEDUCTION</div>
@@ -439,6 +474,8 @@ export default function Player({
       );
     const f = c.files.find((x) => x.id === id);
     if (!f) return null;
+    if (!canInspect(c, state, id))
+      return <p className="empty">아직 접근할 수 없는 파일입니다.</p>;
     if (f.puzzleId && !state.solvedPuzzleIds.includes(f.puzzleId)) {
       const p = c.puzzles.find((p) => p.id === f.puzzleId)!;
       return (
@@ -448,9 +485,7 @@ export default function Player({
           </div>
           <div className="section-kicker">PROTECTED ARCHIVE</div>
           <h2>보관함이 잠겨 있습니다.</h2>
-          <p>
-            마지막 전송 요청의 <b>실제 시각</b>을 입력하세요.
-          </p>
+          <p>{p.title}</p>
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -475,7 +510,7 @@ export default function Player({
                 aria-label="보관함 암호"
                 maxLength={100}
                 autoComplete="off"
-                placeholder="HHMM"
+                placeholder="암호 입력"
                 className="code-input"
               />
             </label>
@@ -487,7 +522,9 @@ export default function Player({
             앞뒤 공백 제거 · NFC 정규화 ·{" "}
             {p.ignoreCase ? "대소문자 무시" : "대소문자 구분"}
             <br />
-            시도 {state.attempts[p.id] || 0}회 · 횟수 제한 없음
+            시도{" "}
+            {Object.hasOwn(state.attempts, p.id) ? state.attempts[p.id] : 0}회 ·
+            횟수 제한 없음
           </p>
           <button className="quiet" onClick={() => setHintId(p.id)}>
             <Lightbulb size={16} /> 도움이 필요해요
@@ -588,14 +625,11 @@ export default function Player({
     );
   }
   return (
-    <div className="player">
+    <div className="player" inert={exiting}>
       <header className="topbar">
         <button
           className="brand-button"
-          onClick={() => {
-            persist(latest.current);
-            onExit();
-          }}
+          onClick={leave}
           aria-label={isTest ? "제작기로 돌아가기" : "홈으로"}
         >
           <Brand />
@@ -756,14 +790,14 @@ export default function Player({
             {c.clues
               .filter((cl) => state.clueIds.includes(cl.id))
               .map((cl) => (
-                <button key={cl.id} onClick={() => open("board")}>
+                <button key={cl.id} onClick={() => open("@board")}>
                   <Check size={14} />
                   {cl.title}
                 </button>
               ))}
             {!state.clueIds.length && <p>아직 단서를 발견하지 못했습니다.</p>}
           </div>
-          <button className="secondary" onClick={() => open("board")}>
+          <button className="secondary" onClick={() => open("@board")}>
             <Network size={17} /> 증거 보드
           </button>
           <div className="investigation-bottom">
@@ -778,7 +812,7 @@ export default function Player({
               onClick={() =>
                 state.mode === "ENDED"
                   ? setEndVisible(true)
-                  : open("conclusion")
+                  : open("@conclusion")
               }
             >
               <ClipboardCheck size={17} />
@@ -816,14 +850,14 @@ export default function Player({
         </div>
         <button
           className="mobile-board"
-          onClick={() => open("board")}
+          onClick={() => open("@board")}
           aria-label="증거 보드"
         >
           <Network size={18} />
         </button>
         <button
           className="mobile-board"
-          onClick={() => open("conclusion")}
+          onClick={() => open("@conclusion")}
           aria-label="결론 작성"
         >
           <ClipboardCheck size={18} />
@@ -892,7 +926,9 @@ export default function Player({
         >
           {(() => {
             const p = c.puzzles.find((x) => x.id === hintId)!;
-            const n = state.hintLevels[p.id] || 0;
+            const n = Object.hasOwn(state.hintLevels, p.id)
+              ? state.hintLevels[p.id]
+              : 0;
             return (
               <>
                 <p className="muted">
@@ -971,12 +1007,7 @@ export default function Player({
             >
               <Download size={16} /> 진행 내보내기
             </button>
-            <button
-              onClick={() => {
-                persist(latest.current);
-                onExit();
-              }}
-            >
+            <button onClick={leave}>
               {isTest ? "제작기로 돌아가기" : "사건 선택으로"}
             </button>
           </div>

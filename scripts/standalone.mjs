@@ -1,6 +1,16 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-const dir = "apps/ghostdesk/dist";
+import { build } from "vite";
+// The hosted app splits the editor. Offline HTML needs a separate, single bundle.
+const dir = path.resolve("output/standalone-dist");
+await build({
+  define: { "import.meta.env.VITE_API_BASE_URL": "undefined" },
+  build: {
+    outDir: dir,
+    cssCodeSplit: false,
+    rolldownOptions: { output: { codeSplitting: false } },
+  },
+});
 let html = await fs.readFile(dir + "/index.html", "utf8");
 for (const match of [
   ...html.matchAll(/<script[^>]*src="([^"]+)"[^>]*><\/script>/g),
@@ -21,7 +31,13 @@ for (const match of [
   html = html.replace(match[0], () => "<style>" + css + "</style>");
 }
 const notices = await fs.readFile("assets/THIRD_PARTY_NOTICES.txt", "utf8");
-html = html.replace("</head>", () => "<!-- Third-party licenses\n" + notices.replace(/--/g, "- -") + "\n-->\n</head>");
+html = html.replace(
+  "</head>",
+  () =>
+    "<!-- Third-party licenses\n" +
+    notices.replace(/--/g, "- -") +
+    "\n-->\n</head>",
+);
 await fs.mkdir("output", { recursive: true });
 await fs.writeFile("output/GhostDesk_Play.html", html);
 console.log(

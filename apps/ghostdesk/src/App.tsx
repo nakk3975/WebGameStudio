@@ -1,4 +1,11 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  lazy,
+  Suspense,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import {
   Ghost,
   ArrowUpRight,
@@ -27,7 +34,7 @@ import {
   type Save,
 } from "./storage";
 import Player from "./Player";
-import Studio from "./Studio";
+const Studio = lazy(() => import("./Studio"));
 import { loadPublishedCase } from "./catalog";
 export function Modal({
   title,
@@ -149,6 +156,17 @@ export default function App() {
       className={motion ? "app reduce-motion" : "app"}
       style={{ fontSize: `${font}rem` }}
     >
+      {(view === "studio" || (view === "play" && test)) && (
+        <div hidden={view !== "studio"}>
+          <Suspense
+            fallback={
+              <div className="loading">사건 제작소를 여는 중입니다.</div>
+            }
+          >
+            <Studio onHome={goHome} onTest={(c) => start(c, true)} />
+          </Suspense>
+        </div>
+      )}
       {view === "play" && active ? (
         <Player
           initial={active}
@@ -162,9 +180,7 @@ export default function App() {
           }}
           onSettings={() => setSettings(true)}
         />
-      ) : view === "studio" ? (
-        <Studio onHome={goHome} onTest={(c) => start(c, true)} />
-      ) : (
+      ) : view === "home" ? (
         <>
           <header className="topbar">
             <Brand />
@@ -275,7 +291,7 @@ export default function App() {
             </footer>
           </main>
         </>
-      )}
+      ) : null}
       <input
         hidden
         ref={file}

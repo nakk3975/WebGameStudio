@@ -416,7 +416,9 @@ export function duplicateCase(c: CasePackage, suffix: string): CasePackage {
     conditionAtoms(r.when).forEach((a) => keys.add(a.id));
     r.then.forEach((e) => keys.add(e.id));
   });
-  const map = new Map([...keys].map((x) => [x, `${x.slice(0, 50)}-${suffix}`]));
+  const map = new Map(
+    [...keys].map((x, i) => [x, `${x.slice(0, 40)}-${i}-${suffix}`]),
+  );
   function walk(v: unknown, key = ""): unknown {
     if (Array.isArray(v)) return v.map((x) => walk(x, key));
     if (v && typeof v === "object")
