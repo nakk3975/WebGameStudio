@@ -83,11 +83,11 @@ it("opens the night handover as text and its photograph in a separate window", a
   const memo = windowByTitle("야간_인계.txt");
   expect(memo.querySelectorAll("img, video")).toHaveLength(0);
   expect(memo.textContent).toContain("404호 문이 살짝 열려");
-  await click("야간 프런트 · 사진 열기");
+  await click("야간 프런트 · 이미지 열기");
   expect(windowByTitle("야간 프런트").querySelector("img")).toBeTruthy();
   expect(memo.querySelector("img")).toBeNull();
-  await click("사진 자료");
-  const files = host.querySelector('[aria-label="사진 자료 목록"]')!;
+  await click("이미지 자료");
+  const files = host.querySelector('[aria-label="이미지 자료 목록"]')!;
   expect(files.textContent).toContain("야간 프런트");
   expect(files.textContent).not.toContain("지하 세탁실");
   expect(files.textContent).toContain(hotelStill.title);
@@ -104,7 +104,7 @@ it("uses the recording frame for the separate photo and date puzzle, with no unr
   );
   expect(clip.querySelectorAll("img")).toHaveLength(0);
   expect(clip.textContent).not.toContain("사람의 동작은 복원하지");
-  await click(hotelStill.title + " · 사진 열기");
+  await click(hotelStill.title + " · 이미지 열기");
   expect(
     windowByTitle(hotelStill.title).querySelector("img")?.getAttribute("src"),
   ).toBe(hotelClip.src);
@@ -127,7 +127,7 @@ it("keeps unlocked later photographs separate from their text records", async ()
     c.files.find((f) => f.id === "hotel-404-record-4")!.title,
   );
   expect(record.querySelector("img")).toBeNull();
-  await click("지하 세탁실 · 사진 열기");
+  await click("지하 세탁실 · 이미지 열기");
   expect(windowByTitle("지하 세탁실").querySelector("img")).toBeTruthy();
 });
 

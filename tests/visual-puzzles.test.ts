@@ -18,6 +18,7 @@ import {
 import { parseSave } from "../apps/ghostdesk/src/storage";
 import expanded from "../apps/ghostdesk/src/expanded-cases.json";
 import visual from "../apps/ghostdesk/src/visual-cases.json";
+import motion from "../apps/ghostdesk/src/motion-cases.json";
 import { auctionObservationAnswer } from "../apps/ghostdesk/src/recording-timing";
 import { recordText } from "../apps/ghostdesk/src/presentation";
 
@@ -84,7 +85,7 @@ it("declares visual sources explicitly, without changing the saved schema or eng
   );
 });
 
-describe.each([...expanded, ...visual])(
+describe.each([...expanded, ...visual, ...motion])(
   "previous $versionId five-stage edition",
   (old) => {
     it("preserves the exact package, answers, progress and finished ending", () => {
@@ -109,9 +110,7 @@ describe.each([...expanded, ...visual])(
       expect(save.case).toEqual(old);
       expect(save.state.solvedPuzzleIds).toEqual(s.solvedPuzzleIds);
       expect(restoreState(c, save.state).mode).toBe("PAUSED");
-      expect(
-        caseLibrary.find((e) => e.case.caseId === c.caseId)!.case.endings,
-      ).toEqual(c.endings);
+      expect(save.case.endings).toEqual(old.endings);
     });
   },
 );
@@ -131,9 +130,8 @@ it("requires the two observed auction transitions, not any seven-second gap", ()
     expect(auctionObservationAnswer(value, 9)).toBe("");
 });
 
-it("keeps all answers/endings while introducing only four new editions", () => {
-  expect(caseLibrary[0].case).toEqual(visual[0]);
-  for (const { case: c } of caseLibrary) {
+it("keeps the four motion editions and their original answers/endings archived", () => {
+  for (const c of motion) {
     const previous = visual.find((v) => v.caseId === c.caseId)!;
     expect(c.puzzles.map((p) => p.answer)).toEqual(
       previous.puzzles.map((p) => p.answer),

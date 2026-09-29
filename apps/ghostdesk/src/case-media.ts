@@ -14,6 +14,13 @@ import islandRope from "./assets/island-rope.webp";
 import islandBuoy from "./assets/island-buoy.webp";
 import { stageClip, auctionClip, receiverClip } from "./recordings";
 import { hotelStill } from "./cctv";
+import labChapter from "./assets/lab-chapter.webp";
+import hotelChapter from "./assets/hotel-chapter.webp";
+import auctionChapter from "./assets/auction-chapter.webp";
+import stageChapter from "./assets/stage-chapter.webp";
+import islandChapter from "./assets/island-chapter.webp";
+import outputMeter from "./assets/stage-output-meter.mp4";
+import outputPoster from "./assets/stage-output-meter.webp";
 
 export type CaseMedia = {
   id: string;
@@ -39,6 +46,74 @@ type Attachment = CaseMedia & {
 
 // Presentation-only attachments: published packages and saved answers stay immutable.
 export const mediaAttachments: Attachment[] = [
+  ...[
+    [
+      "demo-0317",
+      labChapter,
+      "내부 보관함 인덱스",
+      "6b",
+      "A: TX-0917, 2048 B, 7C21. B: TX-0917, 2048 B, 9A06. C: TX-0920, 2048 B, 7C21.",
+    ],
+    [
+      "hotel-404",
+      hotelChapter,
+      "카메라 대체 입력표",
+      "6a",
+      "A: CAM-402, 06-12, 12초. B: CAM-404, 09-27, 20초. C: CAM-404, 06-12, 12초.",
+    ],
+    [
+      "auction-seven",
+      auctionChapter,
+      "작품 포장 대조표",
+      "6b",
+      "상자 A: LOT-26, 푸른 궤도, 60×80. 상자 B: LOT-27, 푸른 궤도, 60×80. 상자 C: LOT-27, 푸른 궤도, 50×70. 단위는 cm이며 입찰 봉투와 별개입니다.",
+    ],
+    [
+      "encore-last",
+      stageChapter,
+      "음향 출력 연결도",
+      "7a",
+      "보컬과 비상 트랙은 B1을 통해 객석으로, 인터컴은 B2를 통해 스태프 헤드셋으로 갑니다. 안내 파일은 선택한 버스로 갑니다.",
+    ],
+    [
+      "monday-loop",
+      islandChapter,
+      "독립 기록의 보관 위치",
+      "6b",
+      "관측 PC는 건물 전원과 복원되는 작업 목록을 사용합니다. 부표는 독립 배터리와 부표 기록함을 사용합니다. 통신 중계기는 독립 배터리와 중계기 접수 원장을 사용합니다.",
+    ],
+  ].map(([caseId, src, title, stage, alt]) => ({
+    id: `${caseId}-chapter-image`,
+    caseId,
+    src,
+    title,
+    alt,
+    sourceIds: [`${caseId}-record-${stage}`],
+    versionIds: [`${caseId}-v5`],
+    caption:
+      "후속 조사 문서 이미지입니다. 표의 모든 값은 연결된 원문에서도 읽을 수 있습니다.",
+  })),
+  {
+    id: "stage-output-meter",
+    caseId: "encore-last",
+    src: outputPoster,
+    video: outputMeter,
+    sourceIds: ["encore-last-record-9b"],
+    versionIds: ["encore-last-v5"],
+    title: "두 출력 버스 기록",
+    caption:
+      "출력 기록을 같은 시간 간격으로 옮겼습니다. 객석과 헤드셋을 구분해 살펴보세요.",
+    alt: "21:56:50 시작. 21:56:51~54에는 B2 스태프 헤드셋에 NOTICE-02 신호가 나타납니다. 21:56:52부터는 B1 객석에 REHEARSAL-06 신호가 나타납니다. 이 구간의 B1에는 NOTICE-02가 없습니다. 사람의 모습이나 위치를 보여 주는 영상이 아닙니다.",
+    recording: {
+      duration: 11,
+      step: 0.1,
+      label: "출력계 기록 재현 · 실제 시간 간격",
+      stamp: (t) => {
+        const s = 50 + Math.floor(t);
+        return `제어기 21:${String(56 + Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+      },
+    },
+  },
   {
     ...hotelStill,
     caseId: "hotel-404",
@@ -48,19 +123,19 @@ export const mediaAttachments: Attachment[] = [
     ...stageClip,
     caseId: "encore-last",
     sourceIds: ["encore-last-f1"],
-    versionIds: ["encore-last-v4"],
+    versionIds: ["encore-last-v4", "encore-last-v5"],
   },
   {
     ...auctionClip,
     caseId: "auction-seven",
     sourceIds: ["auction-seven-record-4"],
-    versionIds: ["auction-seven-v4"],
+    versionIds: ["auction-seven-v4", "auction-seven-v5"],
   },
   {
     ...receiverClip,
     caseId: "monday-loop",
     sourceIds: ["monday-loop-f1"],
-    versionIds: ["monday-loop-v4"],
+    versionIds: ["monday-loop-v4", "monday-loop-v5"],
   },
   {
     id: "lab-receipts",
@@ -173,7 +248,7 @@ export const mediaAttachments: Attachment[] = [
 ];
 
 export function auctionEvidencePhoto(c: CasePackage) {
-  return ["auction-seven-v3", "auction-seven-v4"].includes(c.versionId)
+  return c.puzzles.some((p) => p.visualId === "auction-seal")
     ? auctionSeals
     : auctionEnvelopes;
 }
@@ -195,7 +270,7 @@ export function availableMedia(
     )
     .map((item) =>
       item.id === "auction-envelopes" &&
-      ["auction-seven-v3", "auction-seven-v4"].includes(c.versionId)
+      c.puzzles.some((p) => p.visualId === "auction-seal")
         ? {
             ...item,
             src: auctionEvidencePhoto(c),

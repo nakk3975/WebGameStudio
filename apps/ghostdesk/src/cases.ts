@@ -3,6 +3,7 @@ import additions from "./additional-cases.json";
 import expanded from "./expanded-cases.json";
 import visual from "./visual-cases.json";
 import motion from "./motion-cases.json";
+import tenStage from "./ten-stage-cases.json";
 import { sample } from "./sample";
 
 export type CaseEntry = {
@@ -68,14 +69,15 @@ export const archivedCases = [
   ...legacyCases,
   ...(expanded as CasePackage[]),
   ...(visual as CasePackage[]),
+  ...(motion as CasePackage[]),
 ];
-export const caseLibrary: CaseEntry[] = (
-  [visual[0], ...motion] as CasePackage[]
-).map((c, i) => ({
-  case: c,
-  number: String(i + 1).padStart(3, "0"),
-  ...details[i],
-}));
+export const caseLibrary: CaseEntry[] = (tenStage as CasePackage[]).map(
+  (c, i) => ({
+    case: c,
+    number: String(i + 1).padStart(3, "0"),
+    ...details[i],
+  }),
+);
 export function isOfficialCaseVersion(c: CasePackage) {
   return [...archivedCases, ...caseLibrary.map((e) => e.case)].some(
     (official) =>

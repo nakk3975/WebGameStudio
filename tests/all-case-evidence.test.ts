@@ -37,15 +37,17 @@ afterEach(async () => {
   vi.unstubAllGlobals();
   vi.useRealTimers();
 });
-function unlocked(c: CasePackage) {
-  return c.puzzles.reduce(
-    (s, p) =>
-      transition(c, s, { type: "SOLVE", id: p.id, answer: p.answer }).state,
-    initialState(c),
-  );
+function unlocked(c: CasePackage, count = c.puzzles.length) {
+  return c.puzzles
+    .slice(0, count)
+    .reduce(
+      (s, p) =>
+        transition(c, s, { type: "SOLVE", id: p.id, answer: p.answer }).state,
+      initialState(c),
+    );
 }
-async function mount(c: CasePackage) {
-  const state = unlocked(c);
+async function mount(c: CasePackage, count = c.puzzles.length) {
+  const state = unlocked(c, count);
   const initial: Save = {
     format: "ghostdesk-save-1",
     case: c,
@@ -82,6 +84,63 @@ function windowByTitle(title: string) {
 }
 
 it.each(caseLibrary)(
+  "$number accepts all five new answers through the player controls",
+  async ({ case: c, number }) => {
+    const walkthrough: Record<string, string[]> = {
+      "001": ["A", "0312", "3142", "C", "B"],
+      "002": ["C", "2358", "2413", "B", "A"],
+      "003": ["B", "222", "3241", "C", "B"],
+      "004": ["C", "B2", "2413", "A", "B"],
+      "005": ["B", "0642", "2413", "C", "B"],
+    };
+    await mount(c, 5);
+    for (let index = 5; index < 10; index++) {
+      const p = c.puzzles[index];
+      const f = c.files.find((f) => f.puzzleId === p.id)!;
+      await openFile(f.id);
+      const win = windowByTitle(f.title);
+      const answer = walkthrough[number][index - 5];
+      if (p.inputMode === "text") {
+        const input = win.querySelector<HTMLInputElement>(
+          'input[name="answer"]',
+        )!;
+        await act(async () => {
+          Object.getOwnPropertyDescriptor(
+            HTMLInputElement.prototype,
+            "value",
+          )!.set!.call(input, answer);
+          input.dispatchEvent(new Event("input", { bubbles: true }));
+        });
+      } else {
+        for (const value of answer) {
+          const label = p.choices!.find(
+            (choice) => choice.value === value,
+          )!.label;
+          const button = [
+            ...win.querySelectorAll<HTMLButtonElement>(
+              ".puzzle-options button",
+            ),
+          ].find((b) => b.textContent?.includes(label))!;
+          await act(async () => button.click());
+        }
+      }
+      const submit = win.querySelector<HTMLButtonElement>(
+        'button[type="submit"]',
+      )!;
+      expect(submit.disabled).toBe(false);
+      await act(async () => submit.click());
+      expect(host.querySelector(".stage-rail")?.textContent).toContain(
+        `확인 ${index + 1}/10`,
+      );
+      const close = win.querySelector<HTMLButtonElement>(
+        `button[aria-label="${f.title} 닫기"]`,
+      )!;
+      await act(async () => close.click());
+    }
+  },
+);
+
+it.each(caseLibrary)(
   "$number text records link to separate photos and recordings remain playable",
   async ({ case: c }) => {
     const state = await mount(c);
@@ -90,6 +149,11 @@ it.each(caseLibrary)(
     for (const f of c.files.filter(
       (f) => f.type === "TEXT" && f.parentId === null,
     )) {
+      // Respect the product limit of twelve simultaneous windows.
+      for (const close of host.querySelectorAll<HTMLButtonElement>(
+        'section button[aria-label$=" 닫기"]',
+      ))
+        await act(async () => close.click());
       await openFile(f.id);
       const win = windowByTitle(f.title);
       expect(win.querySelectorAll("img"), f.title).toHaveLength(0);
@@ -99,7 +163,7 @@ it.each(caseLibrary)(
       );
       for (const item of attached.filter((m) => !m.video)) {
         const button = [...win.querySelectorAll("button")].find((b) =>
-          b.textContent?.includes(item.title + " · 사진 열기"),
+          b.textContent?.includes(item.title + " · 이미지 열기"),
         );
         expect(button).toBeTruthy();
         await act(async () => button!.click());
@@ -110,11 +174,11 @@ it.each(caseLibrary)(
       }
     }
     const folder = host.querySelector<HTMLButtonElement>(
-      'button[aria-label="사진 자료"]',
+      'button[aria-label="이미지 자료"]',
     )!;
     expect(folder).toBeTruthy();
     await act(async () => folder.click());
-    const list = host.querySelector('[aria-label="사진 자료 목록"]')!;
+    const list = host.querySelector('[aria-label="이미지 자료 목록"]')!;
     for (const item of media)
       expect(list.textContent?.includes(item.title)).toBe(!item.video);
   },
@@ -158,9 +222,11 @@ it("describes signal gaps in the video edition and keeps the older written Morse
   const c = caseLibrary.find(
     (entry) => entry.case.caseId === "monday-loop",
   )!.case;
-  const message = c.messages.find((m) => m.text.includes("빗금"))!;
-  expect(messageText(c, message)).toContain("긴 쉼");
-  expect(messageText(c, message)).not.toContain("빗금");
+  const legacy = archivedCases.find((c) => c.versionId === "monday-loop-v4")!;
+  const message = legacy.messages.find((m) => m.text.includes("빗금"))!;
+  expect(c.messages.find((m) => m.id === message.id)?.text).toContain("긴 쉼");
+  expect(messageText(legacy, message)).toContain("긴 쉼");
+  expect(messageText(legacy, message)).not.toContain("빗금");
   const older = archivedCases.find((c) => c.versionId === "monday-loop-v3")!;
   expect(messageText(older, message)).toBe(message.text);
 });

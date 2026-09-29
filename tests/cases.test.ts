@@ -12,11 +12,11 @@ import {
 import { parseSave } from "../apps/ghostdesk/src/storage";
 
 const solutions = [
-  ["0310", "C", "2413", "B:0", "B"],
-  ["B204", "C:0612", "12", "3142", "12"],
-  ["ORBIT", "B", "222", "7", "2413"],
-  ["2413", "B", "138", "3241", "B:C"],
-  ["SOS", "1086", "0916", "B:B", "3142"],
+  ["0310", "C", "2413", "B:0", "B", "A", "0312", "3142", "C", "B"],
+  ["B204", "C:0612", "12", "3142", "12", "C", "2358", "2413", "B", "A"],
+  ["ORBIT", "B", "222", "7", "2413", "B", "222", "3241", "C", "B"],
+  ["2413", "B", "138", "3241", "B:C", "C", "B2", "2413", "A", "B"],
+  ["SOS", "1086", "0916", "B:B", "3142", "B", "0642", "2413", "C", "B"],
 ];
 
 describe.each(
@@ -40,11 +40,11 @@ describe.each(
     }
     return s;
   }
-  it("requires all five stages in order and resumes at every stage", () => {
-    expect(c.puzzles).toHaveLength(5);
+  it("requires all ten stages in order and resumes at every stage", () => {
+    expect(c.puzzles).toHaveLength(10);
     let s = initialState(c);
-    for (let i = 0; i < 5; i++) {
-      for (let future = i + 1; future < 5; future++) {
+    for (let i = 0; i < 10; i++) {
+      for (let future = i + 1; future < 10; future++) {
         const blocked = transition(c, s, {
           type: "SOLVE",
           id: c.puzzles[future].id,
@@ -83,7 +83,7 @@ describe.each(
         if (canOpen(c, s, f.id))
           s = transition(c, s, { type: "OPEN_FILE", id: f.id }).state;
     }
-    expect(s.solvedPuzzleIds).toHaveLength(5);
+    expect(s.solvedPuzzleIds).toHaveLength(10);
   });
   it("passes package validation and solves using the authored walkthrough", () => {
     expect(validateCase(c).errors).toEqual([]);

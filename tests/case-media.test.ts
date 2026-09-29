@@ -36,8 +36,10 @@ it.each(caseLibrary)(
       ["hotel-404", "auction-seven", "encore-last", "monday-loop"].includes(
         c.caseId,
       )
-        ? 3
-        : 2,
+        ? c.caseId === "encore-last"
+          ? 5
+          : 4
+        : 3,
     );
     expect(JSON.stringify(c)).toBe(before);
   },
@@ -54,7 +56,7 @@ it("does not expose pictures attached only to a locked ancestor or another case"
 });
 
 it("does not retrofit the three new video puzzles into archived editions", () => {
-  for (const c of archivedCases) {
+  for (const c of archivedCases.filter((c) => !c.versionId.endsWith("-v4"))) {
     let s = initialState(c);
     for (const p of c.puzzles)
       s = transition(c, s, { type: "SOLVE", id: p.id, answer: p.answer }).state;

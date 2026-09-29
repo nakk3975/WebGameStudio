@@ -393,7 +393,7 @@ export default function Player({
       photos.find((m) => id === `@photo:${m.id}`)?.title ||
       c.files.find((f) => f.id === id)?.title ||
       (id === "@photos"
-        ? "사진 자료"
+        ? "이미지 자료"
         : id === "@board"
           ? "증거 보드"
           : id === "@conclusion"
@@ -448,10 +448,10 @@ export default function Player({
           paused={paused}
         />
         {pictures.length ? (
-          <nav className="photo-links" aria-label="별도 사진 자료">
+          <nav className="photo-links" aria-label="별도 이미지 자료">
             {pictures.map((item) => (
               <button key={item.id} onClick={() => open(`@photo:${item.id}`)}>
-                <ImageIcon size={16} aria-hidden="true" /> {item.title} · 사진
+                <ImageIcon size={16} aria-hidden="true" /> {item.title} · 이미지
                 열기
               </button>
             ))}
@@ -465,7 +465,7 @@ export default function Player({
       state.mode !== "RUNNING" || !!wins.find((w) => w.id === id)?.minimized;
     if (id === "@photos")
       return (
-        <div className="folder-content" aria-label="사진 자료 목록">
+        <div className="folder-content" aria-label="이미지 자료 목록">
           {photos.map((item) => (
             <button
               className="file-row"
@@ -549,7 +549,8 @@ export default function Player({
           {c.puzzles.some((p) => p.stageTitle) &&
             state.solvedPuzzleIds.length < c.puzzles.length && (
               <p className="stage-notice">
-                다섯 단계의 확인을 마친 뒤 최종 결론을 제출할 수 있어요.
+                {c.puzzles.length}단계의 확인을 마친 뒤 최종 결론을 제출할 수
+                있어요.
               </p>
             )}
           <p className="muted">
@@ -930,13 +931,13 @@ export default function Player({
           {!!photos.length && (
             <button
               className="desktop-icon"
-              aria-label="사진 자료"
+              aria-label="이미지 자료"
               onClick={() => open("@photos")}
             >
               <span className="file-symbol folder">
                 <Folder />
               </span>
-              <span className="file-name">사진 자료</span>
+              <span className="file-name">이미지 자료</span>
             </button>
           )}
         </aside>

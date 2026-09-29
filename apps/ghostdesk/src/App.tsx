@@ -540,7 +540,8 @@ function Workspace({ account }: { account: Account }) {
                   <Clock3 size={16} /> 약 {chosen.estimatedMinutes}분
                 </span>
                 <span>
-                  <FileCheck2 size={16} /> {selectedEntry.difficulty} · 5단계
+                  <FileCheck2 size={16} /> {selectedEntry.difficulty} ·{" "}
+                  {chosen.puzzles.length}단계
                 </span>
               </div>
               <div className="launch-actions">
@@ -579,9 +580,11 @@ function Workspace({ account }: { account: Account }) {
               )}
               {saved && saved.case.versionId !== chosen.versionId && (
                 <p className="edition-notice">
-                  사진과 영상을 직접 살펴보는 관찰 퍼즐이 추가됐어요. ‘이어서
-                  조사’는 기존 기록을 유지하며, ‘새 조사 시작’에서 새 퍼즐을
-                  만날 수 있어요.
+                  현재 저장은 {saved.case.puzzles.length}단계 사건입니다.
+                  ‘이어서 조사’는 기존 기록을 그대로 엽니다. 추가 이야기와
+                  자료가 있는
+                  {chosen.puzzles.length}단계 확장판은 ‘새 조사 시작’에서 만날
+                  수 있어요.
                 </p>
               )}
               {archived && (
