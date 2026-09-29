@@ -3982,3 +3982,13 @@ button:not(:disabled):active {
 .stage-puzzle .visual-puzzle .photo-pin:active {
   transform: translate(-50%, -50%);
 }
+
+/* The observation answer belongs to the full-width media panel. */
+.stage-puzzle form.motion-answer { width: 100%; max-width: none; margin: 20px 0 0; text-align: left; }
+.motion-answer .puzzle-options { display: flex; flex-wrap: wrap; gap: 8px; }
+.motion-answer .puzzle-options button { display: flex; align-items: center; gap: 8px; min-height: 44px; }
+.motion-answer .puzzle-options button[aria-pressed="true"] { border-color: var(--accent); background: #243950; }
+.motion-answer .puzzle-options b { font-size: .85em; }
+.motion-answer .cue-dot { width: 14px; height: 14px; border-radius: 50%; border: 1px solid #ffffff55; flex-shrink: 0; }
+.motion-answer .field { display: grid; gap: 10px; margin-bottom: 16px; }
+.motion-answer > .primary { margin-top: 12px; }

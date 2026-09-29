@@ -40,7 +40,7 @@ import {
 } from "../../../packages/engine-ghostdesk/src";
 import { writePlay, download, createSaveQueue, type Save } from "./storage";
 import { caseEntry } from "./cases";
-import { boardRecord } from "./presentation";
+import { boardRecord, recordText } from "./presentation";
 import EvidenceView from "./EvidenceView";
 import MediaGallery from "./MediaGallery";
 import { availableMedia } from "./case-media";
@@ -591,7 +591,7 @@ export default function Player({
                           items={availableMedia(c, state, source.id)}
                           paused={mediaPaused}
                         />
-                        <pre className="source-text">{source.text}</pre>
+                        <pre className="source-text">{recordText(c, source)}</pre>
                       </>
                     )}
                   </details>
@@ -767,7 +767,7 @@ export default function Player({
           paused={mediaPaused}
         />
         <div className="document-sheet">
-          <pre>{f.text}</pre>
+          <pre>{recordText(c, f)}</pre>
           {f.clueId && (
             <div className="evidence-found">
               <Check size={16} /> 단서를 증거 보드에 기록했어요.

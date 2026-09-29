@@ -1,0 +1,39 @@
+{
+  "hotel-motion": {
+    "duration": 28,
+    "fps": 24,
+    "size": 1743868,
+    "decodedFrames": 672,
+    "sha256": "9bb170932ac2698ff21338cb6c4f03b17c9a5adb28f453afc91d3457e63ef9b8",
+    "uniqueBaseFrames": 288,
+    "repeatedAfterFrames": 288,
+    "heldAdjacentFrames": 0
+  },
+  "stage-cues": {
+    "duration": 14,
+    "fps": 24,
+    "size": 818706,
+    "decodedFrames": 336,
+    "sha256": "38d4c8e08a6898ff8e2213dc21fce1dd6eb3cd37365501a01ce3a1a51591549f",
+    "distinctCuePeaks": 4
+  },
+  "auction-monitor": {
+    "duration": 11,
+    "fps": 24,
+    "size": 384274,
+    "decodedFrames": 264,
+    "sha256": "e86b9fc1ed02981f0edfb07b9ae8a16fbe056f0ac8712e15af11b3c49205a59e",
+    "observedChangesSeconds": [
+      2,
+      9
+    ]
+  },
+  "island-receiver": {
+    "duration": 11,
+    "fps": 24,
+    "size": 532612,
+    "decodedFrames": 264,
+    "sha256": "6926a4b075f13c58c5dcec628fa9a550884b5b91c37f4effefe2a715c646c81b",
+    "receiverPulseChangesPresent": true
+  }
+}

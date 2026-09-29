@@ -135,6 +135,9 @@ export const caseSchema = z
                 "auction-seal",
                 "stage-route",
                 "island-device",
+                "auction-timing",
+                "stage-cues",
+                "island-signal",
               ])
               .optional(),
             choices: z

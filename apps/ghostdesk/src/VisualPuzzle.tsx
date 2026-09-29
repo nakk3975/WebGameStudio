@@ -1,7 +1,6 @@
 import { useState } from "react";
 import type { CasePackage } from "../../../packages/contracts/src";
-import { CCTVPlayer } from "./MediaGallery";
-import { cctvFrames, cctvFrameIndex, hotelClip, repeatAnswer } from "./cctv";
+import { VideoComparison, SignalObservation } from "./VideoPuzzle";
 import network from "./assets/lab-network.webp";
 import hotel from "./assets/hotel.webp";
 import seals from "./assets/auction-seals.webp";
@@ -173,113 +172,6 @@ const photos: Record<string, PhotoTask> = {
     ],
   },
 };
-const stamp = (t: number) => `00:${String(t).padStart(2, "0")}`;
-const sceneDescriptions = [
-  "카트가 복도 안쪽 문 앞에 있습니다.",
-  "카트가 복도 가운데에 있습니다.",
-  "카트가 화면 아래쪽 가까운 복도 바닥에 있습니다.",
-];
-
-function VideoComparison({
-  paused,
-  onSubmit,
-}: {
-  paused: boolean;
-  onSubmit: (answer: string) => void;
-}) {
-  const [captures, setCaptures] = useState<number[]>([]);
-  const [notice, setNotice] = useState("");
-  function capture(time: number) {
-    if (captures.includes(time)) {
-      setNotice("같은 시점이 이미 담겨 있어요. 다른 시점으로 이동해 주세요.");
-      return;
-    }
-    if (captures.length === 2) {
-      setNotice("비교판에서 한 장면을 비운 뒤 다시 담아 주세요.");
-      return;
-    }
-    setCaptures([...captures, time]);
-    setNotice("");
-  }
-  return (
-    <div className="visual-puzzle">
-      <p className="visual-instruction">
-        영상에서 두 시점을 골라 담으세요. 장면 버튼으로 한 칸씩 이동할 수
-        있어요.
-      </p>
-      <CCTVPlayer
-        item={hotelClip}
-        paused={paused}
-        onCapture={capture}
-        captureDisabled={captures.length === 2}
-      />
-      <p className="small muted">{hotelClip.caption}</p>
-      <div className="frame-comparison" aria-label="장면 비교판">
-        {[0, 1].map((i) => (
-          <div className="captured-scene" key={i}>
-            {captures[i] === undefined ? (
-              <div className="capture-empty">비교할 {i + 1}번째 장면</div>
-            ) : (
-              <>
-                <img
-                  src={cctvFrames[cctvFrameIndex(captures[i])]}
-                  alt={sceneDescriptions[cctvFrameIndex(captures[i])]}
-                />
-                <div>
-                  <strong>{stamp(captures[i])}</strong>
-                  <button
-                    type="button"
-                    aria-label={`${i + 1}번째 장면 비우기`}
-                    onClick={() => {
-                      setCaptures(captures.filter((_, j) => i !== j));
-                      setNotice("");
-                    }}
-                  >
-                    비우기
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        ))}
-      </div>
-      <p role="status" className="visual-notice">
-        {notice || `${captures.length} / 2 장면 선택`}
-      </p>
-      <button
-        className="primary"
-        type="button"
-        disabled={paused || captures.length !== 2}
-        onClick={() => onSubmit(repeatAnswer(captures))}
-      >
-        두 장면 비교하기
-      </button>
-      <details className="visual-description">
-        <summary>영상 대신 장면 설명으로 살펴보기</summary>
-        <p>
-          각 시점의 모습입니다. 사진을 보기 어렵거나 영상이 열리지 않을 때도 두
-          장면을 비교할 수 있어요.
-        </p>
-        {[0, 4, 8, 12, 16, 20, 24].map((t) => (
-          <div className="scene-description" key={t}>
-            <span>
-              <strong>{stamp(t)}</strong> ·{" "}
-              {sceneDescriptions[cctvFrameIndex(t)]}
-            </span>
-            <button
-              type="button"
-              disabled={paused || captures.length === 2 || captures.includes(t)}
-              onClick={() => capture(t)}
-            >
-              {stamp(t)} 장면 담기
-            </button>
-          </div>
-        ))}
-      </details>
-    </div>
-  );
-}
-
 export default function VisualPuzzle({
   puzzle,
   paused,
@@ -294,6 +186,12 @@ export default function VisualPuzzle({
   const [zoom, setZoom] = useState(false);
   if (puzzle.visualId === "hotel-repeat")
     return <VideoComparison paused={paused} onSubmit={onSubmit} />;
+  if (puzzle.visualId === "auction-timing")
+    return <VideoComparison paused={paused} onSubmit={onSubmit} auction />;
+  if (puzzle.visualId === "stage-cues" || puzzle.visualId === "island-signal")
+    return (
+      <SignalObservation puzzle={puzzle} paused={paused} onSubmit={onSubmit} />
+    );
   const task = photos[puzzle.visualId || ""];
   if (!task)
     return (

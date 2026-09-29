@@ -54,19 +54,29 @@ export default function EvidenceView({
       items={[
         {
           id: file.id,
-          src: photos[asset],
+          src: asset === "hotel" ? hotelClip.src : photos[asset],
           title: asset === "hotel" ? "CAM-404 · 복도 기록" : "현장 사진",
           alt:
             asset === "hotel"
               ? hotelClip.alt
               : file.alt || "사건 기록에 첨부된 현장 사진.",
-          caption:
-            asset === "hotel"
-              ? hotelClip.caption
-              : file.text,
+          caption: asset === "hotel" ? hotelClip.caption : file.text,
           video: asset === "hotel" ? hotelClip.video : undefined,
+          recording: asset === "hotel" ? hotelClip.recording : undefined,
           observations,
         },
+        ...(asset === "hotel"
+          ? [
+              {
+                id: `${file.id}-photo`,
+                src: hotel,
+                title: "복도 원본 사진",
+                alt: "왼쪽 객실 문, 흰 시트 카트, 오른쪽 노란 공사 덮개가 보이는 원본 사진.",
+                caption: "원본 촬영 기록 · 06-12 14:32 · F-8821",
+                observations,
+              },
+            ]
+          : []),
         ...related,
       ]}
     />

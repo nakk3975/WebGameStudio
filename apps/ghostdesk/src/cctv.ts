@@ -1,33 +1,36 @@
-import first from "./assets/hotel.webp";
-import middle from "./assets/hotel-frame-middle.webp";
-import exit from "./assets/hotel-frame-exit.webp";
-import video from "./assets/hotel-cctv.mp4";
-
-export const CCTV_DURATION = 28;
-export const CCTV_INTERVAL = 4;
-export const cctvFrames = [first, middle, exit];
+import first from "./assets/hotel-motion-0.webp";
+import middle from "./assets/hotel-motion-4.webp";
+import near from "./assets/hotel-motion-8.webp";
+import video from "./assets/hotel-motion.mp4";
+import type { CaseMedia } from "./case-media";
+import {
+  cctvFrameIndex,
+  CCTV_DURATION,
+  CCTV_INTERVAL,
+} from "./recording-timing";
+export {
+  CCTV_DURATION,
+  CCTV_INTERVAL,
+  cctvSample,
+  cctvFrameIndex,
+  repeatAnswer,
+} from "./recording-timing";
+// Only fallback reference moments. Normal captures use actual decoded frames.
+export const cctvFrames = [first, middle, near];
 export const cctvVideo = video;
-export const cctvSample = (time: number) =>
-  Math.min(24, Math.max(0, Math.floor(time / CCTV_INTERVAL) * CCTV_INTERVAL));
-export const cctvFrameIndex = (time: number) =>
-  (cctvSample(time) / CCTV_INTERVAL) % 3;
-export function repeatAnswer(times: number[]) {
-  if (
-    times.length !== 2 ||
-    times.some((t) => !Number.isFinite(t) || t < 0 || t >= CCTV_DURATION)
-  )
-    return "";
-  const [a, b] = times.map(cctvSample);
-  if (a === b || cctvFrameIndex(a) !== cctvFrameIndex(b))
-    return "different-scenes";
-  return String(Math.abs(a - b));
-}
-export const hotelClip = {
+export const hotelClip: CaseMedia = {
   id: "hotel-cctv",
   src: first,
   title: "CAM-404 · 복도 기록",
   video,
-  alt: "4초 간격의 장면을 이어 붙인 재현 기록. 카트는 안쪽 문 앞에서 복도 바닥을 따라 화면 아래쪽 가까운 곳으로 다가옵니다. 뒤쪽 구간의 카트 위치와 시트 모양을 앞쪽 구간과 비교할 수 있습니다.",
+  alt: "수평을 맞춘 고정 카메라. 카트가 바퀴를 굴리며 복도 안쪽에서 가까운 쪽으로 곧게 다가옵니다. 뒤쪽 구간에서 앞서 본 움직임이 다시 나타나는지 비교하세요.",
   caption:
-    "4초 간격의 장면 재현입니다. 연속 촬영 영상이 아니라 장면 전체를 재구성해 이어 붙였습니다.",
+    "복도와 카트의 위치 변화를 재현했습니다. 사람의 동작은 복원하지 않았어요. 원본 사진은 별도로 확인할 수 있어요.",
+  recording: {
+    duration: CCTV_DURATION,
+    step: CCTV_INTERVAL,
+    label: "3D 재현 영상",
+    live: true,
+    stamp: (t) => `원본 06-12 14:32 · F-${8821 + cctvFrameIndex(t)}`,
+  },
 };

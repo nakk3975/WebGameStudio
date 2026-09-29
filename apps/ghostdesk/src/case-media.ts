@@ -12,6 +12,7 @@ import stageConsole from "./assets/stage-console.webp";
 import stageCorridor from "./assets/stage-corridor.webp";
 import islandRope from "./assets/island-rope.webp";
 import islandBuoy from "./assets/island-buoy.webp";
+import { stageClip, auctionClip, receiverClip } from "./recordings";
 
 export type CaseMedia = {
   id: string;
@@ -20,12 +21,41 @@ export type CaseMedia = {
   alt: string;
   caption: string;
   video?: string;
+  recording?: {
+    duration: number;
+    step: number;
+    label: string;
+    live?: boolean;
+    stamp: (time: number) => string;
+  };
   observations?: { label: string; text: string }[];
 };
-type Attachment = CaseMedia & { caseId: string; sourceIds: string[] };
+type Attachment = CaseMedia & {
+  caseId: string;
+  sourceIds: string[];
+  versionIds?: string[];
+};
 
 // Presentation-only attachments: published packages and saved answers stay immutable.
 export const mediaAttachments: Attachment[] = [
+  {
+    ...stageClip,
+    caseId: "encore-last",
+    sourceIds: ["encore-last-f1"],
+    versionIds: ["encore-last-v4"],
+  },
+  {
+    ...auctionClip,
+    caseId: "auction-seven",
+    sourceIds: ["auction-seven-record-4"],
+    versionIds: ["auction-seven-v4"],
+  },
+  {
+    ...receiverClip,
+    caseId: "monday-loop",
+    sourceIds: ["monday-loop-f1"],
+    versionIds: ["monday-loop-v4"],
+  },
   {
     id: "lab-receipts",
     caseId: "demo-0317",
@@ -146,12 +176,14 @@ export function availableMedia(
     .filter(
       (item) =>
         item.caseId === c.caseId &&
+        (!item.versionIds || item.versionIds.includes(c.versionId)) &&
         item.sourceIds.some(
           (id) => (!fileId || id === fileId) && canOpen(c, state, id),
         ),
     )
     .map((item) =>
-      item.id === "auction-envelopes" && c.versionId === "auction-seven-v3"
+      item.id === "auction-envelopes" &&
+      ["auction-seven-v3", "auction-seven-v4"].includes(c.versionId)
         ? {
             ...item,
             src: auctionSeals,

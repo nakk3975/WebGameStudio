@@ -1,0 +1,45 @@
+{
+  "health": {
+    "status": "ready",
+    "publishedCases": 5
+  },
+  "packages": [
+    {
+      "versionId": "demo-0317-v3",
+      "status": 200,
+      "matchesBundledPackage": true,
+      "stages": 5,
+      "sha256": "b20926cf391d2c1ec4d4a7c99031f5ebebb3f2d5f16871b8f6a9081befce351e"
+    },
+    {
+      "versionId": "hotel-404-v4",
+      "status": 200,
+      "matchesBundledPackage": true,
+      "stages": 5,
+      "sha256": "fd0566949f22d45765a9e1606c23d817cbd84b2050bb9d7fba3634dd8025e3d7"
+    },
+    {
+      "versionId": "auction-seven-v4",
+      "status": 200,
+      "matchesBundledPackage": true,
+      "stages": 5,
+      "sha256": "ab691fe12e66669486b8e1e219eaa1aabffe9f6fe302a4945b67f9ef25371887"
+    },
+    {
+      "versionId": "encore-last-v4",
+      "status": 200,
+      "matchesBundledPackage": true,
+      "stages": 5,
+      "sha256": "f39c29b18918f8568fe94f41cc0cbf794427414eb7efe5f1e78b29d37f27060b"
+    },
+    {
+      "versionId": "monday-loop-v4",
+      "status": 200,
+      "matchesBundledPackage": true,
+      "stages": 5,
+      "sha256": "66dbf3329f0efab4958c5857cee33d1b92f223f0bb0319ef8722ad175632b6fa"
+    }
+  ],
+  "archivedPackageHashesUnchanged": 15,
+  "labVersion": "demo-0317-v3"
+}
