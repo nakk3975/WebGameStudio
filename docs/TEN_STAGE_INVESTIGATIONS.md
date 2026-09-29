@@ -89,3 +89,26 @@ or runtime network dependency is needed to play.
 
 Rollback: deploy the prior frontend commit. Leave additive v5 catalog rows in
 place so any v5 account save remains valid. Old version URLs remain available.
+
+## Production/browser verification, 2026-09-29
+
+- 240 automated tests, typecheck and build passed after the browser follow-up.
+- All five production API v5 packages are structurally identical to the bundle.
+  All 19 preceding database packages kept their original fingerprints.
+- 35 deployed image/video/CSS assets matched the verified local build byte for
+  byte (5,919,272 bytes before the small UI-only follow-up).
+- Real Chrome: old hotel v4 save resumed PAUSED; Escape did not resume it.
+- Real Chrome: theatre v5 stages 6–10 were played from a generated five-stage
+  checkpoint. Separate document image, video playback to the end, choice/text/
+  sequence controls, late unlocks, and the final ending were verified. Old-only
+  conclusion evidence was rejected; adding the new final records allowed it.
+  This is not a claim of manual playthrough of all 50 stages.
+- Browser checks found two display issues: stage five still had old final-stage
+  boilerplate, and the output video's end marker rounded one second past the
+  last captured frame. The viewer now gives a midpoint instruction and clamps
+  that timestamp. Regression checks cover both without rewriting published v5.
+- Original browser progress was exported before the test; the theatre save is
+  restored afterwards. Account outbox/restore is tested automatically; no live
+  signed-in player's save was modified for testing.
+- The API cold start initially exceeded the request timeout. After it started,
+  /health/ready returned 200 and all five package checks passed.

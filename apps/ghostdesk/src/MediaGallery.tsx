@@ -82,7 +82,7 @@ export default function MediaGallery({
         </>
       )}
       <details>
-        <summary>{item.video ? "영상 설명 읽기" : "사진 설명 읽기"}</summary>
+        <summary>{item.video ? "영상 설명 읽기" : "이미지 설명 읽기"}</summary>
         <p>{item.alt}</p>
       </details>
     </figure>

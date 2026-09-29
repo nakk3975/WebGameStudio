@@ -24,6 +24,12 @@ export function boardRecord(c: CasePackage, clueId: string) {
 
 // The archived package remains immutable; its viewer now plays continuous motion.
 export function recordText(c: CasePackage, f: CaseFile) {
+  if (
+    isOfficialCaseVersion(c) &&
+    c.puzzles.length > 5 &&
+    f.id === `${c.caseId}-stage-5`
+  )
+    return "전반부 다섯 확인을 마쳤습니다. 아래 원본 자료는 후속 조사의 근거입니다. 6~10단계에서 남은 의문을 확인하세요.";
   if (c.caseId === "hotel-404" && isOfficialCaseVersion(c)) {
     if (f.id === "hotel-404-f0")
       return f.text.replace(

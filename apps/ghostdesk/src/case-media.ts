@@ -109,7 +109,8 @@ export const mediaAttachments: Attachment[] = [
       step: 0.1,
       label: "출력계 기록 재현 · 실제 시간 간격",
       stamp: (t) => {
-        const s = 50 + Math.floor(t);
+        // The final decoded frame is 21:57:00, even at the 11s end marker.
+        const s = 50 + Math.min(10, Math.floor(t));
         return `제어기 21:${String(56 + Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
       },
     },

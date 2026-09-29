@@ -77,3 +77,11 @@ it("attaches a photo only to its own accessible source document", () => {
   expect(availableMedia(c, state, "hotel-404-f1")).toEqual([]);
   expect(availableMedia(c, state, "hotel-404-record-4")).toEqual([]);
 });
+
+it("keeps the output recording end label on its last captured second", () => {
+  const clip = mediaAttachments.find((m) => m.id === "stage-output-meter")!;
+  expect(clip.recording!.stamp(0)).toBe("제어기 21:56:50");
+  expect(clip.recording!.stamp(2)).toBe("제어기 21:56:52");
+  expect(clip.recording!.stamp(10.9)).toBe("제어기 21:57:00");
+  expect(clip.recording!.stamp(11)).toBe("제어기 21:57:00");
+});

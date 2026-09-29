@@ -710,7 +710,7 @@ export default function Player({
             {entry.location} <ChevronRight size={14} />
             {f.title}
           </div>
-          {f.text && <p className="muted">{f.text}</p>}
+          {f.text && <p className="muted">{recordText(c, f)}</p>}
           {f.puzzleId &&
             c.puzzles
               .find((p) => p.id === f.puzzleId)

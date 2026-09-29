@@ -84,6 +84,18 @@ function windowByTitle(title: string) {
 }
 
 it.each(caseLibrary)(
+  "$number describes stage five as the midpoint of the expanded case",
+  async ({ case: c }) => {
+    await mount(c, 5);
+    const folder = c.files.find((f) => f.id === `${c.caseId}-stage-5`)!;
+    await openFile(folder.id);
+    const win = windowByTitle(folder.title);
+    expect(win.textContent).toContain("6~10단계에서 남은 의문");
+    expect(win.textContent).not.toContain("결론을 작성하세요");
+  },
+);
+
+it.each(caseLibrary)(
   "$number accepts all five new answers through the player controls",
   async ({ case: c, number }) => {
     const walkthrough: Record<string, string[]> = {
