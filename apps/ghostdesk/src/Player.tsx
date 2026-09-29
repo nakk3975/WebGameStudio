@@ -40,7 +40,7 @@ import {
 } from "../../../packages/engine-ghostdesk/src";
 import { writePlay, download, createSaveQueue, type Save } from "./storage";
 import { caseEntry, isOfficialCaseVersion } from "./cases";
-import { boardRecord, recordText } from "./presentation";
+import { boardRecord, recordText, messageText } from "./presentation";
 import EvidenceView from "./EvidenceView";
 import MediaGallery from "./MediaGallery";
 import { availableMedia } from "./case-media";
@@ -265,7 +265,7 @@ export default function Player({
         : old;
     });
   }
-  const separatePhotos = c.caseId === "hotel-404" && isOfficialCaseVersion(c);
+  const separatePhotos = isOfficialCaseVersion(c);
   const photos = separatePhotos
     ? availableMedia(c, state).filter((m) => !m.video)
     : [];
@@ -439,15 +439,26 @@ export default function Player({
     const items = availableMedia(c, state, fileId);
     if (!separatePhotos)
       return <MediaGallery key={fileId} items={items} paused={paused} />;
-    return items.length ? (
-      <nav className="photo-links" aria-label="별도 사진 자료">
-        {items.map((item) => (
-          <button key={item.id} onClick={() => open(`@photo:${item.id}`)}>
-            <ImageIcon size={16} aria-hidden="true" /> {item.title} · 사진 열기
-          </button>
-        ))}
-      </nav>
-    ) : null;
+    const pictures = items.filter((item) => !item.video);
+    return (
+      <>
+        <MediaGallery
+          key={fileId}
+          items={items.filter((item) => item.video)}
+          paused={paused}
+        />
+        {pictures.length ? (
+          <nav className="photo-links" aria-label="별도 사진 자료">
+            {pictures.map((item) => (
+              <button key={item.id} onClick={() => open(`@photo:${item.id}`)}>
+                <ImageIcon size={16} aria-hidden="true" /> {item.title} · 사진
+                열기
+              </button>
+            ))}
+          </nav>
+        ) : null}
+      </>
+    );
   }
   function content(id: string) {
     const mediaPaused =
@@ -637,6 +648,7 @@ export default function Player({
                     <summary>{source.title}</summary>
                     {source.type === "IMAGE" ? (
                       <EvidenceView
+                        casePackage={c}
                         file={source}
                         related={availableMedia(c, state)}
                         paused={mediaPaused}
@@ -776,7 +788,7 @@ export default function Player({
                 </span>
                 <div className="message-content">
                   <span className="message-author">{m.author}</span>
-                  <p>{m.text}</p>
+                  <p>{messageText(c, m)}</p>
                   <div className="message-meta">
                     <time>{m.time}</time>
                     {!state.readMessageIds.includes(m.id) && (
@@ -798,6 +810,7 @@ export default function Player({
       return (
         <>
           <EvidenceView
+            casePackage={c}
             key={f.id}
             file={f}
             related={availableMedia(c, state)}

@@ -1,22 +1,27 @@
-import type { CaseFile } from "../../../packages/contracts/src";
+import type { CaseFile, CasePackage } from "../../../packages/contracts/src";
 import lab from "./assets/lab.webp";
 import auction from "./assets/auction.webp";
 import stage from "./assets/stage.webp";
 import island from "./assets/island.webp";
 import { hotelClip } from "./cctv";
 import MediaGallery from "./MediaGallery";
-import type { CaseMedia } from "./case-media";
+import { auctionEvidencePhoto, type CaseMedia } from "./case-media";
+import { evidenceFile } from "./presentation";
+import { isOfficialCaseVersion } from "./cases";
 
 const photos = { lab, hotel: hotelClip.src, auction, stage, island };
 export default function EvidenceView({
+  casePackage,
   file,
   related = [],
   paused = false,
 }: {
+  casePackage: CasePackage;
   file: CaseFile;
   related?: CaseMedia[];
   paused?: boolean;
 }) {
+  file = evidenceFile(casePackage, file);
   // Old 404 saves retain their package; give the archived capture a visual viewer too.
   const legacyCCTV = file.id === "hotel-404-f3" && !file.assetId;
   const asset = legacyCCTV ? "hotel" : file.assetId;
@@ -53,7 +58,10 @@ export default function EvidenceView({
       items={[
         {
           id: file.id,
-          src: asset === "hotel" ? hotelClip.src : photos[asset],
+          src:
+            asset === "auction" && isOfficialCaseVersion(casePackage)
+              ? auctionEvidencePhoto(casePackage)
+              : photos[asset],
           title: asset === "hotel" ? "CAM-404 · 복도 기록" : "현장 사진",
           alt:
             asset === "hotel"
@@ -65,7 +73,9 @@ export default function EvidenceView({
           observations:
             asset === "hotel" ? hotelClip.observations : observations,
         },
-        ...(asset === "hotel" ? [] : related),
+        ...(isOfficialCaseVersion(casePackage) || asset === "hotel"
+          ? []
+          : related),
       ]}
     />
   );

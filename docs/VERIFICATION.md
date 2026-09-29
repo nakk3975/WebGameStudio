@@ -294,3 +294,17 @@
 - 완성 MP4는 960×540 / 24fps / 28초 / H.264 yuv420p, 1,395,737바이트다. 672개 디코딩 프레임을 검사했고 12초 뒤 같은 288프레임이 정확히 반복된다. 기본 구간 288개가 모두 다르며 인접 정지 프레임은 0개다. 0·4·8초의 WebP 사진은 실제 MP4를 디코딩한 RGB 픽셀과 완전히 일치한다. 다른 세 영상의 해시는 변경 전과 같다.
 - 0·4·8·9·10초 부근의 렌더와 인코딩 후 첫 정지 화면을 직접 검토했다. 실제 UI 구성은 jsdom의 React Player로 검사했다. 운영 Chrome에서는 기존 저장의 이어하기가 일시정지 창으로 열리고 Esc로 닫히거나 재개되지 않는 것을 확인한 뒤 홈으로 돌아갔다. 운영 브라우저에서 `logicalMs` 수치를 직접 측정한 결과나 계정·실기기 Safari 검증으로 간주하지 않는다.
 - `npm run typecheck`, `npm test` (174개), `npm run build`, Python 문법 검사 및 `git diff --check` 통과. 기존 의존성 `use client` 빌드 경고는 남아 있다.
+# 2026-09-29 — all-case evidence audit
+
+- Audited the five current cases' complete story records, chat, questions, hints,
+  answers and endings against all displayed media. Findings and fixes are recorded
+  in `ALL_CASE_EVIDENCE_AUDIT.md`.
+- `npm run typecheck`, `npm test` (205 passing), `npm run build`, and
+  `git diff --check` passed. 31 regression items cover photo separation, original
+  source identity, preserved older editions, message compatibility and paused
+  logical time on restore.
+- `python scripts/verify-recordings.py` passed: all four shipped recordings,
+  eight exact decoded posters, spatial lighting cues and the SOS pulse train.
+  Updated machine-readable evidence is in `evidence/continuous-recordings-media.json`.
+- React/jsdom verification and decoded-media checks are distinct from browser
+  playtesting. This audit did not claim a new real account login/close/reopen test.

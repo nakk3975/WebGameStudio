@@ -1,5 +1,29 @@
 # Fictional case scene assets
 
+## Current evidence audit / 2026-09-29
+
+The historical sections below describe earlier revisions. Current official cases
+open supplemental photographs in a separate photo window; scene viewers no longer
+mix unrelated attachments. See `docs/ALL_CASE_EVIDENCE_AUDIT.md` for the full audit,
+image-edit prompts, version compatibility, and validation.
+
+- Laboratory: the unrelated incorrect desk clock was removed.
+- Auction: the scene uses the same envelopes as its edition's seal puzzle;
+  both editions show the blue orbital painting. `auction-monitor-9.webp` replaces
+  the mismatched hall/vase image. Old `auction.webp` / `auction-display.webp` are
+  not evidence for current official cases.
+- Stage: `stage.webp`, `stage-console.webp`, and `stage-cues.mp4` share one Blender
+  scene. The two stills use after-show lighting at 22:03; the video reconstructs
+  the four executed cues and does not depict people at performance time.
+- Island: the main photograph shares the receiver's design and the orange buoy's
+  design with their close-up evidence, and shows the third morning's seaweed.
+  The signal reconstruction has a connected independent battery to the right.
+- All eight recording stills are lossless extractions of shipped MP4 frames.
+
+Rebuild stage sources with `render-recordings.py stage` and `stage --stills`, then
+`build-recordings.py stage`. `build-recordings.py auction --posters-only` refreshes
+stills without re-encoding the recording. Run `verify-recordings.py` afterward.
+
 The initial five WebP images were generated for GhostDesk on 2026-09-28 and compressed from the original PNGs. They depict fictional locations, not real surveillance or evidence. The original generated files are retained outside this repository.
 
 | Asset | Scene |

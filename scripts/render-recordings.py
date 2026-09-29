@@ -19,6 +19,7 @@ parser.add_argument('scene', choices=['hotel', 'stage', 'auction', 'receiver'])
 parser.add_argument('--out', default='/tmp/ghostdesk-renders')
 parser.add_argument('--preview', action='store_true')
 parser.add_argument('--samples', type=int, default=8)
+parser.add_argument('--stills', action='store_true', help='Render the stage and sound desk after the show, using the same scene')
 parser.add_argument('--geometry-report', type=Path, help='Validate all hotel wheel contacts without rendering')
 parser.add_argument('--start-frame', type=int, default=0, help='Resume an interrupted render at a known completed boundary')
 args = parser.parse_args()
@@ -294,33 +295,60 @@ def build_hotel():
 
 
 def build_stage():
-    box('Stage',(0,3,-.15),(10,7,.3),wood)
+    box('Audience floor',(0,-2,-.45),(10,7,.3),wood)
+    box('Stage',(0,3,-.15),(10,6,.3),wood)
     box('Rear wall',(0,6.6,2.2),(11,.25,4.5),dark)
     velvet=material('Curtain velvet',(.095,.014,.023),.98,noise=90)
-    for side in [-1,1]:
-        for i in range(16):cylinder('Curtain fold',(side*(3.6+i*.09),5.4,2.1),.10,4.2,velvet)
+    # One closed red curtain in the recording and both after-show photographs.
+    verts=[];faces=[]
+    for i in range(181):
+        x=-3.6+i*.04;y=5.4+.10*math.sin(i*.65)
+        verts.extend([(x,y,.02),(x,y,4.2)])
+        if i:faces.append((2*i-2,2*i,2*i+1,2*i-1))
+    mesh=bpy.data.meshes.new('Closed curtain folds');mesh.from_pydata(verts,[],faces);mesh.materials.append(velvet)
+    curtain=bpy.data.objects.new('Closed red curtain',mesh);scene.collection.objects.link(curtain)
+    for face in mesh.polygons:face.use_smooth=True
+    box('Backstage passage',(-4.1,5.5,1.3),(1,.08,2.6),dark)
+    for x in [-4.65,-3.55]:box('Passage jamb',(x,5.4,1.3),(.08,.12,2.6),metal)
+    box('Passage lintel',(-4.1,5.4,2.6),(1.18,.12,.08),metal)
+    rug=material('Burgundy stage rug',(.19,.052,.034),.97,noise=160)
+    box('Stage rug',(0,3,.012),(5.5,3.5,.024),rug)
     rod('Microphone stand',(0,3,.03),(0,3,1.43),.014,metal)
     cylinder('Stand base',(0,3,.025),.23,.05,dark)
     mic=rod('Microphone',(0,2.89,1.43),(0,3.10,1.53),.026,dark)
-    for x in [-2,2]:box('Stage monitor',(x,2.1,.17),(.65,.48,.34),dark,.06)
-    for row in range(3):
-        for col in range(9):
-            x=(col-4)*.72;y=-1.8+row*.74
-            box('Seat',(x,y,.33),(.55,.5,.13),velvet,.08)
-            box('Seat back',(x,y-.24,.64),(.56,.11,.59),velvet,.09)
-    lights=[area('Cue light '+str(i),(x,1,3.8),(0,3.3,.2),500,size=.65) for i,x in enumerate([-2,0,2])]
-    colors=[(1,.40,.07),(.055,.22,1),(1,.94,.83),(1,.025,.012)]
+    for x in [-2,2]:
+        monitor=box('Stage monitor',(x,2.1,.23),(.75,.55,.40),dark,.045)
+        monitor.rotation_euler.x=math.radians(-22)
+    for x in [-3.2,3.2]:
+        box('Amplifier',(x,4.4,.55),(.65,.45,1.1),dark,.03)
+        box('Speaker grille',(x,4.16,.52),(.55,.025,.87),rubber)
+    # The sound desk belongs to this small, single-level room, not a balcony hall.
+    box('Sound desk',(1.7,-2.5,.48),(2.1,1.0,.10),wood,.025)
+    box('Mixer',(2.1,-2.5,.61),(1.10,.73,.16),dark,.025)
+    for col in range(12):
+        x=1.62+col*.087
+        for row in range(3):cylinder('Mixer knob',(x,-2.24-row*.10,.71),.018,.03,metal)
+        box('Fader groove',(x,-2.72,.70),(.012,.19,.006),rubber)
+        box('Fader cap',(x,-2.73+(col%3)*.025,.713),(.037,.025,.018),white)
+    box('Laptop base',(1.0,-2.5,.55),(.52,.40,.03),metal,.01)
+    laptop=box('Laptop screen',(1.0,-2.32,.77),(.52,.025,.42),dark,.02)
+    lights=[
+        area('Cue light amber passage',(-4.1,4.5,2.6),(-4.1,5.3,.5),0,(1,.40,.07),.5),
+        area('Cue light blue center',(0,1.8,3.8),(0,3,.2),0,(.055,.22,1),.4),
+        area('Cue light white audience',(0,.4,3.3),(0,-2.8,0),0,(1,.94,.83),1),
+        area('Cue light red safety',(-4.1,5.1,2.5),(-4.1,4.6,.5),0,(1,.025,.012),.4),
+    ]
     cue_starts=[.7,3.7,6.7,9.7]
     def update(t):
         for light in lights:light.data.energy=0
-        for start,color in zip(cue_starts,colors):
+        for light,start in zip(lights,cue_starts):
             age=t-start
             if 0<=age<2.6:
                 envelope=min(1,age/.4,(2.6-age)/.5)
-                for light in lights:light.data.energy=800*max(0,envelope);light.data.color=color
+                light.data.energy=700*max(0,envelope)
     updates.append(update)
     area('Dim house lights',(0,-3,3.5),(0,2,0),35,(.4,.48,.6),4)
-    camera((.8,-6.7,2.4),(0,3,1),34)
+    camera((.6,-6.7,2.7),(0,3,1),30)
     return 14
 
 
@@ -361,7 +389,7 @@ def build_auction():
 
 def build_receiver():
     box('Desk',(0,1,.68),(3,2,.13),wood,.035)
-    box('Rear wall',(0,2.5,1.8),(5,.1,3.5),material('Weathered coastal plaster',(.16,.21,.22),.8,noise=110))
+    for i in range(17):box('Observation hut wood planks',(-2.4+i*.3,2.5,1.8),(.292,.1,3.5),wood)
     box('Receiver case',(0,1,1.02),(1.7,.65,.58),material('Painted olive instrument',(.10,.15,.13),.47,noise=95),.045)
     box('Receiver face',(0,.665,1.02),(1.58,.025,.47),dark,.014)
     window,_=emissive('Frequency display',(.25,.47,.32),.6)
@@ -375,13 +403,11 @@ def build_receiver():
     text('Receiver label','RX',(.32,.61,.80),.06,white)
     text('Receiver header','COASTAL RECEIVER',(-.16,.61,1.225),.042,white)
     rod('Antenna',(.6,1.2,1.30),(.92,1.3,2.0),.009,metal)
-    box('Independent battery',(-1.07,1.22,.88),(.33,.4,.28),dark,.03)
-    for i in range(22):
-        a=(-.78+i*.032,.94+.055*math.sin(i*.9),.77+.02*math.cos(i*.9))
-        b=(-.78+(i+1)*.032,.94+.055*math.sin((i+1)*.9),.77+.02*math.cos((i+1)*.9))
-        rod('Power lead',a,b,.008,rubber)
-    box('Paper notebook',(.90,.52,.76),(.46,.55,.045),white,.008)
-    for i in range(7):box('Notebook ruled line',(.90,.31+i*.06,.785),(.38,.003,.001),dark)
+    box('Independent battery',(1.15,.40,.88),(.33,.5,.28),dark,.025)
+    lead=[(.85,.85,.88),(.91,.80,.81),(.94,.60,.79),(.91,.40,.80),(.99,.40,.81)]
+    for a,b in zip(lead,lead[1:]):rod('Connected battery power lead',a,b,.009,rubber)
+    box('Paper notebook',(.1,.20,.76),(.62,.43,.045),white,.008)
+    for i in range(7):box('Notebook ruled line',(.1,.04+i*.045,.785),(.54,.003,.001),dark)
     area('Desk practical',(-1,-.1,2.3),(0,1,.7),95,(1,.75,.45),1.1)
     area('Window fill',(1,2,2.7),(0,1,.8),55,(.40,.60,.83),1.8)
     pulses=[];cursor=1.0;unit=.28
@@ -396,11 +422,23 @@ def build_receiver():
         node.inputs['Emission Strength'].default_value=power*4
         node.inputs['Base Color'].default_value=(.9,.25,.018,1) if power else (.07,.025,.009,1)
     updates.append(update)
-    camera((.55,-1.85,1.92),(0,.97,1.05),43)
+    camera((.55,-1.85,1.92),(.2,.97,1.05),35)
     return 11
 
 
 duration=globals()['build_'+args.scene]()
+if args.stills:
+    if args.scene!='stage':raise SystemExit('--stills is for the stage scene')
+    # 22:03 house lighting is not one of the compressed performance cues.
+    area('After-show amber',(-2,2,3.7),(-1,3.3,.4),280,(1,.40,.07),1)
+    area('After-show blue',(2,2,3.7),(1,3.3,.4),280,(.055,.22,1),1)
+    area('After-show desk lamp',(1,-3.5,2.4),(1.7,-2.5,.5),65,(1,.75,.4),.8)
+    out=Path(args.out)/'stage-stills';out.mkdir(parents=True,exist_ok=True)
+    for name,loc,target,lens in [('stage',(.6,-6.7,2.7),(0,3,1),30),
+                                 ('stage-console',(2.7,-4.5,1.9),(1.1,1.0,.7),28)]:
+        camera(loc,target,lens)
+        scene.render.filepath=str(out/f'{name}.png');bpy.ops.render.render(write_still=True)
+    raise SystemExit(0)
 if args.geometry_report:
     if args.scene != 'hotel':raise SystemExit('Geometry validation applies to the moving cart')
     from bpy_extras.object_utils import world_to_camera_view

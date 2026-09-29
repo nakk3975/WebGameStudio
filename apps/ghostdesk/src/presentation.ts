@@ -35,3 +35,45 @@ export function recordText(c: CasePackage, f: CaseFile) {
   }
   return f.text;
 }
+
+export function messageText(
+  c: CasePackage,
+  message: CasePackage["messages"][number],
+) {
+  if (c.versionId === "monday-loop-v4" && isOfficialCaseVersion(c))
+    return message.text.replace(
+      "빗금이 글자를 나눠 주는구나.",
+      "불빛 사이의 긴 쉼이 글자를 나눠 주는구나.",
+    );
+  return message.text;
+}
+
+export function evidenceFile(c: CasePackage, file: CaseFile): CaseFile {
+  if (!isOfficialCaseVersion(c)) return file;
+  if (file.assetId === "auction")
+    return {
+      ...file,
+      observations: [
+        {
+          label: "검수대",
+          text: "봉투 세 개와 포장된 ‘푸른 궤도’가 놓여 있습니다. 봉인표의 판독 기준은 검수 기록에서 확인하세요.",
+        },
+      ],
+    };
+  if (file.assetId === "island")
+    return {
+      ...file,
+      text: "세 번째 아침의 관측소. 수신 신호 영상은 이 수신기의 불빛 길이와 간격을 재현한 기록입니다.",
+      observations: [
+        {
+          label: "관측 책상",
+          text: "종이 노트와 별도 배터리에 연결한 수신기, 해초가 붙은 젖은 파란 밧줄이 놓여 있습니다.",
+        },
+        {
+          label: "창밖",
+          text: "주황색 부체 위에 안테나와 기록함이 달린 관측 부표입니다. 전원과 저장 위치는 연결 대장을 확인하세요.",
+        },
+      ],
+    };
+  return file;
+}
