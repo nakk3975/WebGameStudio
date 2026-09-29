@@ -49,7 +49,7 @@ export function Modal({
 }: {
   title: string;
   children: ReactNode;
-  onClose: () => void;
+  onClose?: () => void;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
@@ -68,14 +68,16 @@ export function Modal({
       aria-labelledby={titleId}
       onCancel={(e) => {
         e.preventDefault();
-        onClose();
+        onClose?.();
       }}
     >
       <div className="modal-head">
         <h2 id={titleId}>{title}</h2>
-        <button onClick={onClose} aria-label="대화상자 닫기">
-          ×
-        </button>
+        {onClose && (
+          <button onClick={onClose} aria-label="대화상자 닫기">
+            ×
+          </button>
+        )}
       </div>
       {children}
     </dialog>
@@ -555,7 +557,9 @@ function Workspace({ account }: { account: Account }) {
                     className="primary"
                     disabled={!ready || !account.ready}
                     onClick={() => {
-                      setActive(saved);
+                      // Memory snapshots can still be RUNNING (for example after
+                      // an error exit). Every continuation uses the restore boundary.
+                      setActive(parseSave(saved));
                       setTest(false);
                       setView("play");
                     }}

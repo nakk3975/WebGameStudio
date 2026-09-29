@@ -259,3 +259,59 @@ it("still uploads immutable v1 progress after the five-stage release", async () 
     expect(a.records[old.caseId].dirty).toBe(false);
   }
 });
+
+it("keeps a final PAUSED save when an older RUNNING upload finishes late", async () => {
+  const { transport, rows } = server();
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  let first = true;
+  const delayed: SaveTransport = {
+    ...transport,
+    put: async (snapshot, revision) => {
+      if (first) {
+        first = false;
+        await gate;
+      }
+      return transport.put(snapshot, revision);
+    },
+  };
+  const a = new CloudSaves("late-running-upload", delayed, () => {});
+  running.push(a);
+  const active = save("last progress");
+  active.state.logicalMs = 4000;
+  await a.persist(active);
+  const upload = a.flush();
+  const paused = structuredClone(active);
+  paused.state.mode = "PAUSED";
+  paused.state.logicalMs = 4250;
+  await a.persist(paused);
+  release();
+  await upload;
+  expect(rows[c.caseId].save.state.mode).toBe("RUNNING");
+  expect(a.records[c.caseId]).toMatchObject({
+    save: { state: { mode: "PAUSED", logicalMs: 4250 } },
+    dirty: true,
+    revision: 1,
+  });
+  expect(await read("account:late-running-upload")).toMatchObject({
+    [c.caseId]: {
+      save: { state: { mode: "PAUSED", logicalMs: 4250 } },
+      dirty: true,
+    },
+  });
+  a.close();
+  // New controller loads the real device cache, then uploads the remaining pause.
+  const b = new CloudSaves("late-running-upload", transport, () => {});
+  running.push(b);
+  await b.initialize();
+  expect(b.records[c.caseId].save.state).toMatchObject({
+    mode: "PAUSED",
+    logicalMs: 4250,
+  });
+  expect(rows[c.caseId]).toMatchObject({
+    revision: 2,
+    save: { state: { mode: "PAUSED", logicalMs: 4250 } },
+  });
+});

@@ -166,15 +166,25 @@ export default function Player({
     };
   }, []);
   useEffect(() => {
-    const pause = () => send({ type: "PAUSE" });
+    const pause = () => {
+      // pagehide may be the last task before this document is frozen/unloaded.
+      // Queue the paused snapshot now; do not wait for React's 500ms autosave.
+      const snapshot = structuredClone(latest.current);
+      snapshot.state = transition(c, snapshot.state, { type: "PAUSE" }).state;
+      latest.current = snapshot;
+      setState(snapshot.state);
+      void persist(snapshot);
+    };
     const hidden = () => {
       if (document.hidden) pause();
     };
     document.addEventListener("visibilitychange", hidden);
     window.addEventListener("blur", pause);
+    window.addEventListener("pagehide", pause);
     return () => {
       document.removeEventListener("visibilitychange", hidden);
       window.removeEventListener("blur", pause);
+      window.removeEventListener("pagehide", pause);
     };
   }, [send]);
   async function persist(s: Save, final = false): Promise<boolean> {
@@ -1093,13 +1103,13 @@ export default function Player({
         </div>
       )}
       {state.mode === "PAUSED" && (
-        <Modal
-          title="조사를 잠시 멈췄습니다"
-          onClose={() => send({ type: "RESUME" })}
-        >
+        <Modal title="조사를 잠시 멈췄습니다">
           <p>자리를 비운 동안 사건 속 시간은 흐르지 않았습니다.</p>
           <button className="primary" onClick={() => send({ type: "RESUME" })}>
             <PlayIcon /> 조사 계속하기
+          </button>
+          <button className="secondary" onClick={leave}>
+            {isTest ? "제작기로 돌아가기" : "홈으로"}
           </button>
         </Modal>
       )}
