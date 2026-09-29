@@ -1,6 +1,5 @@
 import type { CaseFile } from "../../../packages/contracts/src";
 import lab from "./assets/lab.webp";
-import hotel from "./assets/hotel.webp";
 import auction from "./assets/auction.webp";
 import stage from "./assets/stage.webp";
 import island from "./assets/island.webp";
@@ -8,7 +7,7 @@ import { hotelClip } from "./cctv";
 import MediaGallery from "./MediaGallery";
 import type { CaseMedia } from "./case-media";
 
-const photos = { lab, hotel, auction, stage, island };
+const photos = { lab, hotel: hotelClip.src, auction, stage, island };
 export default function EvidenceView({
   file,
   related = [],
@@ -63,21 +62,10 @@ export default function EvidenceView({
           caption: asset === "hotel" ? hotelClip.caption : file.text,
           video: asset === "hotel" ? hotelClip.video : undefined,
           recording: asset === "hotel" ? hotelClip.recording : undefined,
-          observations,
+          observations:
+            asset === "hotel" ? hotelClip.observations : observations,
         },
-        ...(asset === "hotel"
-          ? [
-              {
-                id: `${file.id}-photo`,
-                src: hotel,
-                title: "복도 원본 사진",
-                alt: "왼쪽 객실 문, 흰 시트 카트, 오른쪽 노란 공사 덮개가 보이는 원본 사진.",
-                caption: "원본 촬영 기록 · 06-12 14:32 · F-8821",
-                observations,
-              },
-            ]
-          : []),
-        ...related,
+        ...(asset === "hotel" ? [] : related),
       ]}
     />
   );

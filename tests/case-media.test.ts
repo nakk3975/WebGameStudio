@@ -33,7 +33,9 @@ it.each(caseLibrary)(
       }).state;
     }
     expect(availableMedia(c, state)).toHaveLength(
-      ["auction-seven", "encore-last", "monday-loop"].includes(c.caseId)
+      ["hotel-404", "auction-seven", "encore-last", "monday-loop"].includes(
+        c.caseId,
+      )
         ? 3
         : 2,
     );

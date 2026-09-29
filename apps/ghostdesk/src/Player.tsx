@@ -39,7 +39,7 @@ import {
   type State,
 } from "../../../packages/engine-ghostdesk/src";
 import { writePlay, download, createSaveQueue, type Save } from "./storage";
-import { caseEntry } from "./cases";
+import { caseEntry, isOfficialCaseVersion } from "./cases";
 import { boardRecord, recordText } from "./presentation";
 import EvidenceView from "./EvidenceView";
 import MediaGallery from "./MediaGallery";
@@ -265,7 +265,16 @@ export default function Player({
         : old;
     });
   }
+  const separatePhotos = c.caseId === "hotel-404" && isOfficialCaseVersion(c);
+  const photos = separatePhotos
+    ? availableMedia(c, state).filter((m) => !m.video)
+    : [];
   function open(id: string) {
+    if (
+      id.startsWith("@photo:") &&
+      !photos.some((m) => id === `@photo:${m.id}`)
+    )
+      return;
     const f = c.files.find((x) => x.id === id);
     if (f) {
       if (!canInspect(c, state, id)) {
@@ -381,12 +390,15 @@ export default function Player({
             : "수집한 증거로 결론을 작성하세요.";
   function title(id: string) {
     return (
+      photos.find((m) => id === `@photo:${m.id}`)?.title ||
       c.files.find((f) => f.id === id)?.title ||
-      (id === "@board"
-        ? "증거 보드"
-        : id === "@conclusion"
-          ? "결론 작성"
-          : "") ||
+      (id === "@photos"
+        ? "사진 자료"
+        : id === "@board"
+          ? "증거 보드"
+          : id === "@conclusion"
+            ? "결론 작성"
+            : "") ||
       id
     );
   }
@@ -423,9 +435,43 @@ export default function Player({
       </button>
     );
   }
+  function attachments(fileId: string, paused: boolean) {
+    const items = availableMedia(c, state, fileId);
+    if (!separatePhotos)
+      return <MediaGallery key={fileId} items={items} paused={paused} />;
+    return items.length ? (
+      <nav className="photo-links" aria-label="별도 사진 자료">
+        {items.map((item) => (
+          <button key={item.id} onClick={() => open(`@photo:${item.id}`)}>
+            <ImageIcon size={16} aria-hidden="true" /> {item.title} · 사진 열기
+          </button>
+        ))}
+      </nav>
+    ) : null;
+  }
   function content(id: string) {
     const mediaPaused =
       state.mode !== "RUNNING" || !!wins.find((w) => w.id === id)?.minimized;
+    if (id === "@photos")
+      return (
+        <div className="folder-content" aria-label="사진 자료 목록">
+          {photos.map((item) => (
+            <button
+              className="file-row"
+              key={item.id}
+              onClick={() => open(`@photo:${item.id}`)}
+            >
+              <ImageIcon size={20} aria-hidden="true" /> {item.title}
+            </button>
+          ))}
+        </div>
+      );
+    if (id.startsWith("@photo:")) {
+      const item = photos.find((m) => id === `@photo:${m.id}`);
+      return item ? (
+        <MediaGallery key={item.id} items={[item]} paused={mediaPaused} />
+      ) : null;
+    }
     if (id === "@board")
       return (
         <div className="board-content">
@@ -597,11 +643,10 @@ export default function Player({
                       />
                     ) : (
                       <>
-                        <MediaGallery
-                          items={availableMedia(c, state, source.id)}
-                          paused={mediaPaused}
-                        />
-                        <pre className="source-text">{recordText(c, source)}</pre>
+                        {attachments(source.id, mediaPaused)}
+                        <pre className="source-text">
+                          {recordText(c, source)}
+                        </pre>
                       </>
                     )}
                   </details>
@@ -751,12 +796,15 @@ export default function Player({
     }
     if (f.type === "IMAGE" || f.id === "hotel-404-f3")
       return (
-        <EvidenceView
-          key={f.id}
-          file={f}
-          related={availableMedia(c, state)}
-          paused={mediaPaused}
-        />
+        <>
+          <EvidenceView
+            key={f.id}
+            file={f}
+            related={availableMedia(c, state)}
+            paused={mediaPaused}
+          />
+          {separatePhotos && attachments(f.id, mediaPaused)}
+        </>
       );
     return (
       <article
@@ -771,11 +819,7 @@ export default function Player({
           </span>
           <span>읽기 전용</span>
         </div>
-        <MediaGallery
-          key={f.id}
-          items={availableMedia(c, state, f.id)}
-          paused={mediaPaused}
-        />
+        {attachments(f.id, mediaPaused)}
         <div className="document-sheet">
           <pre>{recordText(c, f)}</pre>
           {f.clueId && (
@@ -870,6 +914,18 @@ export default function Player({
           {c.files
             .filter((f) => !f.parentId && state.visibleFileIds.includes(f.id))
             .map((f) => fileButton(f, true))}
+          {!!photos.length && (
+            <button
+              className="desktop-icon"
+              aria-label="사진 자료"
+              onClick={() => open("@photos")}
+            >
+              <span className="file-symbol folder">
+                <Folder />
+              </span>
+              <span className="file-name">사진 자료</span>
+            </button>
+          )}
         </aside>
         <main className="desktop-area" ref={area}>
           <div className="desktop-watermark">

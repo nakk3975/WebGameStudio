@@ -9,3 +9,5 @@ apps/api/target/
 .neon
 *.pem
 *.key
+
+__pycache__/

@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { CasePackage } from "../../../packages/contracts/src";
 import { VideoComparison, SignalObservation } from "./VideoPuzzle";
 import network from "./assets/lab-network.webp";
-import hotel from "./assets/hotel.webp";
+import { hotelStill } from "./cctv";
 import seals from "./assets/auction-seals.webp";
 import corridor from "./assets/stage-corridor.webp";
 import buoy from "./assets/island-buoy.webp";
@@ -57,8 +57,8 @@ const photos: Record<string, PhotoTask> = {
     field: { label: "외부 전송량 증가분", placeholder: "바이트 수 입력" },
   },
   "hotel-date": {
-    src: hotel,
-    alt: "호텔 복도 왼쪽에는 문, 가운데에는 흰 시트 카트, 오른쪽에는 노란 공사용 덮개가 있습니다. 원본 표시는 06-12 14:32입니다.",
+    src: hotelStill.src,
+    alt: hotelStill.alt + " 원본 표시는 06-12 14:32입니다.",
     instruction: "오늘의 시설 점검 메모와 맞지 않는 흔적을 표시하세요.",
     pins: [
       {
@@ -69,16 +69,15 @@ const photos: Record<string, PhotoTask> = {
       },
       {
         value: "B",
-        x: 54,
-        y: 43,
-        focusY: 28,
+        x: 48,
+        y: 49,
         description: "흰 시트가 놓인 카트입니다.",
       },
       {
         value: "C",
-        x: 83,
-        y: 54,
-        description: "복도 오른쪽에 노란 공사용 덮개가 있습니다.",
+        x: 64,
+        y: 27,
+        description: "404호 뒤쪽 벽면 공사 구역에 노란 덮개가 있습니다.",
       },
     ],
     field: { label: "원본 촬영일 · 월과 일 네 자리", placeholder: "예: 0305" },

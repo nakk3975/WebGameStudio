@@ -128,25 +128,34 @@ updates=[]
 
 
 def build_hotel():
-    # Closed floor at night: isolated cold light pools, not a uniformly lit lobby.
-    # Keep the cart, floor contact and room signs readable without flashing lights.
+    from hotel_motion import (ROOM_ROWS, CURTAIN_Y, DOOR_404_ANGLE,
+                              CART_X, distance_at, cart_y, foot_pose)
     scene.world.node_tree.nodes['Background'].inputs['Color'].default_value=(.055,.10,.17,1)
-    scene.world.node_tree.nodes['Background'].inputs['Strength'].default_value=.035
-    scene.view_settings.exposure=-.55
-    floor=material('Grey fine stone',(.27,.29,.28),.27,noise=135)
+    scene.world.node_tree.nodes['Background'].inputs['Strength'].default_value=.045
+    scene.view_settings.exposure=-.3
+    floor=material('Grey fine stone',(.27,.29,.28),.32,noise=135)
     wall=material('Painted plaster',(.25,.29,.27),.8,noise=100)
     trim=material('Lower wall olive',(.10,.14,.12),.55,noise=90)
-    door=material('Hotel door',(.082,.07,.049),.48,noise=25)
-    yellow=material('Yellow protective film',(.42,.36,.12),.38,noise=7)
-    box('Walkable floor',(0,6,-.06),(3.2,16,.12),floor)
-    for x in [-1.55,1.55]:box('Black floor border',(x,6,.005),(.10,16,.014),dark)
-    for y in range(-1,15):box('Tile joint',(0,y,.002),(3.0,.009,.002),trim)
-    for x in [-.8,0,.8]:box('Tile joint',(x,6,.002),(.006,16,.002),trim)
+    door=material('Hotel door',(.11,.075,.041),.48,noise=25)
+    yellow=material('Yellow protective film',(.52,.40,.11),.6,noise=7)
+    box('Walkable floor',(0,4,-.06),(3.2,20,.12),floor)
+    for x in [-1.55,1.55]:box('Black floor border',(x,4,.005),(.10,20,.014),dark)
+    for y in range(-6,15):box('Tile joint',(0,y,.002),(3.0,.009,.002),trim)
+    for x in [-.8,0,.8]:box('Tile joint',(x,4,.002),(.006,20,.002),trim)
+    # The right wall has a real opening at 404, with a dark room behind it.
     for x in [-1.66,1.66]:
-        box('Side wall',(x,6,1.5),(.15,16,3),wall)
-        box('Wainscot',(x*.965,6,.55),(.035,16,1.1),trim)
-        box('Rail',(x*.95,6,1.12),(.03,16,.035),metal)
-    box('Ceiling',(0,6,3.04),(3.4,16,.12),wall)
+        segments=[(-6,14)] if x<0 else [(-6,3.93),(5.07,14)]
+        for start,end in segments:
+            mid=(start+end)/2;length=end-start
+            box('Side wall',(x,mid,1.5),(.15,length,3),wall)
+            box('Wainscot',(x*.965,mid,.55),(.035,length,1.1),trim)
+            box('Rail',(x*.95,mid,1.12),(.03,length,.035),metal)
+        if x>0:box('404 wall above opening',(x,4.5,2.63),(.15,1.14,.74),wall)
+    box('404 room rear wall',(3.0,4.5,1.4),(.15,1.4,2.8),dark)
+    for y in [3.84,5.16]:box('404 room side wall',(2.28,y,1.4),(1.6,.12,2.8),dark)
+    box('404 room floor',(2.2,4.5,-.025),(1.3,1.25,.05),dark)
+    box('404 threshold',(1.63,4.5,.018),(.25,1.02,.036),wood)
+    box('Ceiling',(0,4,3.04),(3.4,20,.12),wall)
     box('End wall',(0,14,1.5),(3.3,.12,3),trim)
     glass,_=emissive('Blue window',(.10,.20,.31),.22)
     box('Window',(0,13.90,1.8),(1.1,.04,1.25),glass)
@@ -154,44 +163,51 @@ def build_hotel():
     box('Window mullion',(0,13.84,1.8),(1.13,.03,.035),dark)
     night_lamp,_=emissive('Old fluorescent diffuser',(.43,.66,.61),.9)
     dead_lamp=material('Unlit fluorescent diffuser',(.09,.11,.10),.9)
-    sign_back=material('Aged room plaque',(.023,.032,.031),.63,.25)
-    sign_ink,_=emissive('Readable room numerals',(.65,.74,.66),.32)
-    for row,y in enumerate([1.5,4.5,7.5,10.5]):
+    sign_back=material('Door-mounted number plaque',(.027,.031,.028),.6,.3)
+    sign_ink=material('Room numerals',(.78,.72,.53),.42,.2)
+    for row,y in enumerate(ROOM_ROWS):
         for side,x in enumerate([-1.565,1.565]):
-            box('Door frame',(x,y,1.10),(.075,1.12,2.20),dark,.018)
-            box('Door',(x*.985,y,1.06),(.038,.97,2.10),door,.012)
-            rod('Handle',(x*.958,y-.28,.96),(x*.958,y-.09,.96),.017,metal)
-            # Corridor-facing projecting plaques stay visible outside the work
-            # curtain. Numerals belong to the 3D scene and share its perspective.
             room=401+row*2+side
-            # The camera is slightly right of centre; extend the far-right
-            # bracket so 406's plaque cannot hide 408's last digit.
-            px=-1.20 if side==0 else (1.08 if row==3 else 1.20)
-            rod(f'Room {room} sign bracket',(x,y-.50,2.53),(px,y-.50,2.53),.015,metal)
-            rod(f'Room {room} sign hanger',(px,y-.50,2.53),(px,y-.50,2.43),.011,metal)
-            box(f'Room {room} plaque',(px,y-.50,2.31),(.40,.045,.23),sign_back,.016)
-            label=text(f'Room {room} number',str(room),(px,y-.527,2.31),.16,sign_ink)
+            # Each plaque is physically attached to the door leaf. No hanging signs.
+            for edge in [-.55,.55]:box(f'Room {room} frame jamb',(x,y+edge,1.10),(.10,.075,2.20),dark,.012)
+            box(f'Room {room} lintel',(x,y,2.18),(.10,1.17,.08),dark,.01)
+            before=set(bpy.data.objects)
+            box(f'Room {room} door',(x*.985,y,1.06),(.045,1.015,2.10),door,.012)
+            inner=-1 if side else 1
+            handle_x=x+inner*.07
+            rod(f'Room {room} handle',(handle_x,y-.31,.96),(handle_x,y-.13,.96),.017,metal)
+            plaque_x=x+inner*.045
+            box(f'Room {room} plaque',(plaque_x,y,1.77),(.022,.42,.20),sign_back,.01)
+            label=text(f'Room {room} number',str(room),(plaque_x+inner*.013,y,1.77),.15,sign_ink)
+            label.rotation_euler=(math.pi/2,0,math.pi/2 if side==0 else -math.pi/2)
             label.data.align_y='CENTER'
-        power=[22,17,0,11][row]
+            if room==404:
+                leaf=[o for o in bpy.data.objects if o not in before]
+                pivot=bpy.data.objects.new('404 door hinge',None);scene.collection.objects.link(pivot)
+                pivot.location=(x*.985,y-.5075,0)
+                bpy.context.view_layer.update()
+                for o in leaf:o.parent=pivot;o.matrix_parent_inverse=pivot.matrix_world.inverted()
+                pivot.rotation_euler.z=DOOR_404_ANGLE
+        power=[25,25,0,14][row]
         box('Ceiling light',(0,y,2.95),(.30,.75,.06),night_lamp if power else dead_lamp,.02)
         if power:area('Ceiling illumination',(0,y,2.88),(0,y,0),power,(.51,.76,.71),size=.55)
-    # Taut, slightly wrinkled protective curtain, physically in the scene.
-    verts=[];faces=[];ny=60;nz=15
+    # A wall repair bay between 404 and 406. It does not cover a numbered room.
+    verts=[];faces=[];ny=28;nz=15
     for j in range(ny+1):
-        y=-.4+j*6/ny
+        y=CURTAIN_Y[0]+j*(CURTAIN_Y[1]-CURTAIN_Y[0])/ny
         for k in range(nz+1):
-            z=.10+k*2.80/nz
-            x=1.48+.035*math.sin(j*.85+k*.21)+.017*math.sin(k*1.6+j*.32)
+            z=.10+k*2.65/nz
+            x=1.48+.025*math.sin(j*.85+k*.21)+.012*math.sin(k*1.6+j*.32)
             verts.append((x,y,z))
     for j in range(ny):
         for k in range(nz):
             a=j*(nz+1)+k;faces.append((a,a+1,a+nz+2,a+nz+1))
     mesh=bpy.data.meshes.new('Protective curtain mesh');mesh.from_pydata(verts,[],faces);mesh.materials.append(yellow)
-    o=bpy.data.objects.new('Yellow construction covering',mesh);scene.collection.objects.link(o)
+    o=bpy.data.objects.new('Wall repair covering between 404 and 406',mesh);scene.collection.objects.link(o)
     for polygon in mesh.polygons:polygon.use_smooth=True
-    for y in [0,2,4,5.5]:rod('Curtain support',(1.43,y,.06),(1.43,y,2.95),.021,metal)
+    for y in CURTAIN_Y:rod('Wall repair support',(1.43,y,.06),(1.43,y,2.83),.018,metal)
     before=set(bpy.data.objects)
-    body=box('Cart lower platform',(0,0,.27),(.82,1.15,.08),metal,.025)
+    box('Cart lower platform',(0,0,.27),(.82,1.15,.08),metal,.025)
     box('Cart dark undertray',(0,0,.225),(.66,.94,.08),dark,.02)
     for x in [-.39,.39]:
         for y in [-.53,.53]:rod('Vertical upright',(x,y,.3),(x,y,1.30),.020,metal)
@@ -201,35 +217,78 @@ def build_hotel():
     for x in [-.26,-.13,0,.13,.26]:
         for y in [-.535,.535]:rod('Basket vertical wire',(x,y,.34),(x,y,1.23),.009,metal)
     fabric=material('Folded linen weave',(.75,.74,.68),.94,noise=260)
-    for z in range(7):
-        box('Folded linen',(0,.02,.38+z*.115),(.68,.94,.102),fabric,.035)
-    for z in range(2):
-        for x in [-.17,.18]:box('Top folded towels',(x,.02,1.20+z*.08),(.34,.89,.075),fabric,.027)
+    for z in range(6):box('Folded linen',(0,.02,.38+z*.115),(.68,.94,.102),fabric,.025)
+    for x in [-.17,.18]:box('Top folded towels',(x,.02,1.11),(.34,.89,.075),fabric,.025)
+    # Rear push bar joins the basket; both hands stay in contact with this bar.
+    rod('Cart push bar',(-.35,.67,1.13),(.35,.67,1.13),.021,metal)
+    for x in [-.35,.35]:rod('Push bar support',(x,.53,.94),(x,.67,1.13),.018,metal)
     wheels=[]
     for x in [-.32,.32]:
         for y in [-.44,.44]:
             rod('Caster bracket',(x,y,.16),(x,y,.27),.022,metal)
             wh=cylinder('Rubber wheel',(x,y,.105),.105,.06,rubber,(0,math.pi/2,0));wheels.append(wh)
             cylinder('Wheel hub',(x,y,.105),.046,.068,metal,(0,math.pi/2,0))
-            # Visible rotational spoke for a no-slip rolling cue.
-            for sx in [-.036,.036]:
-                sp=box('Wheel spoke',(x+sx,y,.105),(.004,.11,.013),metal,.003)
-                sp.parent=wh;sp.matrix_parent_inverse=wh.matrix_world.inverted()
     cart=[o for o in bpy.data.objects if o not in before and o.parent is None]
     root=bpy.data.objects.new('Cart rigid chassis',None);scene.collection.objects.link(root)
     for o in cart:o.parent=root
+
+    def ellipsoid(name, loc, scale, mat):
+        bpy.ops.mesh.primitive_uv_sphere_add(segments=20,ring_count=12,location=loc)
+        o=bpy.context.object;o.name=name;o.scale=scale;o.data.materials.append(mat)
+        for face in o.data.polygons:face.use_smooth=True
+        return o
+    uniform=material('Off-white work jacket',(.69,.68,.58),.95,noise=150)
+    trousers=material('Dark work trousers',(.075,.086,.078),.92,noise=130)
+    skin=material('Worker skin',(.30,.22,.15),.93)
+    before=set(bpy.data.objects)
+    ellipsoid('Worker jacket',(0,1.04,1.27),(.23,.16,.34),uniform)
+    ellipsoid('Worker pelvis',(0,1.08,.92),(.19,.14,.15),trousers)
+    cylinder('Worker neck',(0,1.02,1.60),.065,.13,skin)
+    ellipsoid('Worker head',(0,.99,1.74),(.115,.105,.15),skin)
+    ellipsoid('Worker nose',(0,.884,1.74),(.025,.028,.034),skin)
+    ellipsoid('Worker white cap',(0,1.0,1.86),(.124,.117,.054),uniform)
+    box('Worker cap brim',(0,.875,1.84),(.25,.17,.018),uniform,.01)
+    for side in [-1,1]:
+        ellipsoid('Worker eye shadow',(side*.044,.893,1.775),(.021,.007,.009),dark)
+        rod('Jacket collar',(0,.876,1.58),(side*.07,.882,1.52),.009,white)
+    rod('Jacket seam',(0,.872,1.02),(0,.872,1.50),.004,trim)
+    for z in [1.15,1.27,1.39]:ellipsoid('Jacket button',(0,.864,z),(.008,.004,.008),dark)
+    for side in [-1,1]:
+        shoulder=(side*.19,1.03,1.47);elbow=(side*.29,.89,1.25);hand=(side*.30,.67,1.13)
+        rod('Worker sleeve upper',shoulder,elbow,.078,uniform)
+        ellipsoid('Worker elbow',elbow,(.077,.077,.077),uniform)
+        rod('Worker sleeve forearm',elbow,hand,.065,uniform)
+        ellipsoid('Worker hand',hand,(.048,.065,.037),skin)
+    legs=[]
+    for side in [-1,1]:
+        upper=rod('Worker trouser thigh',(side*.105,1.08,.94),(side*.11,1.08,.50),.08,trousers)
+        lower=rod('Worker trouser shin',(side*.11,1.08,.50),(side*.11,1.08,.12),.064,trousers)
+        foot=ellipsoid('Worker grounded boot',(side*.11,1.0,.075),(.08,.15,.075),rubber)
+        legs.append((side,upper,lower,foot))
+    person=[o for o in bpy.data.objects if o not in before]
+    actor=bpy.data.objects.new('Worker walking behind cart',None);scene.collection.objects.link(actor)
+    for o in person:o.parent=actor
+    def segment(o,a,b):
+        a,b=Vector(a),Vector(b);o.location=(a+b)/2
+        o.rotation_euler=(b-a).to_track_quat('Z','Y').to_euler()
+        o.scale.z=(b-a).length/(max(v.co.z for v in o.data.vertices)-min(v.co.z for v in o.data.vertices))
     def update(t):
-        # Approach on the floor; ease to a stop before the near wheels leave view.
-        # No lateral drift, scale animation, chassis roll or floor-plane sliding.
-        coast=max(0,min(1.5,t-10.5))
-        distance=.60*min(t,10.5)+.60*(coast-coast*coast/3)
-        root.location=(-.23,9.3-distance,0)
+        distance=distance_at(t)
+        root.location=(CART_X,cart_y(t),0)
         root.rotation_euler=(0,0,0);root.scale=(1,1,1)
+        actor.location=root.location
         for wh in wheels:
             wh.rotation_mode='QUATERNION'
             wh.rotation_quaternion=Quaternion((1,0,0),distance/.105) @ Quaternion((0,1,0),math.pi/2)
+        for side,upper,lower,foot in legs:
+            offset,height=foot_pose(t,side)
+            hip=(side*.105,1.08,.94);ankle=(side*.11,1.08+offset,height+.055)
+            knee=(side*.11,1.04+offset*.5,.51+max(0,height-.075)*.35)
+            segment(upper,hip,knee);segment(lower,knee,ankle)
+            foot.location=(side*.11,1.0+offset,height)
     updates.append(update)
-    area('Camera-side fill',(-.7,-1.5,2.4),(0,4,.8),16,(.36,.52,.72),2.2)
+    area('Camera-side fill',(-.7,-1.5,2.4),(0,4,.8),22,(.36,.52,.72),2.2)
+    area('404 threshold fill',(2.1,4.4,1.9),(1.1,4.5,.6),1.0,(.3,.42,.43),.4)
     camera((.2,-2.7,2.55),(0,6.5,1.0),29)
     return 12
 
@@ -345,23 +404,46 @@ duration=globals()['build_'+args.scene]()
 if args.geometry_report:
     if args.scene != 'hotel':raise SystemExit('Geometry validation applies to the moving cart')
     from bpy_extras.object_utils import world_to_camera_view
+    from hotel_motion import SPEED, CURTAIN_Y, ROOM_ROWS, DOOR_404_ANGLE
     root=bpy.data.objects['Cart rigid chassis']
+    actor=bpy.data.objects['Worker walking behind cart']
     wheels=[o for o in bpy.data.objects if o.name.startswith('Rubber wheel')]
-    bounds=[]
+    bounds=[];positions=[];visible_contacts=[]
     for frame in range(duration*FPS):
         for update in updates:update(frame/FPS)
         bpy.context.view_layer.update()
         assert tuple(root.scale)==(1,1,1) and tuple(root.rotation_euler)==(0,0,0)
+        assert (actor.location-root.location).length<1e-6
+        positions.append(root.location.y)
+        visible=0
         for wheel in wheels:
             contact=wheel.matrix_world.translation-Vector((0,0,.105))
-            assert abs(contact.z)<1e-6 and -1.5<contact.x<1.4 and 0<contact.y<14
+            assert abs(contact.z)<1e-6 and -1.5<contact.x<1.4 and -6<contact.y<14
             pixel=world_to_camera_view(scene,scene.camera,contact)
-            assert 0<pixel.x<1 and 0<pixel.y<1 and pixel.z>0, (frame, wheel.name, tuple(contact), tuple(pixel))
-            bounds.append([contact.x,contact.y,contact.z,pixel.x,pixel.y])
+            visible+=int(0<pixel.x<1 and 0<pixel.y<1 and pixel.z>0)
+            bounds.append([contact.x,contact.y,contact.z])
+        visible_contacts.append(visible)
+    assert all(a>b for a,b in zip(positions,positions[1:])), 'Cart must never reverse within the recording'
+    assert visible_contacts[0]==4 and visible_contacts[-1]==0
+    # The person follows the cart past the camera before the archived clip restarts.
+    assert actor.location.y+1.25<scene.camera.location.y
+    assert abs(bpy.data.objects['404 door hinge'].rotation_euler.z-DOOR_404_ANGLE)<1e-6
+    for row,y in enumerate(ROOM_ROWS):
+        assert not (y-.59<CURTAIN_Y[1] and y+.59>CURTAIN_Y[0]), 'Cover must not overlap any doorway'
+        for room in [401+row*2,402+row*2]:
+            leaf=bpy.data.objects[f'Room {room} door']
+            plaque=bpy.data.objects[f'Room {room} plaque']
+            number=bpy.data.objects[f'Room {room} number']
+            for item in [plaque,number]:
+                local=leaf.matrix_world.inverted() @ item.matrix_world.translation
+                assert abs(local.x)<.07 and abs(local.y)<1e-5, (room,tuple(local))
     report={'frames':duration*FPS,'wheelContacts':len(bounds),'fps':FPS,
-            'allContactsOnFloor':True,'allContactsInsideCamera':True,'cartRollRadians':0,
-            'cartScale':[1,1,1],'speedMetersPerSecond':.6,'wheelRadiusMeters':.105,
-            'floorXBounds':[-1.5,1.4],'pathXBounds':[min(b[0] for b in bounds),max(b[0] for b in bounds)],
+            'allContactsOnFloor':True,'forwardMotionOnly':True,'cartAndPersonExitBeforeRepeat':True,
+            'door404OpenDegrees':math.degrees(DOOR_404_ANGLE),'numberPlaquesAttachedToDoors':8,
+            'curtainYBounds':list(CURTAIN_Y),'curtainOverlapsDoorway':False,
+            'cartRollRadians':0,'cartScale':[1,1,1],'speedMetersPerSecond':SPEED,
+            'wheelRadiusMeters':.105,'floorXBounds':[-1.5,1.4],
+            'pathXBounds':[min(b[0] for b in bounds),max(b[0] for b in bounds)],
             'pathYBounds':[min(b[1] for b in bounds),max(b[1] for b in bounds)]}
     args.geometry_report.write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps(report));raise SystemExit(0)

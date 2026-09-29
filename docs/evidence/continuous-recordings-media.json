@@ -2,12 +2,18 @@
   "hotel-motion": {
     "duration": 28,
     "fps": 24,
-    "size": 1232159,
+    "size": 1395737,
     "decodedFrames": 672,
-    "sha256": "d944e6fb89724b23fcd702389bf558268cee0a90a6ec703c09ee1111694017d0",
+    "sha256": "307cdfac540150035d9ea32e6c2e42fc1b4e9332690ceacb6d90dc49b01ad79f",
     "uniqueBaseFrames": 288,
     "repeatedAfterFrames": 288,
-    "heldAdjacentFrames": 0
+    "distinctMotionFrames": 216,
+    "heldAdjacentFrames": 0,
+    "matchingDecodedPostersSeconds": [
+      0,
+      4,
+      8
+    ]
   },
   "stage-cues": {
     "duration": 14,

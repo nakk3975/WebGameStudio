@@ -21,11 +21,22 @@ for name, duration in expected.items():
     item = {'duration': duration, 'fps': 24, 'size': file.stat().st_size,
             'decodedFrames': len(frames), 'sha256': hashlib.sha256(file.read_bytes()).hexdigest()}
     if name == 'hotel-motion':
-        assert len(set(frames[:288])) == 288, 'The base motion must have 288 distinct decoded frames'
+        # The person and cart move for the first nine seconds, then leave view.
+        # A naturally empty corridor at the end may legitimately hold still.
+        assert len(set(frames[:216])) == 216, 'Moving subjects must not freeze or reuse frames'
         assert frames[:288] == frames[288:576]
         assert frames[:96] == frames[576:672]
-        assert all(a != b for a, b in zip(frames, frames[1:]))
-        item.update(uniqueBaseFrames=288, repeatedAfterFrames=288, heldAdjacentFrames=0)
+        item.update(uniqueBaseFrames=len(set(frames[:288])), repeatedAfterFrames=288,
+                    distinctMotionFrames=216,
+                    heldAdjacentFrames=sum(a == b for a, b in zip(frames, frames[1:])))
+        for second in [0, 4, 8]:
+            decoded = subprocess.check_output(['ffmpeg', '-v', 'error', '-i', str(file),
+                '-vf', f'select=eq(n\\,{second*24}),format=rgb24', '-frames:v', '1',
+                '-f', 'rawvideo', '-'])
+            poster = subprocess.check_output(['ffmpeg', '-v', 'error', '-i',
+                str(assets / f'hotel-motion-{second}.webp'), '-pix_fmt', 'rgb24', '-f', 'rawvideo', '-'])
+            assert decoded == poster, f'{second}s photograph differs from the shipped video'
+        item['matchingDecodedPostersSeconds'] = [0, 4, 8]
     elif name == 'auction-monitor':
         assert frames[47] != frames[48] and frames[215] != frames[216]
         item['observedChangesSeconds'] = [2, 9]

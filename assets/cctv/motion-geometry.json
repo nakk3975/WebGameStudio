@@ -3,25 +3,33 @@
   "wheelContacts": 1152,
   "fps": 24,
   "allContactsOnFloor": true,
-  "allContactsInsideCamera": true,
+  "forwardMotionOnly": true,
+  "cartAndPersonExitBeforeRepeat": true,
+  "door404OpenDegrees": 12.000000000000002,
+  "numberPlaquesAttachedToDoors": 8,
+  "curtainYBounds": [
+    5.45,
+    6.75
+  ],
+  "curtainOverlapsDoorway": false,
   "cartRollRadians": 0,
   "cartScale": [
     1,
     1,
     1
   ],
-  "speedMetersPerSecond": 0.6,
+  "speedMetersPerSecond": 1.2,
   "wheelRadiusMeters": 0.105,
   "floorXBounds": [
     -1.5,
     1.4
   ],
   "pathXBounds": [
-    -0.550000011920929,
-    0.08999998867511749
+    -0.6699999570846558,
+    -0.030000001192092896
   ],
   "pathYBounds": [
-    2.110347270965576,
+    -5.490000247955322,
     9.739999771118164
   ]
 }

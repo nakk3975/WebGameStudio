@@ -13,6 +13,7 @@ import stageCorridor from "./assets/stage-corridor.webp";
 import islandRope from "./assets/island-rope.webp";
 import islandBuoy from "./assets/island-buoy.webp";
 import { stageClip, auctionClip, receiverClip } from "./recordings";
+import { hotelStill } from "./cctv";
 
 export type CaseMedia = {
   id: string;
@@ -38,6 +39,11 @@ type Attachment = CaseMedia & {
 
 // Presentation-only attachments: published packages and saved answers stay immutable.
 export const mediaAttachments: Attachment[] = [
+  {
+    ...hotelStill,
+    caseId: "hotel-404",
+    sourceIds: ["hotel-404-f3"],
+  },
   {
     ...stageClip,
     caseId: "encore-last",

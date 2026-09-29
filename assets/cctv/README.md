@@ -8,8 +8,10 @@ cameras and lights in Blender 4.3 (Cycles CPU). Each moving-cart frame is a fres
 render of the corridor and trolley together. There are no image planes, moving
 cutouts, optical-flow interpolation or independently painted shadows. These are
 stylized CG reconstructions, **not filmed footage or generative-video output**.
-The game labels them as reconstructions; original photographs remain separate.
-No person or their identity/movements is reconstructed.
+The hotel scene includes a fictional white-clothed person pushing the trolley.
+This is authored game content, not a reconstruction of a real person. The in-world
+viewer calls it the front desk recording; the matching still is a decoded frame
+from that same video, not a separate generated photograph.
 
 | Asset | Duration | Observation | Existing answer |
 | --- | ---: | --- | --- |
@@ -30,28 +32,31 @@ story. The receiver is visibly connected to its separate battery.
 
 The cart is a rigid 3D chassis with constant unit scale and zero pitch/roll/yaw.
 Its wheel radius is 0.105 m. Wheels roll by distance/radius about the fixed axle.
-The path has no sideways drift: x=-0.23 m; y decreases from 9.3 m with 0.6 m/s
-initial speed, easing to a stop over the final 1.5 seconds. Four wheel contact
-points remain at z=0, inside the corridor borders and inside the camera view for
-all 288 source frames. Lighting, contact shadows, occlusion and perspective come
-from the same scene. The camera never rotates or zooms.
+The path has no sideways drift: x=-0.35 m; y decreases from 9.3 m at 1.2 m/s.
+The person walks behind the trolley, with both hands attached to the rear push
+bar. Planted feet compensate for forward travel. Both person and trolley leave
+the bottom of the camera view before the next cycle; neither reverses direction.
+Four wheel contact points remain at z=0 inside the walkable floor for all 288
+source frames, including the extension below the camera. Lighting, occlusion,
+contact shadows and perspective come from the same scene. The camera is fixed.
 
-The hotel night pass uses low, cold fluorescent light pools, one unlit fixture
-and a dim blue window. The grade is rendered into the scene, so playback,
-posters and captured comparison frames have the same appearance. There is no
-animated flicker. Projecting room plaques identify all eight rooms: near to far,
-401/403/405/407 on the left and 402/404/406/408 on the right. The right-hand
-plaques extend beyond the construction curtain; the far-right bracket also
-keeps 408 from being hidden by 406. This follows the existing fourth-floor
-room/device records and does not identify the separate B204 laundry as a room
-on this floor. The original photographic evidence is unchanged.
+The cold night lighting has one unlit fixture and a dim blue window, without
+animated flicker. Every number plaque is attached to its actual door leaf:
+401/403/405/407 on the left and 402/404/406/408 on the right. Door 404 is ajar by
+12 degrees at a real opening into a dark room. The yellow construction covering
+occupies a wall repair bay between 404 and 406 and overlaps no doorway. The
+separate B204 laundry is not depicted as a fourth-floor room.
 
-`motion-geometry.json` records the complete 1,152-contact validation.
-The final image is near the camera; **the cut back to the distant cart at 12 and
-24 seconds is intentional evidence of the monitor's repeated source record**.
-It is not a physically continuous return trip, and is not blended away. Inside
-each 12-second cycle all 288 decoded frames differ, without four-second holds.
-The 28-second container plays once; the repetition is inside the record.
+`motion-geometry.json` records all 1,152 wheel contacts, monotonic travel, exit
+before repeat, open-door angle, plaque attachment and cover/door separation.
+**The cut back to the initial scene at 12 and 24 seconds remains intentional
+evidence of the monitor's repeated source record.** It is not a return trip or
+reverse playback. The 28-second container plays once; repetition is in the record.
+
+The 0/4/8-second WebP references are lossless captures of decoded H.264 frames.
+The separate corridor photo and date puzzle use the same 0-second image. The
+verification script checks exact decoded RGB equality at each of these moments,
+as well as exact 12-second repetition across all 672 video frames.
 
 `recording-timing.ts` compares captured native-video times at 24 fps, allowing
 one frame of capture timing tolerance. Arbitrary positions inside the old
@@ -92,11 +97,14 @@ structure, endings, save schema and engine version are unchanged. The lab stays
 on v3. v1/v2/v3 packages and user saves are not rewritten. New investigations use
 v4; existing investigations keep their edition. Archived 404 video viewers also
 use the new continuous recording with the same 12-second comparison answer; a
-presentation-only note corrects the old v3 four-second wording.
+presentation-only note corrects the old v3 four-second wording. The handover
+mentions the ajar door as seen on the monitor. Hotel photographs open in separate
+windows, and follow the accessibility of their original source documents. Text
+files contain text and links, without embedding photographs.
 
-All pre-existing photos and media bytes are preserved. `hotel-cctv.mp4`,
+The superseded photographic assets remain preserved for provenance. `hotel-cctv.mp4`,
 `hotel.webp`, `hotel-frame-middle.webp`, `hotel-frame-exit.webp` and the old
 `scripts/build-cctv.sh` document the superseded 4-second A/B/C reconstruction.
-The original photo still supports the date/curtain puzzle. `hotel-empty.webp`
-and `hotel-cart.webp` here remain provenance of the earlier rejected cutout
-experiment; neither is used by the new renderer or shipped player.
+`hotel.webp` no longer appears in the hotel date puzzle or evidence viewer.
+`hotel-empty.webp` and `hotel-cart.webp` here also remain provenance of the
+earlier cutout experiment; neither is used by the new renderer or shipped player.

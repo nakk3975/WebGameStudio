@@ -43,6 +43,13 @@ for scene in names if args.scene == 'all' else [args.scene]:
                'stage': [(36, '')], 'auction': [(0, ''), (48, '-2'), (216, '-9')],
                'receiver': [(30, '')]}[scene]
     for frame, suffix in posters:
-        run('-i', folder / f'{frame:04d}.png', '-frames:v', '1', '-c:v', 'libwebp',
-            '-quality', '88', '-threads', '2', assets / f'{name}{suffix}.webp')
+        if scene == 'hotel':
+            # The photograph, date puzzle and fallback capture must match the
+            # shipped video, including its H.264 encode. Preserve decoded RGB.
+            run('-i', assets / f'{name}.mp4', '-vf', f'select=eq(n\\,{frame}),format=rgb24',
+                '-frames:v', '1', '-c:v', 'libwebp', '-lossless', '1',
+                '-threads', '2', assets / f'{name}{suffix}.webp')
+        else:
+            run('-i', folder / f'{frame:04d}.png', '-frames:v', '1', '-c:v', 'libwebp',
+                '-quality', '88', '-threads', '2', assets / f'{name}{suffix}.webp')
     print(f'Encoded {name}', flush=True)

@@ -3992,3 +3992,15 @@ button:not(:disabled):active {
 .motion-answer .cue-dot { width: 14px; height: 14px; border-radius: 50%; border: 1px solid #ffffff55; flex-shrink: 0; }
 .motion-answer .field { display: grid; gap: 10px; margin-bottom: 16px; }
 .motion-answer > .primary { margin-top: 12px; }
+
+.photo-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 16px;
+}
+.photo-links button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
