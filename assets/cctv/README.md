@@ -36,6 +36,16 @@ points remain at z=0, inside the corridor borders and inside the camera view for
 all 288 source frames. Lighting, contact shadows, occlusion and perspective come
 from the same scene. The camera never rotates or zooms.
 
+The hotel night pass uses low, cold fluorescent light pools, one unlit fixture
+and a dim blue window. The grade is rendered into the scene, so playback,
+posters and captured comparison frames have the same appearance. There is no
+animated flicker. Projecting room plaques identify all eight rooms: near to far,
+401/403/405/407 on the left and 402/404/406/408 on the right. The right-hand
+plaques extend beyond the construction curtain; the far-right bracket also
+keeps 408 from being hidden by 406. This follows the existing fourth-floor
+room/device records and does not identify the separate B204 laundry as a room
+on this floor. The original photographic evidence is unchanged.
+
 `motion-geometry.json` records the complete 1,152-contact validation.
 The final image is near the camera; **the cut back to the distant cart at 12 and
 24 seconds is intentional evidence of the monitor's repeated source record**.

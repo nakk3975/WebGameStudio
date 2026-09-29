@@ -2,9 +2,9 @@
   "hotel-motion": {
     "duration": 28,
     "fps": 24,
-    "size": 1743868,
+    "size": 1232159,
     "decodedFrames": 672,
-    "sha256": "9bb170932ac2698ff21338cb6c4f03b17c9a5adb28f453afc91d3457e63ef9b8",
+    "sha256": "d944e6fb89724b23fcd702389bf558268cee0a90a6ec703c09ee1111694017d0",
     "uniqueBaseFrames": 288,
     "repeatedAfterFrames": 288,
     "heldAdjacentFrames": 0

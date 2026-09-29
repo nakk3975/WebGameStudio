@@ -128,8 +128,13 @@ updates=[]
 
 
 def build_hotel():
+    # Closed floor at night: isolated cold light pools, not a uniformly lit lobby.
+    # Keep the cart, floor contact and room signs readable without flashing lights.
+    scene.world.node_tree.nodes['Background'].inputs['Color'].default_value=(.055,.10,.17,1)
+    scene.world.node_tree.nodes['Background'].inputs['Strength'].default_value=.035
+    scene.view_settings.exposure=-.55
     floor=material('Grey fine stone',(.27,.29,.28),.27,noise=135)
-    wall=material('Painted plaster',(.38,.40,.34),.8,noise=100)
+    wall=material('Painted plaster',(.25,.29,.27),.8,noise=100)
     trim=material('Lower wall olive',(.10,.14,.12),.55,noise=90)
     door=material('Hotel door',(.082,.07,.049),.48,noise=25)
     yellow=material('Yellow protective film',(.42,.36,.12),.38,noise=7)
@@ -143,17 +148,33 @@ def build_hotel():
         box('Rail',(x*.95,6,1.12),(.03,16,.035),metal)
     box('Ceiling',(0,6,3.04),(3.4,16,.12),wall)
     box('End wall',(0,14,1.5),(3.3,.12,3),trim)
-    glass,_=emissive('Blue window',(.24,.33,.43),.7)
+    glass,_=emissive('Blue window',(.10,.20,.31),.22)
     box('Window',(0,13.90,1.8),(1.1,.04,1.25),glass)
     for x in [-.55,0,.55]:box('Window frame',(x,13.84,1.8),(.035,.03,1.3),dark)
     box('Window mullion',(0,13.84,1.8),(1.13,.03,.035),dark)
-    for y in [1.5,4.5,7.5,10.5]:
-        for x in [-1.565,1.565]:
+    night_lamp,_=emissive('Old fluorescent diffuser',(.43,.66,.61),.9)
+    dead_lamp=material('Unlit fluorescent diffuser',(.09,.11,.10),.9)
+    sign_back=material('Aged room plaque',(.023,.032,.031),.63,.25)
+    sign_ink,_=emissive('Readable room numerals',(.65,.74,.66),.32)
+    for row,y in enumerate([1.5,4.5,7.5,10.5]):
+        for side,x in enumerate([-1.565,1.565]):
             box('Door frame',(x,y,1.10),(.075,1.12,2.20),dark,.018)
             box('Door',(x*.985,y,1.06),(.038,.97,2.10),door,.012)
             rod('Handle',(x*.958,y-.28,.96),(x*.958,y-.09,.96),.017,metal)
-        box('Ceiling light',(0,y,2.95),(.30,.75,.06),lampmat,.02)
-        area('Ceiling illumination',(0,y,2.88),(0,y,0),65,size=.8)
+            # Corridor-facing projecting plaques stay visible outside the work
+            # curtain. Numerals belong to the 3D scene and share its perspective.
+            room=401+row*2+side
+            # The camera is slightly right of centre; extend the far-right
+            # bracket so 406's plaque cannot hide 408's last digit.
+            px=-1.20 if side==0 else (1.08 if row==3 else 1.20)
+            rod(f'Room {room} sign bracket',(x,y-.50,2.53),(px,y-.50,2.53),.015,metal)
+            rod(f'Room {room} sign hanger',(px,y-.50,2.53),(px,y-.50,2.43),.011,metal)
+            box(f'Room {room} plaque',(px,y-.50,2.31),(.40,.045,.23),sign_back,.016)
+            label=text(f'Room {room} number',str(room),(px,y-.527,2.31),.16,sign_ink)
+            label.data.align_y='CENTER'
+        power=[22,17,0,11][row]
+        box('Ceiling light',(0,y,2.95),(.30,.75,.06),night_lamp if power else dead_lamp,.02)
+        if power:area('Ceiling illumination',(0,y,2.88),(0,y,0),power,(.51,.76,.71),size=.55)
     # Taut, slightly wrinkled protective curtain, physically in the scene.
     verts=[];faces=[];ny=60;nz=15
     for j in range(ny+1):
@@ -208,7 +229,7 @@ def build_hotel():
             wh.rotation_mode='QUATERNION'
             wh.rotation_quaternion=Quaternion((1,0,0),distance/.105) @ Quaternion((0,1,0),math.pi/2)
     updates.append(update)
-    area('Camera-side fill',(-.7,-1.5,2.4),(0,4,.8),100,(.63,.72,.85),2.2)
+    area('Camera-side fill',(-.7,-1.5,2.4),(0,4,.8),16,(.36,.52,.72),2.2)
     camera((.2,-2.7,2.55),(0,6.5,1.0),29)
     return 12
 
