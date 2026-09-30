@@ -140,6 +140,9 @@ it.each(caseLibrary)(
     expect(
       host.querySelector(`section[aria-label="${fileTitle(c, source)} 창"]`),
     ).toBeTruthy();
+    expect(document.activeElement?.getAttribute("aria-label")).toBe(
+      fileTitle(c, source) + " 창",
+    );
     expect(JSON.stringify(c)).toBe(original);
     expect((await snapshot()).notes).toBe("notes");
   },

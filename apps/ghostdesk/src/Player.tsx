@@ -319,6 +319,7 @@ export default function Player({
           { ...win, minimized: false },
         ];
       if (remaining.length >= 12) {
+        pendingWindowFocus.current = null;
         setToast("창은 최대 12개까지 열 수 있습니다.");
         return old;
       }
@@ -345,6 +346,19 @@ export default function Player({
   };
   const patch = (id: string, p: Partial<Win>) =>
     setWins((w) => w.map((x) => (x.id === id ? { ...x, ...p } : x)));
+  useEffect(() => {
+    // A closing hint restores its old button first. The requested source must
+    // receive focus after that cleanup, rather than leaving focus behind it.
+    const id = pendingWindowFocus.current;
+    if (!id) return;
+    const node = [
+      ...(area.current?.querySelectorAll<HTMLElement>(".os-window") || []),
+    ].find((window) => window.dataset.windowId === id);
+    if (node) {
+      pendingWindowFocus.current = null;
+      node.focus();
+    }
+  }, [wins]);
   useEffect(() => {
     const esc = (e: KeyboardEvent) => {
       if (
@@ -1043,12 +1057,7 @@ export default function Player({
             <section
               key={w.id}
               tabIndex={-1}
-              ref={(node) => {
-                if (node && pendingWindowFocus.current === w.id) {
-                  pendingWindowFocus.current = null;
-                  node.focus();
-                }
-              }}
+              data-window-id={w.id}
               aria-label={title(w.id) + " 창"}
               data-view={(() => {
                 const file = files.find((f) => f.id === w.id);
