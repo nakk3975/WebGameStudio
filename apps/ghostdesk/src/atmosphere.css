@@ -572,6 +572,18 @@ select {
   color: #466039;
   border-color: #b8c1a5;
 }
+.document-reader:not(.log-document) button {
+  background: #dedbc9;
+  color: #35432b;
+  border-color: #969b7e;
+}
+.document-reader:not(.log-document) button:hover {
+  background: #c9cfb7;
+  border-color: #6b7758;
+}
+.document-reader:not(.log-document) button:focus-visible {
+  outline-color: #566442;
+}
 .document-reader.log-document {
   background: #151e15;
   color: #cddcc2;
