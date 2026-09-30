@@ -7,6 +7,7 @@ import {
 } from "../apps/ghostdesk/src/cases";
 import {
   boardRecord,
+  fileTitle,
   investigationStatus,
 } from "../apps/ghostdesk/src/presentation";
 import { initialState } from "../packages/engine-ghostdesk/src";
@@ -37,9 +38,8 @@ it("shows source names rather than the explanatory clue copy, including old save
     for (const cl of c.clues) {
       const record = boardRecord(c, cl.id);
       expect(record.description).not.toBe(cl.description);
-      expect(record.title).toBe(
-        c.files.find((f) => f.clueId === cl.id)?.title || "수집한 기록",
-      );
+      const source = c.files.find((f) => f.clueId === cl.id);
+      expect(record.title).toBe(source ? fileTitle(c, source) : "수집한 기록");
       expect(record.description).not.toContain("정답");
     }
   expect(investigationStatus(null)).toBe("미해결");

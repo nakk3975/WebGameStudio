@@ -40,7 +40,12 @@ import {
 } from "../../../packages/engine-ghostdesk/src";
 import { writePlay, download, createSaveQueue, type Save } from "./storage";
 import { caseEntry, isOfficialCaseVersion } from "./cases";
-import { boardRecord, recordText, messageText } from "./presentation";
+import {
+  boardRecord,
+  recordText,
+  messageText,
+  evidenceFile,
+} from "./presentation";
 import EvidenceView from "./EvidenceView";
 import MediaGallery from "./MediaGallery";
 import { availableMedia } from "./case-media";
@@ -100,11 +105,13 @@ export default function Player({
     [reveal, setReveal] = useState(false),
     [endVisible, setEndVisible] = useState(state.mode === "ENDED"),
     [exiting, setExiting] = useState(false);
+  const files = c.files.map((file) => evidenceFile(c, file));
   const player = useRef<HTMLDivElement>(null),
     area = useRef<HTMLDivElement>(null),
     latest = useRef<Save>(initial),
     saveQueue = useRef(createSaveQueue<Save>(persistSave)),
     leaving = useRef(false),
+    pendingWindowFocus = useRef<string | null>(null),
     drag = useRef<{ id: string; dx: number; dy: number } | null>(null),
     previousSolved = useRef(state.solvedPuzzleIds.length);
   latest.current = {
@@ -275,7 +282,7 @@ export default function Player({
       !photos.some((m) => id === `@photo:${m.id}`)
     )
       return;
-    const f = c.files.find((x) => x.id === id);
+    const f = files.find((x) => x.id === id);
     if (f) {
       if (!canInspect(c, state, id)) {
         setToast(
@@ -286,24 +293,29 @@ export default function Player({
       if (canOpen(c, state, id)) send({ type: "OPEN_FILE", id });
       if (f.type === "CHAT_LINK") send({ type: "READ_MESSAGES" });
     }
+    showWindow(id);
+  }
+  function showWindow(id: string, replaceId?: string) {
     setWins((old) => {
-      const win = old.find((w) => w.id === id);
+      const replaced = old.find((w) => w.id === replaceId);
+      const remaining = old.filter((w) => w.id !== replaceId);
+      const win = remaining.find((w) => w.id === id);
       if (win)
         return [
-          ...old.filter((w) => w.id !== id),
+          ...remaining.filter((w) => w.id !== id),
           { ...win, minimized: false },
         ];
-      if (old.length >= 12) {
+      if (remaining.length >= 12) {
         setToast("창은 최대 12개까지 열 수 있습니다.");
         return old;
       }
       return [
-        ...old,
+        ...remaining,
         {
           id,
-          x: Math.min(48 + old.length * 28, 180),
-          y: 40 + old.length * 20,
-          layout: "normal",
+          x: replaced?.x ?? Math.min(48 + remaining.length * 28, 180),
+          y: replaced?.y ?? 40 + remaining.length * 20,
+          layout: replaced?.layout ?? "normal",
           minimized: false,
         },
       ];
@@ -391,7 +403,7 @@ export default function Player({
   function title(id: string) {
     return (
       photos.find((m) => id === `@photo:${m.id}`)?.title ||
-      c.files.find((f) => f.id === id)?.title ||
+      files.find((f) => f.id === id)?.title ||
       (id === "@photos"
         ? "이미지 자료"
         : id === "@board"
@@ -507,7 +519,7 @@ export default function Player({
                   <button
                     className="quiet"
                     onClick={() => {
-                      const f = c.files.find(
+                      const f = files.find(
                         (f) => f.clueId === cl.id && canInspect(c, state, f.id),
                       );
                       if (f) open(f.id);
@@ -609,7 +621,7 @@ export default function Player({
           </button>
         </div>
       );
-    const f = c.files.find((x) => x.id === id);
+    const f = files.find((x) => x.id === id);
     if (!f) return null;
     if (!canInspect(c, state, id))
       return <p className="empty">아직 접근할 수 없는 파일입니다.</p>;
@@ -621,18 +633,14 @@ export default function Player({
           <div className="vault-lock">
             <LockKeyhole size={32} />
           </div>
-          <div className="section-kicker">
-            {p.stageTitle
-              ? `${c.puzzles.indexOf(p) + 1} / ${c.puzzles.length} 단계`
-              : "잠긴 보관함"}
-          </div>
-          <h2>{p.stageTitle || "보관함이 잠겨 있습니다."}</h2>
+          <div className="section-kicker">잠긴 폴더</div>
+          <h2>{f.title}</h2>
           <p>{p.title}</p>
           {!!p.evidenceIds?.length && (
             <div className="puzzle-sources">
               <h3>대조할 자료</h3>
               {p.evidenceIds.map((eid) => {
-                const source = c.files.find((x) => x.id === eid);
+                const source = files.find((x) => x.id === eid);
                 if (!source || !canOpen(c, state, eid)) return null;
                 return (
                   <details
@@ -677,10 +685,35 @@ export default function Player({
                 id: p.id,
                 answer,
               });
-              setState(r.state);
+              let nextState = r.state;
+              const newlySolved =
+                !state.solvedPuzzleIds.includes(p.id) &&
+                nextState.solvedPuzzleIds.includes(p.id);
+              if (newlySolved)
+                nextState = transition(c, nextState, {
+                  type: "OPEN_FILE",
+                  id: f.id,
+                }).state;
+              setState(nextState);
               if (r.message) setToast(r.message);
-              if (r.state.solvedPuzzleIds.includes(p.id))
-                send({ type: "OPEN_FILE", id: f.id });
+              // Use the post-solve state: the next folder is still hidden in
+              // this render. Reuse the solved window, even at the 12-window cap.
+              if (newlySolved && p.stageTitle && nextState.mode === "RUNNING") {
+                const next = c.puzzles
+                  .slice(c.puzzles.indexOf(p) + 1)
+                  .filter(
+                    (puzzle) => !nextState.solvedPuzzleIds.includes(puzzle.id),
+                  )
+                  .map((puzzle) =>
+                    files.find((file) => file.puzzleId === puzzle.id),
+                  )
+                  .find((file) => file && canInspect(c, nextState, file.id));
+                if (next) {
+                  pendingWindowFocus.current = next.id;
+                  showWindow(next.id, f.id);
+                  setToast(`기록을 확인했습니다. 다음 폴더: ${next.title}`);
+                }
+              }
             }}
           />
           <p className="small muted">
@@ -715,7 +748,7 @@ export default function Player({
             c.puzzles
               .find((p) => p.id === f.puzzleId)
               ?.evidenceIds?.map((eid) => {
-                const source = c.files.find((x) => x.id === eid);
+                const source = files.find((x) => x.id === eid);
                 return source && canInspect(c, state, eid)
                   ? fileButton(source)
                   : null;
@@ -725,7 +758,7 @@ export default function Player({
               <button
                 className="primary"
                 onClick={() => {
-                  const next = c.files.find(
+                  const next = files.find(
                     (x) =>
                       x.puzzleId &&
                       !state.solvedPuzzleIds.includes(x.puzzleId) &&
@@ -736,17 +769,17 @@ export default function Player({
                 }}
               >
                 {state.solvedPuzzleIds.length < c.puzzles.length
-                  ? "다음 단계 열기"
+                  ? "다음 조사 폴더 열기"
                   : "결론 작성하기"}
               </button>
             )}
-          {c.files
+          {files
             .filter(
               (x) => x.parentId === id && state.visibleFileIds.includes(x.id),
             )
             .map((x) => fileButton(x))}
           {!f.puzzleId &&
-            !c.files.some(
+            !files.some(
               (x) => x.parentId === id && state.visibleFileIds.includes(x.id),
             ) && <p className="empty">표시할 파일이 없습니다.</p>}
         </div>
@@ -900,23 +933,23 @@ export default function Player({
         <span className="muted">파일 더블클릭 또는 Enter로 열기</span>
       </div>
       {c.puzzles.some((p) => p.stageTitle) && (
-        <nav className="stage-rail" aria-label="조사 단계">
+        <nav className="stage-rail" aria-label="조사 폴더">
           <span>
             확인 {state.solvedPuzzleIds.length}/{c.puzzles.length}
           </span>
-          {c.puzzles.map((p, i) => {
-            const f = c.files.find((f) => f.puzzleId === p.id)!;
+          {c.puzzles.map((p) => {
+            const f = files.find((f) => f.puzzleId === p.id)!;
             const solved = state.solvedPuzzleIds.includes(p.id);
             return (
               <button
                 key={p.id}
                 disabled={!canInspect(c, state, f.id)}
-                aria-label={`${i + 1}단계 ${p.stageTitle}${solved ? " · 완료" : ""}`}
+                aria-label={`${f.title}${solved ? " · 확인 완료" : " · 잠김"}`}
                 onClick={() => open(f.id)}
                 className={solved ? "stage-done" : ""}
               >
-                <b>{solved ? "✓" : i + 1}</b>
-                <span>{p.stageTitle}</span>
+                <b>{solved ? "✓" : <Folder size={14} aria-hidden="true" />}</b>
+                <span>{f.title}</span>
               </button>
             );
           })}
@@ -925,7 +958,7 @@ export default function Player({
       <div className="desktop-layout">
         <aside className="desktop-files">
           <span className="file-rail-label">사건 자료</span>
-          {c.files
+          {files
             .filter((f) => !f.parentId && state.visibleFileIds.includes(f.id))
             .map((f) => fileButton(f, true))}
           {!!photos.length && (
@@ -958,9 +991,9 @@ export default function Player({
                 className="primary"
                 onClick={() =>
                   open(
-                    c.files.find(
+                    files.find(
                       (f) => f.type === "TEXT" && f.visible && !f.parentId,
-                    )?.id || c.files[0].id,
+                    )?.id || files[0].id,
                   )
                 }
               >
@@ -971,9 +1004,16 @@ export default function Player({
           {wins.map((w, i) => (
             <section
               key={w.id}
+              tabIndex={-1}
+              ref={(node) => {
+                if (node && pendingWindowFocus.current === w.id) {
+                  pendingWindowFocus.current = null;
+                  node.focus();
+                }
+              }}
               aria-label={title(w.id) + " 창"}
               data-view={(() => {
-                const file = c.files.find((f) => f.id === w.id);
+                const file = files.find((f) => f.id === w.id);
                 return file?.type === "CHAT_LINK"
                   ? "chat"
                   : file?.type === "TEXT"
@@ -1152,7 +1192,7 @@ export default function Player({
             unread ? `메신저 · 읽지 않은 메시지 ${unread}개` : "메신저 열기"
           }
           onClick={() => {
-            const f = c.files.find((x) => x.type === "CHAT_LINK");
+            const f = files.find((x) => x.type === "CHAT_LINK");
             if (f) open(f.id);
           }}
         >

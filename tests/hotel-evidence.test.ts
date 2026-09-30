@@ -6,7 +6,7 @@ import Player from "../apps/ghostdesk/src/Player";
 import { archivedCases, caseLibrary } from "../apps/ghostdesk/src/cases";
 import { initialState, transition } from "../packages/engine-ghostdesk/src";
 import { hotelClip, hotelStill } from "../apps/ghostdesk/src/cctv";
-import { recordText } from "../apps/ghostdesk/src/presentation";
+import { recordText, fileTitle } from "../apps/ghostdesk/src/presentation";
 import { parseSave, type Save } from "../apps/ghostdesk/src/storage";
 
 const c = caseLibrary.find((e) => e.case.caseId === "hotel-404")!.case;
@@ -108,9 +108,9 @@ it("uses the recording frame for the separate photo and date puzzle, with no unr
   expect(
     windowByTitle(hotelStill.title).querySelector("img")?.getAttribute("src"),
   ).toBe(hotelClip.src);
-  await click("2단계 " + c.puzzles[1].stageTitle);
   const puzzleFile = c.files.find((f) => f.puzzleId === c.puzzles[1].id)!;
-  const puzzle = windowByTitle(puzzleFile.title);
+  await click(fileTitle(c, puzzleFile) + " · 잠김");
+  const puzzle = windowByTitle(fileTitle(c, puzzleFile));
   expect(
     [...puzzle.querySelectorAll("img")].some(
       (img) => img.getAttribute("src") === hotelStill.src,

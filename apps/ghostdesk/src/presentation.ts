@@ -2,6 +2,82 @@ import type { CaseFile, CasePackage } from "../../../packages/contracts/src";
 import type { Save } from "./storage";
 import { isOfficialCaseVersion } from "./cases";
 
+// View names only: account saves must still match their immutable case package.
+const investigationFolders: Record<string, string[]> = {
+  "demo-0317": [
+    "전송 보관함",
+    "요청 접수함",
+    "처리 이력",
+    "회선 점검 자료",
+    "영수증 원본",
+    "내부 보존함",
+    "자료실 출입 기록",
+    "보존 이관 대장",
+    "인계 서명부",
+    "작업 목록 백업",
+  ],
+  "hotel-404": [
+    "객실 관리함",
+    "촬영 기록",
+    "복도 녹화함",
+    "야간 이동 대장",
+    "배송 원장",
+    "카메라 입력 기록",
+    "통신 장애 기록",
+    "시설 점검 일지",
+    "복구 영상함",
+    "야간 인계 보관함",
+  ],
+  "auction-seven": [
+    "입찰 접수함",
+    "봉인 검수함",
+    "정산 원장",
+    "전광판 기록",
+    "접수 이력",
+    "작품 포장 대장",
+    "결제 알림함",
+    "인수표 출력 기록",
+    "반출 승인함",
+    "낙찰자 인계 기록",
+  ],
+  "encore-last": [
+    "조명 큐 보관함",
+    "음원 보관함",
+    "공연 재생 기록",
+    "안전 통로 자료",
+    "촬영 구역 기록",
+    "안내 요청함",
+    "음향 배선 자료",
+    "방송 실행 기록",
+    "관객 제보함",
+    "공연 인계 기록",
+  ],
+  "monday-loop": [
+    "수신 기록함",
+    "관측 원장",
+    "날짜 기록",
+    "관측 장비 자료",
+    "당직 일지",
+    "독립 기록함",
+    "중계기 점검표",
+    "자료 보존 절차",
+    "구조 인계 대장",
+    "작업 목록 복구함",
+  ],
+};
+
+export function fileTitle(c: CasePackage, file: CaseFile): string {
+  if (!isOfficialCaseVersion(c)) return file.title;
+  if (c.caseId === "demo-0317" && file.id === "f-photo")
+    return "시계_대조기록.txt";
+  const index = investigationFolders[c.caseId]?.findIndex(
+    (_, i) => file.id === `${c.caseId}-stage-${i + 1}`,
+  );
+  return index !== undefined && index >= 0
+    ? investigationFolders[c.caseId][index]
+    : file.title;
+}
+
 export function investigationStatus(save?: Save | null) {
   if (!save) return "미해결";
   if (save.state.mode !== "ENDED") return "진행 중";
@@ -14,7 +90,7 @@ export function investigationStatus(save?: Save | null) {
 export function boardRecord(c: CasePackage, clueId: string) {
   const source = c.files.find((f) => f.clueId === clueId);
   return {
-    title: source?.title || "수집한 기록",
+    title: source ? fileTitle(c, source) : "수집한 기록",
     description: source
       ? "확인한 원본 자료입니다. 필요한 부분은 추리 노트에 직접 기록해 보세요."
       : "조사 중 확보한 기록입니다.",
@@ -24,12 +100,23 @@ export function boardRecord(c: CasePackage, clueId: string) {
 
 // The archived package remains immutable; its viewer now plays continuous motion.
 export function recordText(c: CasePackage, f: CaseFile) {
+  if (isOfficialCaseVersion(c)) {
+    if (c.caseId === "demo-0317" && f.id === "f-photo")
+      return "야간 점검 / 시계 대조 기록\n\n같은 순간에 확인한 표시 시각\n벽시계      03:10\n기록용 PC   03:17\n\n야간 점검 담당자가 두 시계의 표시값을 옮겨 적었습니다.";
+    if (
+      f.type === "FOLDER" &&
+      f.puzzleId &&
+      f.text ===
+        "이 단계의 확인을 마쳤습니다. 조사 단계에서 다음 기록을 열어 주세요."
+    )
+      return "관련 기록의 잠금이 해제되었습니다. 이 폴더의 자료는 언제든 다시 확인할 수 있습니다.";
+  }
   if (
     isOfficialCaseVersion(c) &&
     c.puzzles.length > 5 &&
     f.id === `${c.caseId}-stage-5`
   )
-    return "전반부 다섯 확인을 마쳤습니다. 아래 원본 자료는 후속 조사의 근거입니다. 6~10단계에서 남은 의문을 확인하세요.";
+    return "아래 원본 자료는 후속 조사의 근거입니다. 새로 열린 조사 폴더에서 남은 의문을 확인하세요.";
   if (c.caseId === "hotel-404" && isOfficialCaseVersion(c)) {
     if (f.id === "hotel-404-f0")
       return f.text.replace(
@@ -56,6 +143,30 @@ export function messageText(
 
 export function evidenceFile(c: CasePackage, file: CaseFile): CaseFile {
   if (!isOfficialCaseVersion(c)) return file;
+  file = { ...file, title: fileTitle(c, file) };
+  if (c.caseId === "demo-0317" && file.id === "f-photo")
+    return {
+      ...file,
+      type: "TEXT",
+      assetId: undefined,
+      alt: undefined,
+      text: recordText(c, file),
+    };
+  if (file.assetId === "lab")
+    return {
+      ...file,
+      alt: "야간 연구실의 책상. 꺼진 모니터 두 대와 검은 PC 본체, 서류와 분리된 연결선이 보입니다.",
+      observations: [
+        {
+          label: "촬영 시각",
+          text: "점검 촬영: 벽시계 기준 03:20. PC 책상 전경입니다. 통신 장비함은 별도 점검 사진에 기록되어 있습니다.",
+        },
+        {
+          label: "시계 대조 기록",
+          text: "동시 측정값은 시계_대조기록.txt에 따로 적었습니다. 현장 사진의 모니터는 꺼져 있습니다.",
+        },
+      ],
+    };
   if (file.assetId === "auction")
     return {
       ...file,

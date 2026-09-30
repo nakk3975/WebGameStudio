@@ -10,6 +10,7 @@ import {
 } from "../apps/ghostdesk/src/case-media";
 import {
   evidenceFile,
+  fileTitle,
   messageText,
   recordText,
 } from "../apps/ghostdesk/src/presentation";
@@ -89,8 +90,8 @@ it.each(caseLibrary)(
     await mount(c, 5);
     const folder = c.files.find((f) => f.id === `${c.caseId}-stage-5`)!;
     await openFile(folder.id);
-    const win = windowByTitle(folder.title);
-    expect(win.textContent).toContain("6~10단계에서 남은 의문");
+    const win = windowByTitle(fileTitle(c, folder));
+    expect(win.textContent).toContain("새로 열린 조사 폴더에서 남은 의문");
     expect(win.textContent).not.toContain("결론을 작성하세요");
   },
 );
@@ -110,7 +111,7 @@ it.each(caseLibrary)(
       const p = c.puzzles[index];
       const f = c.files.find((f) => f.puzzleId === p.id)!;
       await openFile(f.id);
-      const win = windowByTitle(f.title);
+      const win = windowByTitle(fileTitle(c, f));
       const answer = walkthrough[number][index - 5];
       if (p.inputMode === "text") {
         const input = win.querySelector<HTMLInputElement>(
@@ -144,10 +145,20 @@ it.each(caseLibrary)(
       expect(host.querySelector(".stage-rail")?.textContent).toContain(
         `확인 ${index + 1}/10`,
       );
-      const close = win.querySelector<HTMLButtonElement>(
-        `button[aria-label="${f.title} 닫기"]`,
-      )!;
-      await act(async () => close.click());
+      if (index < 9) {
+        const next = c.files.find(
+          (file) => file.puzzleId === c.puzzles[index + 1].id,
+        )!;
+        const nextWindow = windowByTitle(fileTitle(c, next));
+        expect(nextWindow.classList.contains("active")).toBe(true);
+        expect(document.activeElement).toBe(nextWindow);
+        expect(win.isConnected).toBe(false);
+      } else {
+        // The last folder retains its sources; concluding remains an explicit action.
+        expect(win.isConnected).toBe(true);
+        expect(win.textContent).toContain("결론 작성하기");
+        expect(host.querySelector('[aria-label="결론 작성 창"]')).toBeNull();
+      }
     }
   },
 );
@@ -167,7 +178,7 @@ it.each(caseLibrary)(
       ))
         await act(async () => close.click());
       await openFile(f.id);
-      const win = windowByTitle(f.title);
+      const win = windowByTitle(fileTitle(c, f));
       expect(win.querySelectorAll("img"), f.title).toHaveLength(0);
       const attached = availableMedia(c, state, f.id);
       expect(win.querySelectorAll("video")).toHaveLength(
