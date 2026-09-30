@@ -92,7 +92,7 @@ it.each(caseLibrary)(
     const folder = c.files.find((f) => f.id === `${c.caseId}-stage-5`)!;
     await openFile(folder.id);
     const win = windowByTitle(fileTitle(c, folder));
-    expect(win.textContent).toContain("새로 열린 조사 폴더에서 남은 의문");
+    expect(win.textContent).toContain("다음 폴더에서 남은 의문");
     expect(win.textContent).not.toContain("결론을 작성하세요");
   },
 );
@@ -135,6 +135,10 @@ it.each(caseLibrary)(
       const f = c.files.find((f) => f.puzzleId === p.id)!;
       await openFile(f.id);
       const win = windowByTitle(fileTitle(c, f));
+      expect(win.textContent).toContain("이 폴더를 열려면 암호가 필요합니다.");
+      expect(win.querySelector(".folder-password-hint")?.textContent).toContain(
+        p.title,
+      );
       const answer = walkthrough[number][index];
       if (p.inputMode === "visual") {
         const click = async (selector: string) => {
@@ -176,7 +180,7 @@ it.each(caseLibrary)(
         } else if (p.visualId === "island-signal") {
           await fill(
             win.querySelector<HTMLInputElement>(
-              'input[aria-label="해독한 신호"]',
+              'input[aria-label="폴더 암호"]',
             )!,
             answer,
           );
@@ -219,9 +223,10 @@ it.each(caseLibrary)(
         'button[type="submit"], .visual-puzzle > button.primary',
       )!;
       expect(submit.disabled).toBe(false);
+      expect(submit.textContent?.trim()).toBe("폴더 열기");
       await act(async () => submit.click());
       expect(host.querySelector(".stage-rail")?.textContent).toContain(
-        `확인 ${index + 1}/10`,
+        `잠금 해제 ${index + 1}/10`,
       );
       if (index < 9) {
         const next = c.files.find(

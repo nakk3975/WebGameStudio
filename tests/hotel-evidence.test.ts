@@ -115,7 +115,7 @@ it("uses the recording frame for the separate photo and date puzzle, with no unr
     windowByTitle(hotelStill.title).querySelector("img")?.getAttribute("src"),
   ).toBe(hotelClip.src);
   const puzzleFile = c.files.find((f) => f.puzzleId === c.puzzles[1].id)!;
-  await click(fileTitle(c, puzzleFile) + " · 잠김");
+  await click(fileTitle(c, puzzleFile) + " · 암호 필요");
   const puzzle = windowByTitle(fileTitle(c, puzzleFile));
   expect(
     [...puzzle.querySelectorAll("img")].some(

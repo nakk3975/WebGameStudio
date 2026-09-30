@@ -1,4 +1,5 @@
 import { useState } from "react";
+import FolderPassword from "./FolderPassword";
 import type { CasePackage } from "../../../packages/contracts/src";
 import { CCTVPlayer } from "./RecordingPlayer";
 import { hotelClip, cctvFrames } from "./cctv";
@@ -133,7 +134,7 @@ export function VideoComparison({
           )
         }
       >
-        {auction ? "두 변화 대조하기" : "두 장면 비교하기"}
+        폴더 열기
       </button>
       <details className="visual-description">
         <summary>영상 대신 장면 설명으로 살펴보기</summary>
@@ -227,7 +228,7 @@ export function SignalObservation({
               ))}
             </div>
             <p aria-live="polite">
-              선택한 순서:{" "}
+              암호 조합:{" "}
               {answer
                 ? [...answer]
                     .map((v) => cards.find((c) => c.value === v)?.label)
@@ -243,19 +244,13 @@ export function SignalObservation({
             </button>
           </>
         ) : (
-          <label className="field">
-            통신 카드로 해독한 세 글자
-            <input
-              aria-label="해독한 신호"
-              value={answer}
-              onChange={(e) => setAnswer(e.target.value)}
-              maxLength={3}
-              autoComplete="off"
-              autoCapitalize="characters"
-              spellCheck={false}
-              placeholder="영문 세 글자"
-            />
-          </label>
+          <FolderPassword
+            value={answer}
+            onChange={setAnswer}
+            disabled={paused}
+            maxLength={3}
+            placeholder="신호에서 찾은 영문 세 글자"
+          />
         )}
         <button
           className="primary"
@@ -264,7 +259,7 @@ export function SignalObservation({
             paused || (stage ? answer.length !== 4 : answer.trim().length !== 3)
           }
         >
-          관찰 결과 확인하기
+          폴더 열기
         </button>
       </form>
       <details className="visual-description">

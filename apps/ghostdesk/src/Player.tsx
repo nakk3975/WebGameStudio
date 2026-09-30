@@ -660,53 +660,59 @@ export default function Player({
     if (f.puzzleId && !state.solvedPuzzleIds.includes(f.puzzleId)) {
       const p = c.puzzles.find((p) => p.id === f.puzzleId)!;
       const Answer = p.inputMode === "visual" ? VisualPuzzle : PuzzleAnswer;
+      const directPassword = !p.inputMode || p.inputMode === "text";
+      const sources = !!p.evidenceIds?.length && (
+        <div className="puzzle-sources">
+          <h3>암호를 찾을 자료</h3>
+          {p.evidenceIds.map((eid) => {
+            const source = files.find((x) => x.id === eid);
+            if (!source || !canOpen(c, state, eid)) return null;
+            return (
+              <details
+                key={eid}
+                onToggle={(e) => {
+                  if (e.currentTarget.open)
+                    send({ type: "OPEN_FILE", id: eid });
+                  else
+                    e.currentTarget
+                      .querySelectorAll("video")
+                      .forEach((video) => video.pause());
+                }}
+              >
+                <summary>{source.title}</summary>
+                {source.type === "IMAGE" ? (
+                  <EvidenceView
+                    casePackage={c}
+                    file={source}
+                    related={availableMedia(c, state)}
+                    paused={mediaPaused}
+                  />
+                ) : (
+                  <>
+                    {attachments(source.id, mediaPaused)}
+                    <pre className="source-text">{recordText(c, source)}</pre>
+                  </>
+                )}
+              </details>
+            );
+          })}
+        </div>
+      );
       return (
         <div className={"vault " + (p.stageTitle ? "stage-puzzle" : "")}>
           <div className="vault-lock">
             <LockKeyhole size={32} />
           </div>
-          <div className="section-kicker">잠긴 폴더</div>
+          <div className="section-kicker">암호로 보호된 폴더</div>
           <h2>{f.title}</h2>
-          <p>{p.title}</p>
-          {!!p.evidenceIds?.length && (
-            <div className="puzzle-sources">
-              <h3>대조할 자료</h3>
-              {p.evidenceIds.map((eid) => {
-                const source = files.find((x) => x.id === eid);
-                if (!source || !canOpen(c, state, eid)) return null;
-                return (
-                  <details
-                    key={eid}
-                    onToggle={(e) => {
-                      if (e.currentTarget.open)
-                        send({ type: "OPEN_FILE", id: eid });
-                      else
-                        e.currentTarget
-                          .querySelectorAll("video")
-                          .forEach((video) => video.pause());
-                    }}
-                  >
-                    <summary>{source.title}</summary>
-                    {source.type === "IMAGE" ? (
-                      <EvidenceView
-                        casePackage={c}
-                        file={source}
-                        related={availableMedia(c, state)}
-                        paused={mediaPaused}
-                      />
-                    ) : (
-                      <>
-                        {attachments(source.id, mediaPaused)}
-                        <pre className="source-text">
-                          {recordText(c, source)}
-                        </pre>
-                      </>
-                    )}
-                  </details>
-                );
-              })}
-            </div>
-          )}
+          <p className="folder-lock-notice">
+            이 폴더를 열려면 암호가 필요합니다.
+          </p>
+          <div className="folder-password-hint">
+            <h3>암호 힌트</h3>
+            <p>{p.title}</p>
+          </div>
+          {!directPassword && sources}
           <Answer
             key={p.id}
             puzzle={p}
@@ -727,7 +733,14 @@ export default function Player({
                   id: f.id,
                 }).state;
               setState(nextState);
-              if (r.message) setToast(r.message);
+              if (r.message)
+                setToast(
+                  newlySolved
+                    ? `‘${f.title}’ 폴더의 잠금이 해제되었습니다.`
+                    : nextState.attempts[p.id] !== state.attempts[p.id]
+                      ? "암호가 맞지 않습니다. 자료와 암호 힌트를 다시 확인해 주세요."
+                      : r.message,
+                );
               // Use the post-solve state: the next folder is still hidden in
               // this render. Reuse the solved window, even at the 12-window cap.
               if (newlySolved && p.stageTitle && nextState.mode === "RUNNING") {
@@ -743,15 +756,16 @@ export default function Player({
                 if (next) {
                   pendingWindowFocus.current = next.id;
                   showWindow(next.id, f.id);
-                  setToast(`기록을 확인했습니다. 다음 폴더: ${next.title}`);
+                  setToast(`‘${f.title}’ 잠금 해제 · 다음 폴더: ${next.title}`);
                 }
               }
             }}
           />
+          {directPassword && sources}
           <p className="small muted">
             {(!p.inputMode || p.inputMode === "text") && (
               <>
-                답 앞뒤의 빈칸은 무시합니다.{" "}
+                암호 앞뒤의 빈칸은 무시합니다.{" "}
                 {p.ignoreCase
                   ? "영문 대소문자는 상관없어요."
                   : "영문 대소문자를 구분해 주세요."}
@@ -763,7 +777,7 @@ export default function Player({
             횟수 제한 없음
           </p>
           <button className="quiet" onClick={() => setHintId(p.id)}>
-            <Lightbulb size={16} /> 도움이 필요해요
+            <Lightbulb size={16} /> 암호 힌트 더 보기
           </button>
         </div>
       );
@@ -801,7 +815,7 @@ export default function Player({
                 }}
               >
                 {state.solvedPuzzleIds.length < c.puzzles.length
-                  ? "다음 조사 폴더 열기"
+                  ? "다음 폴더 열기"
                   : "결론 작성하기"}
               </button>
             )}
@@ -973,9 +987,9 @@ export default function Player({
         <span className="muted">파일 더블클릭 또는 Enter로 열기</span>
       </div>
       {c.puzzles.some((p) => p.stageTitle) && (
-        <nav className="stage-rail" aria-label="조사 폴더">
+        <nav className="stage-rail" aria-label="폴더 바로가기">
           <span>
-            확인 {state.solvedPuzzleIds.length}/{c.puzzles.length}
+            잠금 해제 {state.solvedPuzzleIds.length}/{c.puzzles.length}
           </span>
           {c.puzzles.map((p) => {
             const f = files.find((f) => f.puzzleId === p.id)!;
@@ -984,7 +998,7 @@ export default function Player({
               <button
                 key={p.id}
                 disabled={!canInspect(c, state, f.id)}
-                aria-label={`${f.title}${solved ? " · 확인 완료" : " · 잠김"}`}
+                aria-label={`${f.title}${solved ? " · 잠금 해제됨" : " · 암호 필요"}`}
                 onClick={() => open(f.id)}
                 className={solved ? "stage-done" : ""}
               >

@@ -297,7 +297,7 @@ export default function VisualPuzzle({
         className="primary"
         disabled={paused || !selected || (needFollowup && !followup.trim())}
       >
-        관찰 결과 확인하기
+        폴더 열기
       </button>
       <details className="visual-description">
         <summary>사진 설명으로 살펴보기</summary>

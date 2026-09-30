@@ -5,64 +5,64 @@ import { isOfficialCaseVersion } from "./cases";
 // View names only: account saves must still match their immutable case package.
 const investigationFolders: Record<string, string[]> = {
   "demo-0317": [
-    "전송 보관함",
-    "요청 접수함",
-    "처리 이력",
-    "회선 점검 자료",
-    "영수증 원본",
-    "내부 보존함",
-    "자료실 출입 기록",
-    "보존 이관 대장",
-    "인계 서명부",
-    "작업 목록 백업",
+    "업무 자료",
+    "접수 내역",
+    "작업 기록",
+    "장비 관리",
+    "전송 내역",
+    "보관 자료",
+    "출입 관리",
+    "파일 정리",
+    "인수인계",
+    "백업",
   ],
   "hotel-404": [
-    "객실 관리함",
-    "촬영 기록",
-    "복도 녹화함",
-    "야간 이동 대장",
-    "배송 원장",
-    "카메라 입력 기록",
-    "통신 장애 기록",
-    "시설 점검 일지",
-    "복구 영상함",
-    "야간 인계 보관함",
+    "객실 자료",
+    "촬영 자료",
+    "CCTV",
+    "근무 기록",
+    "배송 내역",
+    "장비 설정",
+    "네트워크",
+    "시설 관리",
+    "복구 자료",
+    "인수인계",
   ],
   "auction-seven": [
-    "입찰 접수함",
-    "봉인 검수함",
-    "정산 원장",
-    "전광판 기록",
-    "접수 이력",
-    "작품 포장 대장",
-    "결제 알림함",
-    "인수표 출력 기록",
-    "반출 승인함",
-    "낙찰자 인계 기록",
+    "입찰 자료",
+    "검수 자료",
+    "정산 내역",
+    "전광판",
+    "접수 기록",
+    "포장 자료",
+    "결제 내역",
+    "출력 기록",
+    "반출 서류",
+    "인수인계",
   ],
   "encore-last": [
-    "조명 큐 보관함",
-    "음원 보관함",
-    "공연 재생 기록",
-    "안전 통로 자료",
-    "촬영 구역 기록",
-    "안내 요청함",
-    "음향 배선 자료",
-    "방송 실행 기록",
-    "관객 제보함",
-    "공연 인계 기록",
+    "공연 자료",
+    "음원",
+    "재생 기록",
+    "안전 관리",
+    "현장 자료",
+    "연락 내역",
+    "음향 설정",
+    "방송 기록",
+    "접수 자료",
+    "인수인계",
   ],
   "monday-loop": [
-    "수신 기록함",
-    "관측 원장",
-    "날짜 기록",
-    "관측 장비 자료",
-    "당직 일지",
-    "독립 기록함",
-    "중계기 점검표",
-    "자료 보존 절차",
-    "구조 인계 대장",
-    "작업 목록 복구함",
+    "수신 자료",
+    "관측 자료",
+    "일정",
+    "장비 관리",
+    "근무 기록",
+    "별도 보관",
+    "점검 내역",
+    "자료 정리",
+    "인수인계",
+    "백업",
   ],
 };
 
@@ -84,12 +84,11 @@ export function fileTitle(c: CasePackage, file: CaseFile): string {
     return file.id === "hotel-404-f3"
       ? "CAM-404_복도기록.mp4"
       : file.title.replace(/\.cam$/i, ".mp4");
-  const index = investigationFolders[c.caseId]?.findIndex(
-    (_, i) => file.id === `${c.caseId}-stage-${i + 1}`,
-  );
-  return index !== undefined && index >= 0
-    ? investigationFolders[c.caseId][index]
-    : file.title;
+  const index =
+    file.type === "FOLDER" && file.puzzleId
+      ? c.puzzles.findIndex((puzzle) => puzzle.id === file.puzzleId)
+      : -1;
+  return investigationFolders[c.caseId]?.[index] ?? file.title;
 }
 
 export function investigationStatus(save?: Save | null) {
@@ -130,7 +129,7 @@ export function recordText(c: CasePackage, f: CaseFile) {
     c.puzzles.length > 5 &&
     f.id === `${c.caseId}-stage-5`
   )
-    return "아래 원본 자료는 후속 조사의 근거입니다. 새로 열린 조사 폴더에서 남은 의문을 확인하세요.";
+    return "아래 원본 자료는 후속 조사의 근거입니다. 다음 폴더에서 남은 의문을 확인하세요.";
   if (c.caseId === "hotel-404" && isOfficialCaseVersion(c)) {
     if (f.id === "hotel-404-record-9b")
       return f.text.replaceAll("06-12 14:20", "06-12 14:32");

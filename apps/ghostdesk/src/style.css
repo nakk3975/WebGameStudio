@@ -3432,13 +3432,34 @@ button:not(:disabled):active {
   padding: 24px;
 }
 .stage-puzzle .vault-lock {
-  display: none;
+  margin: 0 0 16px;
 }
 .stage-puzzle h2 {
   margin: 8px 0 12px;
 }
 .stage-puzzle > p {
   line-height: 1.7;
+}
+.folder-password-hint {
+  padding: 14px 16px;
+  margin: 20px 0;
+  border: 1px solid #3c5669;
+  border-radius: 10px;
+  background: #142634;
+  text-align: left;
+}
+.folder-password-hint h3 {
+  font-size: 0.875em;
+  margin: 0 0 8px;
+  color: #a8c1d1;
+}
+.folder-password-hint p {
+  margin: 0;
+  line-height: 1.7;
+}
+.password-visibility {
+  font-size: 0.875em;
+  margin: 12px 0 18px;
 }
 .puzzle-sources {
   margin: 20px 0;

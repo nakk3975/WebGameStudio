@@ -155,20 +155,33 @@ it.each(
     });
     // Even a stale submit dispatched behind the pause dialog cannot advance.
     await open(`${c.caseId}-stage-1`);
-    await submit(win("전송 보관함"), "0310");
+    await submit(win("업무 자료"), "0310");
     expect((await snapshot()).state.solvedPuzzleIds).toEqual([]);
-    expect(host.querySelector('section[aria-label="요청 접수함 창"]')).toBeNull();
+    expect(host.querySelector('section[aria-label="접수 내역 창"]')).toBeNull();
     await click("조사 계속하기");
     await open(`${c.caseId}-stage-1`);
-    const first = win("전송 보관함");
+    const first = win("업무 자료");
     expect(first.textContent).not.toMatch(/\d+\s*단계/);
+    const password = first.querySelector<HTMLInputElement>(
+      'input[name="answer"]',
+    )!;
+    expect(password.type).toBe("password");
+    // Showing a password must preserve leading zeroes and the submitted value.
+    await fill(password, "0310");
+    const visibility = first.querySelector<HTMLInputElement>(
+      ".password-visibility input",
+    )!;
+    await act(async () => visibility.click());
+    expect(password.type).toBe("text");
+    expect(password.value).toBe("0310");
+    await act(async () => visibility.click());
+    expect(password.type).toBe("password");
     await submit(first, "9999");
     expect(first.isConnected).toBe(true);
-    expect(
-      host.querySelector('section[aria-label="요청 접수함 창"]'),
-    ).toBeNull();
+    expect(host.textContent).toContain("암호가 맞지 않습니다.");
+    expect(host.querySelector('section[aria-label="접수 내역 창"]')).toBeNull();
     await submit(first, "0310");
-    const next = win("요청 접수함");
+    const next = win("접수 내역");
     expect(first.isConnected).toBe(false);
     expect(document.activeElement).toBe(next);
     expect(next.querySelector('[aria-pressed="true"]')).toBeNull();
@@ -184,8 +197,8 @@ it.each(
       transition(c, restored.state, { type: "TICK", ms: 1000 }).state.logicalMs,
     ).toBe(4250);
     await open(`${c.caseId}-stage-1`);
-    expect(win("전송 보관함").querySelector(".folder-content")).toBeTruthy();
-    expect(win("전송 보관함").querySelector(".puzzle-answer")).toBeNull();
+    expect(win("업무 자료").querySelector(".folder-content")).toBeTruthy();
+    expect(win("업무 자료").querySelector(".puzzle-answer")).toBeNull();
   },
 );
 
@@ -207,7 +220,7 @@ it("advances a visual answer at the window limit without hiding other evidence",
   ];
   for (const id of ids) await open(id);
   expect(host.querySelectorAll(".os-window")).toHaveLength(12);
-  const photo = win("회선 점검 자료");
+  const photo = win("장비 관리");
   await click("사진 B 선택");
   await fill(
     photo.querySelector<HTMLInputElement>(
@@ -220,7 +233,7 @@ it("advances a visual answer at the window limit without hiding other evidence",
   );
   expect(host.querySelectorAll(".os-window")).toHaveLength(12);
   expect(photo.isConnected).toBe(false);
-  expect(win("영수증 원본").classList.contains("active")).toBe(true);
+  expect(win("전송 내역").classList.contains("active")).toBe(true);
   expect(win("시계_대조기록.txt").isConnected).toBe(true);
   expect((await snapshot()).state.solvedPuzzleIds).toHaveLength(4);
 });
@@ -228,7 +241,7 @@ it("advances a visual answer at the window limit without hiding other evidence",
 it("keeps the original receipt accessible after automatically opening the follow-up investigation", async () => {
   await mount(lab, 4);
   await open("demo-0317-stage-5");
-  const receiptFolder = win("영수증 원본");
+  const receiptFolder = win("전송 내역");
   const choice = [
     ...receiptFolder.querySelectorAll<HTMLButtonElement>(
       ".puzzle-options button",
@@ -240,7 +253,7 @@ it("keeps the original receipt accessible after automatically opening the follow
       .querySelector<HTMLButtonElement>('button[type="submit"]')!
       .click(),
   );
-  expect(win("내부 보존함").classList.contains("active")).toBe(true);
+  expect(win("보관 자료").classList.contains("active")).toBe(true);
   expect((await snapshot()).state.clueIds).not.toContain("c-receipt");
   await open("demo-0317-stage-5");
   await click("전송_처리_영수증.txt");
