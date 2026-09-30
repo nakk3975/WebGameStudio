@@ -1,6 +1,9 @@
 import { readFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { expect, it } from "vitest";
-import { archivedCases, caseLibrary } from "../apps/ghostdesk/src/cases";
+import {
+  archivedCases,
+  tenStageLibrary as caseLibrary,
+} from "../apps/ghostdesk/src/cases";
 import { availableMedia } from "../apps/ghostdesk/src/case-media";
 import {
   initialState,

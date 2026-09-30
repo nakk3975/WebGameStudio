@@ -3,7 +3,10 @@ import { act, createElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import Player from "../apps/ghostdesk/src/Player";
-import { archivedCases, caseLibrary } from "../apps/ghostdesk/src/cases";
+import {
+  archivedCases,
+  tenStageLibrary as caseLibrary,
+} from "../apps/ghostdesk/src/cases";
 import { initialState, transition } from "../packages/engine-ghostdesk/src";
 import { hotelClip, hotelStill } from "../apps/ghostdesk/src/cctv";
 import { recordText, fileTitle } from "../apps/ghostdesk/src/presentation";

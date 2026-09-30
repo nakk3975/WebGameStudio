@@ -3,7 +3,11 @@ import { act, createElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import Player from "../apps/ghostdesk/src/Player";
-import { archivedCases, caseLibrary } from "../apps/ghostdesk/src/cases";
+import {
+  archivedCases,
+  caseLibrary,
+  tenStageLibrary,
+} from "../apps/ghostdesk/src/cases";
 import {
   boardRecord,
   evidenceFile,
@@ -14,7 +18,7 @@ import { parseSave, type Save } from "../apps/ghostdesk/src/storage";
 import type { CasePackage } from "../packages/contracts/src";
 
 const versions = [...archivedCases, ...caseLibrary.map((e) => e.case)];
-const lab = caseLibrary[0].case;
+const lab = tenStageLibrary[0].case;
 let host: HTMLDivElement;
 let root: Root;
 const settings = vi.fn<(save: Save) => void>();
@@ -128,14 +132,14 @@ it.each(versions.filter((c) => c.caseId === "demo-0317"))(
     const record = win("시계_대조기록.txt");
     expect(record.dataset.view).toBe("document");
     expect(record.querySelector("img, .clock-evidence")).toBeNull();
-    expect(record.textContent).toContain("벽시계      03:10");
-    expect(record.textContent).toContain("기록용 PC   03:17");
+    expect(record.textContent).toMatch(/벽시계\s+03:10/);
+    expect(record.textContent).toMatch(/기록용 PC\s+03:17/);
     expect(boardRecord(c, "c-photo").title).toBe("시계_대조기록.txt");
     const save = await snapshot();
     expect(save.state.clueIds).toContain("c-photo");
     expect(save.state.readFileIds).toContain("f-photo");
     expect(save.case.files.find((f) => f.id === "f-photo")?.title).toBe(
-      "작업실_기록.img",
+      c.files.find((f) => f.id === "f-photo")!.title,
     );
     expect(JSON.stringify(c)).toBe(before);
   },

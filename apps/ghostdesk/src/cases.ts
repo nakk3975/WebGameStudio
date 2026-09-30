@@ -4,6 +4,7 @@ import expanded from "./expanded-cases.json";
 import visual from "./visual-cases.json";
 import motion from "./motion-cases.json";
 import tenStage from "./ten-stage-cases.json";
+import resolution from "./resolution-cases.json";
 import { sample } from "./sample";
 
 export type CaseEntry = {
@@ -70,14 +71,29 @@ export const archivedCases = [
   ...(expanded as CasePackage[]),
   ...(visual as CasePackage[]),
   ...(motion as CasePackage[]),
+  ...(tenStage as CasePackage[]),
 ];
-export const caseLibrary: CaseEntry[] = (tenStage as CasePackage[]).map(
+export const caseLibrary: CaseEntry[] = (resolution as CasePackage[]).map(
   (c, i) => ({
     case: c,
     number: String(i + 1).padStart(3, "0"),
     ...details[i],
   }),
 );
+// Explicitly pinned for compatibility tests and archived save readers.
+export const tenStageLibrary: CaseEntry[] = (tenStage as CasePackage[]).map(
+  (c, i) => ({
+    case: c,
+    number: String(i + 1).padStart(3, "0"),
+    ...details[i],
+  }),
+);
+export function isResolutionCase(c: CasePackage) {
+  return (resolution as CasePackage[]).some(
+    (edition) =>
+      edition.caseId === c.caseId && edition.versionId === c.versionId,
+  );
+}
 export function isOfficialCaseVersion(c: CasePackage) {
   return [...archivedCases, ...caseLibrary.map((e) => e.case)].some(
     (official) =>

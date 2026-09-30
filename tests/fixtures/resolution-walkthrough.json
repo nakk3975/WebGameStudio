@@ -1,0 +1,614 @@
+[
+  {
+    "caseId": "demo-0317",
+    "versionId": "demo-0317-v6",
+    "steps": [
+      {
+        "folder": "업무 자료",
+        "answer": "0310",
+        "ruleSource": "f-handover",
+        "sources": [
+          "f-handover",
+          "f-photo",
+          "f-queue"
+        ],
+        "reasoning": "동시 측정에서 PC는 7분 빠릅니다. PC의 03:17 요청을 벽시계 기준으로 바꾸세요."
+      },
+      {
+        "folder": "접수 내역",
+        "answer": "83060310",
+        "ruleSource": "demo-0317-record-2",
+        "sources": [
+          "demo-0317-record-2",
+          "f-queue",
+          "f-photo"
+        ],
+        "reasoning": "내부 복제 접수는 제외합니다. 외부 TX-0917에 해당하는 C의 보관 번호와 앞서 보정한 요청 시각을 연결하세요."
+      },
+      {
+        "folder": "작업 기록",
+        "answer": "9",
+        "ruleSource": "demo-0317-record-3",
+        "sources": [
+          "demo-0317-record-3",
+          "f-queue"
+        ],
+        "reasoning": "같은 PC 시계이므로 차이에는 7분 보정이 필요 없습니다. 03:17:00부터 03:17:09까지입니다."
+      },
+      {
+        "folder": "장비 관리",
+        "answer": "2048-0",
+        "ruleSource": "demo-0317-record-4",
+        "sources": [
+          "demo-0317-record-4",
+          "demo-0317-record-3"
+        ],
+        "reasoning": "내부는 6144−4096, 외부는 8192−8192입니다. 연결선 사진만으로 전송량을 단정하지 마세요."
+      },
+      {
+        "folder": "전송 내역",
+        "answer": "9274-9",
+        "ruleSource": "demo-0317-record-5",
+        "sources": [
+          "demo-0317-record-5",
+          "f-queue",
+          "demo-0317-record-3",
+          "demo-0317-record-4"
+        ],
+        "reasoning": "완료 2048바이트라는 A는 외부 계량기와 충돌합니다. B의 키에 생성→취소의 9초를 연결하세요."
+      },
+      {
+        "folder": "보관 자료",
+        "answer": "7C21-2048",
+        "ruleSource": "demo-0317-record-6a",
+        "sources": [
+          "demo-0317-record-6a",
+          "demo-0317-record-6b",
+          "demo-0317-record-4"
+        ],
+        "reasoning": "요청 TX-0917과 내용 식별값, 크기를 모두 대조합니다. 보관 사본 크기가 내부 회선의 증가량과도 같아야 합니다."
+      },
+      {
+        "folder": "출입 관리",
+        "answer": "0312-2",
+        "ruleSource": "demo-0317-record-7b",
+        "sources": [
+          "demo-0317-record-7b",
+          "demo-0317-record-7a",
+          "f-queue",
+          "f-photo"
+        ],
+        "reasoning": "자료실 단말 03:17은 5분 빠르므로 03:12입니다. PC 요청의 실제 03:10과는 2분 차이입니다."
+      },
+      {
+        "folder": "파일 정리",
+        "answer": "031003-031300",
+        "ruleSource": "demo-0317-record-8b",
+        "sources": [
+          "demo-0317-record-8b",
+          "demo-0317-record-8a",
+          "f-photo"
+        ],
+        "reasoning": "검증은 기준 03:10:03, 복사는 보정 후 03:10:12, 봉인은 03:10:18, 인수는 03:13:00입니다."
+      },
+      {
+        "folder": "인수인계",
+        "answer": "9418-1",
+        "ruleSource": "demo-0317-record-9b",
+        "sources": [
+          "demo-0317-record-9b",
+          "demo-0317-record-9a",
+          "demo-0317-record-6a",
+          "demo-0317-record-7a",
+          "demo-0317-record-7b"
+        ],
+        "reasoning": "7C21을 윤서가 인계한 확정 문서는 C입니다. 실제 입장은 03:12, 인계는 03:13입니다."
+      },
+      {
+        "folder": "백업",
+        "answer": "VIEW-7C21-0310-0",
+        "ruleSource": "demo-0317-record-10b",
+        "sources": [
+          "demo-0317-record-10b",
+          "demo-0317-record-10a",
+          "demo-0317-record-6a",
+          "demo-0317-record-6b",
+          "f-queue",
+          "f-photo",
+          "demo-0317-record-4"
+        ],
+        "reasoning": "필터 때문에 숨은 사본을 VIEW로 연결합니다. 7C21 사본, 실제 요청 03:10, 외부 증가량 0을 초기 기록에서 다시 검증하세요."
+      }
+    ],
+    "resolution": "보존 사본으로 작업 목록 복구"
+  },
+  {
+    "caseId": "hotel-404",
+    "versionId": "hotel-404-v6",
+    "steps": [
+      {
+        "folder": "객실 자료",
+        "answer": "B204-12",
+        "ruleSource": "hotel-404-f0",
+        "sources": [
+          "hotel-404-f0",
+          "hotel-404-f1",
+          "hotel-404-f2"
+        ],
+        "reasoning": "개방 성공 장치는 D-07, 위치는 B204입니다. 00:04:00 성공부터 00:04:12 잠금까지 12초입니다."
+      },
+      {
+        "folder": "촬영 자료",
+        "answer": "0612-3",
+        "ruleSource": "hotel-404-record-2",
+        "sources": [
+          "hotel-404-record-2",
+          "hotel-404-f3"
+        ],
+        "reasoning": "원본 날짜는 6월 12일, 철거일은 6월 15일입니다. 실제 문과 문 사이 가림막을 혼동하지 마세요."
+      },
+      {
+        "folder": "CCTV",
+        "answer": "12-2",
+        "ruleSource": "hotel-404-record-3",
+        "sources": [
+          "hotel-404-record-3",
+          "hotel-404-f3"
+        ],
+        "reasoning": "장면은 12초 뒤 다시 시작합니다. 0초 다음 시작은 12초, 24초이며 36초는 구간 밖입니다."
+      },
+      {
+        "folder": "근무 기록",
+        "answer": "133",
+        "ruleSource": "hotel-404-record-4",
+        "sources": [
+          "hotel-404-record-4",
+          "hotel-404-f1",
+          "hotel-404-f2"
+        ],
+        "reasoning": "D-07의 실제 위치 B204를 이동 기록에서 찾으세요. 00:04:08→00:06:21은 2분 13초입니다."
+      },
+      {
+        "folder": "배송 내역",
+        "answer": "12-0",
+        "ruleSource": "hotel-404-record-5",
+        "sources": [
+          "hotel-404-record-5",
+          "hotel-404-record-4"
+        ],
+        "reasoning": "창고는 20−8=12, 세탁실은 15−3=12입니다. 경로 끝까지 12묶음이 일치하므로 미확인 수는 0입니다."
+      },
+      {
+        "folder": "장비 설정",
+        "answer": "404-0612-12",
+        "ruleSource": "hotel-404-record-6b",
+        "sources": [
+          "hotel-404-record-6b",
+          "hotel-404-record-6a",
+          "hotel-404-f3",
+          "hotel-404-record-3"
+        ],
+        "reasoning": "CAM-404, 6월 12일, 12초를 함께 만족하는 입력만 사용할 수 있습니다. 카메라 번호는 숫자 부분만 적으세요."
+      },
+      {
+        "folder": "네트워크",
+        "answer": "0927-2358",
+        "ruleSource": "hotel-404-record-7b",
+        "sources": [
+          "hotel-404-record-7b",
+          "hotel-404-record-7a"
+        ],
+        "reasoning": "패널은 2분 빠릅니다. 09-28 00:00에서 2분을 빼면 전날 23:58입니다."
+      },
+      {
+        "folder": "시설 관리",
+        "answer": "10-5",
+        "ruleSource": "hotel-404-record-8a",
+        "sources": [
+          "hotel-404-record-8a",
+          "hotel-404-record-8b",
+          "hotel-404-record-7b"
+        ],
+        "reasoning": "승인 23:57:50, 끊김 23:58:00, 검수 보류 23:58:05입니다. 두 구간은 10초와 5초입니다."
+      },
+      {
+        "folder": "복구 자료",
+        "answer": "9221-24",
+        "ruleSource": "hotel-404-record-9a",
+        "sources": [
+          "hotel-404-record-9a",
+          "hotel-404-record-9b"
+        ],
+        "reasoning": "B만 오늘 날짜이며 원본 번호가 증가합니다. 뒤 번호는 9221, (9221−9101)÷5=24입니다."
+      },
+      {
+        "folder": "인수인계",
+        "answer": "STAMP-B204-0612-9221",
+        "ruleSource": "hotel-404-record-10b",
+        "sources": [
+          "hotel-404-record-10b",
+          "hotel-404-record-10a",
+          "hotel-404-f1",
+          "hotel-404-f2",
+          "hotel-404-f3",
+          "hotel-404-record-9a",
+          "hotel-404-record-9b"
+        ],
+        "reasoning": "현재와 연결된 STAMP 표시를 사용합니다. 오늘 출입은 B204, 과거 촬영은 0612, 검수된 현재 쌍의 끝은 9221입니다."
+      }
+    ],
+    "resolution": "현재 입력과 촬영 시각 표시로 복구 인계"
+  },
+  {
+    "caseId": "auction-seven",
+    "versionId": "auction-seven-v6",
+    "steps": [
+      {
+        "folder": "입찰 자료",
+        "answer": "B-71-240",
+        "ruleSource": "auction-seven-f0",
+        "sources": [
+          "auction-seven-f0",
+          "auction-seven-f1",
+          "auction-seven-f2",
+          "auction-seven-f3"
+        ],
+        "reasoning": "B-72는 취소, B-75는 마감 뒤입니다. 240만 원의 B-71과 B-73 중 먼저 접수된 B-71이 남습니다."
+      },
+      {
+        "folder": "검수 자료",
+        "answer": "6829-115",
+        "ruleSource": "auction-seven-record-2",
+        "sources": [
+          "auction-seven-record-2",
+          "auction-seven-scene",
+          "auction-seven-f1",
+          "auction-seven-f2",
+          "auction-seven-f3"
+        ],
+        "reasoning": "파란 두 줄이 있고 봉인 종이가 이어진 것은 가운데입니다. 원본 입찰 B-71의 접수 순번은 115입니다."
+      },
+      {
+        "folder": "정산 내역",
+        "answer": "222",
+        "ruleSource": "auction-seven-record-3",
+        "sources": [
+          "auction-seven-record-3",
+          "auction-seven-f1",
+          "auction-seven-f2",
+          "auction-seven-f3"
+        ],
+        "reasoning": "유효 낙찰가 240의 5%는 12입니다. 240+12−30을 계산하세요."
+      },
+      {
+        "folder": "전광판",
+        "answer": "215957-7",
+        "ruleSource": "auction-seven-record-4",
+        "sources": [
+          "auction-seven-record-4",
+          "auction-seven-f0"
+        ],
+        "reasoning": "영상의 불빛은 서버 21:59:53에 꺼지고 마감은 22:00:00입니다. 단말 표시에는 4초를 더하지만 실제 간격은 7초입니다."
+      },
+      {
+        "folder": "접수 기록",
+        "answer": "3-1",
+        "ruleSource": "auction-seven-record-5",
+        "sources": [
+          "auction-seven-record-5",
+          "auction-seven-f1",
+          "auction-seven-f2"
+        ],
+        "reasoning": "취소는 117, 마감은 120, 늦은 재입찰은 121입니다. 차이는 3과 1입니다."
+      },
+      {
+        "folder": "포장 자료",
+        "answer": "LOT-27-4800",
+        "ruleSource": "auction-seven-record-6a",
+        "sources": [
+          "auction-seven-record-6a",
+          "auction-seven-record-6b"
+        ],
+        "reasoning": "원장은 LOT-27, 60×80cm입니다. 맞는 상자는 B이며 면적은 4800cm²입니다. 봉투 검수표와 다른 물건입니다."
+      },
+      {
+        "folder": "결제 내역",
+        "answer": "1-0",
+        "ruleSource": "auction-seven-record-7b",
+        "sources": [
+          "auction-seven-record-7b",
+          "auction-seven-record-7a",
+          "auction-seven-record-3",
+          "auction-seven-f1",
+          "auction-seven-f2",
+          "auction-seven-f3"
+        ],
+        "reasoning": "LOT-27의 완료 결제는 P-71 한 건 222만 원입니다. 정산액도 222이므로 부족액은 0입니다. P-69는 다른 작품입니다."
+      },
+      {
+        "folder": "출력 기록",
+        "answer": "T-72-L-71",
+        "ruleSource": "auction-seven-record-8b",
+        "sources": [
+          "auction-seven-record-8b",
+          "auction-seven-record-8a",
+          "auction-seven-record-5"
+        ],
+        "reasoning": "취소 전에 전광판을 복사한 T-72는 이름이 자동 갱신되지 않습니다. 마감 뒤 원장으로 만든 L-71이 대체 표입니다."
+      },
+      {
+        "folder": "반출 서류",
+        "answer": "5417-P-71",
+        "ruleSource": "auction-seven-record-9b",
+        "sources": [
+          "auction-seven-record-9b",
+          "auction-seven-record-9a",
+          "auction-seven-f4",
+          "auction-seven-record-6a",
+          "auction-seven-record-7a",
+          "auction-seven-record-7b"
+        ],
+        "reasoning": "확정 L-71은 ORBIT, LOT-27, 완료 P-71과 이어집니다. 유효 표 C의 검수 키를 사용하세요."
+      },
+      {
+        "folder": "인수인계",
+        "answer": "T-72-ORBIT-222-4800",
+        "ruleSource": "auction-seven-record-10b",
+        "sources": [
+          "auction-seven-record-10b",
+          "auction-seven-record-10a",
+          "auction-seven-f1",
+          "auction-seven-f2",
+          "auction-seven-f3",
+          "auction-seven-record-6a",
+          "auction-seven-record-6b",
+          "auction-seven-record-7b"
+        ],
+        "reasoning": "T-72를 회수합니다. 마감·취소·동률 규칙으로 ORBIT를 확인하고, 추가 결제 222와 맞는 작품 면적 4800을 연결하세요."
+      }
+    ],
+    "resolution": "임시 표 회수와 작품 반출 승인"
+  },
+  {
+    "caseId": "encore-last",
+    "versionId": "encore-last-v6",
+    "steps": [
+      {
+        "folder": "공연 자료",
+        "answer": "2413",
+        "ruleSource": "encore-last-f0",
+        "sources": [
+          "encore-last-f0",
+          "encore-last-f1",
+          "encore-last-f2"
+        ],
+        "reasoning": "실행은 주황빛→파란빛→흰빛→붉은빛입니다. 카드표의 번호로 바꾸고 취소된 초록빛은 제외하세요."
+      },
+      {
+        "folder": "음원",
+        "answer": "06-26",
+        "ruleSource": "encore-last-record-2",
+        "sources": [
+          "encore-last-record-2",
+          "encore-last-f3"
+        ],
+        "reasoning": "일치 음원은 06입니다. 6.8−4.2=2.6초이므로 0.1초 단위로 26입니다. 첫 간격 하나만 같다는 이유로 05를 고르지 마세요."
+      },
+      {
+        "folder": "재생 기록",
+        "answer": "138",
+        "ruleSource": "encore-last-record-3",
+        "sources": [
+          "encore-last-record-3",
+          "encore-last-record-2"
+        ],
+        "reasoning": "21:56:52에서 21:59:10까지는 2분 18초, 138초입니다."
+      },
+      {
+        "folder": "안전 관리",
+        "answer": "31-27",
+        "ruleSource": "encore-last-record-4",
+        "sources": [
+          "encore-last-record-4",
+          "encore-last-f3"
+        ],
+        "reasoning": "21:56:50→21:57:21은 31초, 21:56:54→21:57:21은 27초입니다. 정문 제보에는 이 통로가 포함되지 않습니다."
+      },
+      {
+        "folder": "현장 자료",
+        "answer": "3708-109",
+        "ruleSource": "encore-last-record-5",
+        "sources": [
+          "encore-last-record-5",
+          "encore-last-record-4",
+          "encore-last-record-3"
+        ],
+        "reasoning": "도착지는 휴게실 3708입니다. 21:57:21부터 비상 트랙 종료 21:59:10까지 109초 동안 사람과 소리는 다른 곳에 있었습니다."
+      },
+      {
+        "folder": "연락 내역",
+        "answer": "H-1-U-2-4",
+        "ruleSource": "encore-last-record-6b",
+        "sources": [
+          "encore-last-record-6b",
+          "encore-last-record-6a",
+          "encore-last-f5"
+        ],
+        "reasoning": "해온 H-1이 요청하고 유진 U-2가 21:56:50에 확인합니다. 인계서의 통과는 21:56:54입니다."
+      },
+      {
+        "folder": "음향 설정",
+        "answer": "B2-B1",
+        "ruleSource": "encore-last-record-7b",
+        "sources": [
+          "encore-last-record-7b",
+          "encore-last-record-7a"
+        ],
+        "reasoning": "NOTICE-02는 스태프 헤드셋인 B2로 갔습니다. 객석 스피커는 B1입니다."
+      },
+      {
+        "folder": "방송 기록",
+        "answer": "1-2",
+        "ruleSource": "encore-last-record-8b",
+        "sources": [
+          "encore-last-record-8b",
+          "encore-last-record-8a",
+          "encore-last-record-6a",
+          "encore-last-f5"
+        ],
+        "reasoning": "확인 50초→안내 51초는 1초, 트랙 52초→통과 54초는 2초입니다."
+      },
+      {
+        "folder": "접수 자료",
+        "answer": "142-3",
+        "ruleSource": "encore-last-record-9a",
+        "sources": [
+          "encore-last-record-9a",
+          "encore-last-record-9b",
+          "encore-last-record-6a",
+          "encore-last-record-7a"
+        ],
+        "reasoning": "요청 확인 21:56:50에서 객석 안내 21:59:12까지 142초입니다. B1 안내는 12초부터 15초까지 3초입니다."
+      },
+      {
+        "folder": "인수인계",
+        "answer": "B1-06-3708-142",
+        "ruleSource": "encore-last-record-10b",
+        "sources": [
+          "encore-last-record-10b",
+          "encore-last-record-10a",
+          "encore-last-record-2",
+          "encore-last-record-4",
+          "encore-last-record-5",
+          "encore-last-record-7a",
+          "encore-last-record-9b",
+          "encore-last-record-6a"
+        ],
+        "reasoning": "관객은 B1, 파형은 음원 06, 센서 도착지는 휴게실 3708입니다. 요청 확인부터 첫 객석 안내까지는 142초입니다."
+      }
+    ],
+    "resolution": "검증한 사실로 정정 방송 승인"
+  },
+  {
+    "caseId": "monday-loop",
+    "versionId": "monday-loop-v6",
+    "steps": [
+      {
+        "folder": "수신 자료",
+        "answer": "SOS-1086",
+        "ruleSource": "monday-loop-f0",
+        "sources": [
+          "monday-loop-f0",
+          "monday-loop-f1",
+          "monday-loop-f2",
+          "monday-loop-f3"
+        ],
+        "reasoning": "불빛 세 묶음은 점 세 개, 선 세 개, 점 세 개입니다. 카드로 해독한 호출에 해초가 붙은 마지막 관측 번호를 연결하세요."
+      },
+      {
+        "folder": "관측 자료",
+        "answer": "3-0",
+        "ruleSource": "monday-loop-f3",
+        "sources": [
+          "monday-loop-f3",
+          "monday-loop-f2"
+        ],
+        "reasoning": "1084, 1085, 1086은 연속 세 건입니다. 차이 2를 관측 횟수로 쓰면 첫날을 놓칩니다. 빠진 번호는 없습니다."
+      },
+      {
+        "folder": "일정",
+        "answer": "0916-2",
+        "ruleSource": "monday-loop-record-3",
+        "sources": [
+          "monday-loop-record-3",
+          "monday-loop-f3"
+        ],
+        "reasoning": "09-14의 1084에서 이틀 지나 1086입니다. 날짜는 09-16이며 세 건이지만 경과는 2일입니다."
+      },
+      {
+        "folder": "장비 관리",
+        "answer": "8624-1086",
+        "ruleSource": "monday-loop-record-4",
+        "sources": [
+          "monday-loop-record-4",
+          "monday-loop-f3",
+          "monday-loop-scene"
+        ],
+        "reasoning": "외부 모니터는 별도 전원이어도 PC 화면을 보여 줍니다. 부표 8624는 독립 배터리와 자체 저장장치를 쓰며 마지막 번호는 1086입니다."
+      },
+      {
+        "folder": "근무 기록",
+        "answer": "15-7",
+        "ruleSource": "monday-loop-record-5",
+        "sources": [
+          "monday-loop-record-5",
+          "monday-loop-record-4"
+        ],
+        "reasoning": "07:59:40→07:59:55는 15초, 07:59:55→08:00:02는 7초입니다. 복원 완료는 그 사이 07:59:58입니다."
+      },
+      {
+        "folder": "별도 보관",
+        "answer": "6295-2",
+        "ruleSource": "monday-loop-record-6b",
+        "sources": [
+          "monday-loop-record-6b",
+          "monday-loop-record-6a",
+          "monday-loop-f3",
+          "monday-loop-final",
+          "monday-loop-f4"
+        ],
+        "reasoning": "부표의 1086·09-16인 B만 일치합니다. PC는 09-14 백업 화면이므로 차이는 2일입니다."
+      },
+      {
+        "folder": "점검 내역",
+        "answer": "0916-0642",
+        "ruleSource": "monday-loop-record-7b",
+        "sources": [
+          "monday-loop-record-7b",
+          "monday-loop-record-7a"
+        ],
+        "reasoning": "UTC 09-15 21:42에 9시간을 더하면 현지 09-16 06:42입니다."
+      },
+      {
+        "folder": "자료 정리",
+        "answer": "RCQL",
+        "ruleSource": "monday-loop-record-8b",
+        "sources": [
+          "monday-loop-record-8b",
+          "monday-loop-record-8a",
+          "monday-loop-f4"
+        ],
+        "reasoning": "원본 읽기 전용 R을 먼저, 복사 C 뒤에 대조 Q, 마지막에 연결 L입니다. 카드 번호를 그대로 입력하지 않습니다."
+      },
+      {
+        "folder": "인수인계",
+        "answer": "R-086-48",
+        "ruleSource": "monday-loop-record-9b",
+        "sources": [
+          "monday-loop-record-9b",
+          "monday-loop-record-9a",
+          "monday-loop-record-7a",
+          "monday-loop-record-7b"
+        ],
+        "reasoning": "R-086 접수는 현지 06:42, 인계 완료는 07:30입니다. 같은 요청에 대해 48분 차이를 계산하세요."
+      },
+      {
+        "folder": "백업",
+        "answer": "RCQL-0916-1086-48",
+        "ruleSource": "monday-loop-record-10b",
+        "sources": [
+          "monday-loop-record-10b",
+          "monday-loop-record-10a",
+          "monday-loop-f3",
+          "monday-loop-record-3",
+          "monday-loop-record-8a",
+          "monday-loop-record-8b",
+          "monday-loop-record-7a",
+          "monday-loop-record-9b"
+        ],
+        "reasoning": "RCQL 순서로 보존합니다. 마지막 관측은 09-16의 1086이며 R-086의 현지 06:42 접수부터 07:30 인계까지 48분입니다."
+      }
+    ],
+    "resolution": "원본 보존과 새 관측 목록 연결"
+  }
+]

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   archivedCases,
-  caseLibrary,
+  tenStageLibrary as caseLibrary,
   isOfficialCaseVersion,
 } from "../apps/ghostdesk/src/cases";
 import {
