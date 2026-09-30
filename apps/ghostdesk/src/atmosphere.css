@@ -1,0 +1,785 @@
+/* GhostDesk's night archive. Presentation only: evidence imagery and signal
+   colours are deliberately left intact because they are part of the puzzles. */
+:root {
+  color: #e8e5dc;
+  background: #101211;
+  --bg: #141715;
+  --panel: #1e221f;
+  --line: #3d413a;
+  --muted: #b0b3a8;
+  --accent: #c9b17f;
+  --amber: #d4b57d;
+}
+::selection {
+  background: #665638;
+  color: #fff8e8;
+}
+button {
+  background: #292e29;
+  border-radius: 5px;
+}
+button:hover {
+  background: #373c34;
+  border-color: #858775;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+  outline-color: #e0c795;
+}
+input,
+textarea,
+select {
+  background: #131814;
+  color: #f0eee6;
+  border-color: #656c5d;
+}
+.primary {
+  color: #211d14;
+}
+.primary:hover {
+  background: #e1c895;
+  border-color: #e1c895;
+}
+.secondary {
+  background: #252b26;
+  border-color: #6b7160;
+}
+.topbar,
+.player .topbar {
+  background: #121613;
+  border-bottom-color: #373d33;
+}
+.brand > svg {
+  color: #d0b681;
+  background: #c9b17f0d;
+  border: 1px solid #6b604342;
+  border-radius: 4px;
+}
+.brand b {
+  letter-spacing: 2.8px;
+}
+.brand b span {
+  color: #a6ac9e;
+}
+.pill {
+  background: transparent;
+  border-color: #4a5044;
+  color: #b5b9ab;
+}
+.section-kicker,
+.eyebrow {
+  color: #c2b08c;
+}
+.square {
+  background: #ae6855;
+  border-radius: 0;
+}
+
+/* The archive room is decorative, never presented as case evidence. */
+.app[data-view="home"] {
+  background:
+    radial-gradient(ellipse at 82% 30%, #61502b12, transparent 60%),
+    linear-gradient(135deg, #171b16, #101211 70%);
+}
+.launch {
+  gap: 30px;
+  padding-top: 28px;
+  padding-bottom: 36px;
+}
+.account-strip {
+  padding: 12px 18px;
+  border-color: #373f33;
+  border-radius: 4px;
+  background: #1b201bcc;
+}
+.account-strip b {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+.account-strip p {
+  color: #aaafa2;
+  font-size: 0.8125rem;
+  margin-top: 2px;
+}
+.save-conflict {
+  background: #292a20;
+  border-color: #bfa170;
+  border-radius: 5px;
+}
+.library-heading {
+  margin-bottom: 22px;
+  align-items: center;
+}
+.library-heading h2 {
+  font-family: "Noto Serif KR", "Batang", "Georgia", serif;
+  font-size: clamp(1.2rem, 2vw, 1.65rem);
+  letter-spacing: -0.035em;
+  font-weight: 500;
+  margin-top: 8px;
+}
+.section-kicker {
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+.library-count {
+  color: #b0b3a8;
+}
+.case-cards {
+  gap: 12px;
+  padding-top: 9px;
+}
+.case-card {
+  position: relative;
+  border-radius: 0 5px 5px 5px;
+  border-color: #424638;
+  background: linear-gradient(145deg, #262c23, #1a201b);
+  padding: 16px 14px 14px;
+  min-height: 126px;
+  gap: 9px;
+}
+.case-card::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  left: -1px;
+  width: 44px;
+  height: 8px;
+  border: 1px solid #424638;
+  border-bottom: 0;
+  border-radius: 4px 5px 0 0;
+  background: #272d24;
+  pointer-events: none;
+}
+.case-card:hover {
+  background: #30372a;
+  border-color: #7f846b;
+}
+.case-card-top,
+.case-card small {
+  color: #b4b8a9;
+}
+.case-card-top > span:first-child {
+  color: #c9b78f;
+  letter-spacing: 1.5px;
+}
+.case-card.selected-case {
+  background: linear-gradient(145deg, #3b3d2c, #292f24);
+  border-color: #ac976c;
+  box-shadow:
+    inset 0 -2px 0 #c9b17f,
+    0 8px 18px #0002;
+}
+.case-card.selected-case::before {
+  border-color: #ac976c;
+  background: #3b3d2c;
+}
+.case-hero {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  align-items: center;
+  gap: 30px;
+  min-width: 0;
+  position: relative;
+  isolation: isolate;
+  padding: 38px;
+  border: 1px solid #575343;
+  border-radius: 5px;
+  background:
+    linear-gradient(
+      90deg,
+      #0d110ff2 0%,
+      #0d110fe6 33%,
+      #0d110f55 70%,
+      #0d110f40
+    ),
+    url("./assets/archive-night.webp") center 57% / cover;
+  box-shadow:
+    0 20px 55px #0005,
+    inset 0 1px 0 #c3b08012;
+}
+.case-hero::before {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border: 1px solid #c3b08012;
+  border-radius: 2px;
+  pointer-events: none;
+  z-index: -1;
+}
+.case-intro h1 {
+  font-family: "Noto Serif KR", "Batang", "Georgia", serif;
+  font-size: clamp(34px, 3.7vw, 52px);
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: -0.045em;
+  color: #f0eadd;
+  text-shadow: 0 2px 16px #000;
+}
+.title-dot {
+  color: #b87860;
+}
+.case-intro > p {
+  color: #c6c8bb;
+}
+.case-intro > .small {
+  color: #a9afa2;
+  font-size: 0.75rem;
+}
+.case-meta {
+  color: #c6c9bb;
+  flex-wrap: wrap;
+  gap: 10px 22px;
+  margin: 24px 0;
+}
+.case-meta svg {
+  color: #b7a781;
+}
+.case-meta span {
+  background: #232a20;
+  border-color: #535b45;
+  border-radius: 3px;
+}
+.launch-actions {
+  flex-wrap: wrap;
+}
+.launch-actions button {
+  border-radius: 4px;
+}
+.launch-actions .primary {
+  box-shadow: 0 4px 24px #b7985620;
+}
+.resume-summary {
+  color: #c2c9b5;
+}
+.case-visual {
+  min-width: 0;
+  min-height: 0;
+  padding: 24px;
+  border-radius: 3px;
+  border-color: #9b926f66;
+  background: linear-gradient(160deg, #1c221be8, #111710d4);
+  box-shadow:
+    0 18px 38px #0006,
+    inset 0 1px 0 #d2c39414;
+}
+.visual-top {
+  color: #b8bdaa;
+  gap: 12px;
+  letter-spacing: 0.5px;
+}
+.file-status {
+  background: #54492c50;
+  color: #ddc495;
+  border-color: #9c885557;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.big-clock,
+.big-clock span {
+  color: #d9dec9;
+  text-shadow: 0 0 28px #abb7852b;
+}
+.big-clock {
+  font-size: clamp(62px, 6.5vw, 94px);
+  height: 105px;
+  margin: 20px 0 6px;
+}
+.big-clock.word-clock {
+  font-size: clamp(34px, 4.6vw, 64px);
+}
+.preview-caption {
+  color: #bac1af;
+  margin-bottom: 22px;
+}
+.log-preview {
+  background: #0e140ee6;
+  border-color: #535b43;
+  border-radius: 2px;
+  padding: 12px 16px;
+}
+.log-preview > span {
+  border-color: #353e2f;
+}
+.log-preview div {
+  color: #aebba3;
+}
+.log-preview b {
+  color: #dce1cf;
+}
+.visual-bottom {
+  color: #bcc0ae;
+  font-size: 0.75rem;
+}
+.launch-footer {
+  gap: 18px;
+}
+.studio-link,
+.import-link {
+  padding: 18px 20px;
+  border-color: #3b4235;
+  border-radius: 4px;
+  background: #1b211a;
+}
+.studio-link:hover,
+.import-link:hover {
+  background: #293024;
+  border-color: #818568;
+}
+.studio-link small,
+.import-link small {
+  color: #aeb5a5;
+}
+.studio-link > svg:last-child,
+.import-link > svg:last-child {
+  color: #abb19d;
+}
+
+/* Investigation desktop: a quiet, worn terminal, with no moving overlays. */
+.player {
+  background: #141b17;
+}
+.desktop-layout {
+  background:
+    radial-gradient(ellipse at 42% 35%, #6b75542b, transparent 65%),
+    repeating-linear-gradient(0deg, #00000008 0 1px, transparent 1px 4px);
+}
+.mission-strip {
+  background: #262d22;
+  border-bottom-color: #48513e;
+}
+.mission-strip > span:first-child {
+  color: #d2d9bf;
+}
+.save-state {
+  color: #b9c8ae;
+}
+.stage-rail {
+  background: #171d17;
+  border-bottom-color: #3d4936;
+}
+.stage-rail > span {
+  color: #b6beab;
+}
+.stage-rail button {
+  background: #2a3226;
+  border-color: #5e6a51;
+  border-radius: 4px;
+}
+.stage-rail button:hover {
+  background: #3a4332;
+  border-color: #969d7b;
+}
+.stage-rail button b {
+  color: #d6c59b;
+}
+.stage-rail .stage-done {
+  background: #344030;
+  border-color: #7d8a6a;
+}
+.desktop-files {
+  background: #131a15cc;
+  border-right-color: #374430;
+}
+.desktop-icon {
+  background: transparent;
+  border-color: transparent;
+}
+.desktop-icon:hover {
+  background: #353f2c99;
+  border-color: #717e55;
+}
+.desktop-icon.selected {
+  background: #bbc19518;
+  border-color: #a8ae7b80;
+}
+.file-symbol {
+  color: #c3cabb;
+}
+.file-symbol.folder {
+  color: #cbb17d;
+}
+.file-symbol.chat_link {
+  color: #b1c4b4;
+}
+.file-symbol .lock-badge {
+  background: #283123;
+}
+.desktop-watermark {
+  color: #a0b08b18;
+}
+.desktop-watermark p {
+  color: #acb59455;
+}
+.desktop-welcome {
+  background: #20291fee;
+  border-color: #637052;
+  border-radius: 5px;
+}
+.desktop-welcome p {
+  color: #c1cbb6;
+}
+.investigation {
+  background: #171e18ed;
+  border-left-color: #3b4934;
+}
+.progress-caption small,
+.evidence-mini p,
+.investigation-bottom p {
+  color: #b4c0a9;
+}
+.progress-bar {
+  background: #3f4b35;
+}
+.os-window {
+  background: #242c22;
+  border-color: #68735a;
+  border-radius: 5px;
+  box-shadow: 0 20px 60px #0008;
+}
+.os-window.active {
+  border-color: #b5b18a;
+}
+.window-header {
+  background: #343f2d;
+  border-bottom-color: #677157;
+}
+.window-led {
+  border-color: #c2bf90;
+}
+.window-controls button {
+  color: #c7ceba;
+}
+.breadcrumbs,
+.vault p,
+.field {
+  color: #d0d5c4;
+}
+.vault-lock {
+  background: #c9b17f0d;
+  border-color: #8a7953;
+  color: #d3b77e;
+  border-radius: 5px;
+}
+.folder-password-hint,
+.puzzle-sources details {
+  background: #1a241a;
+  border-color: #5b6a4e;
+  border-radius: 4px;
+}
+.folder-password-hint h3,
+.puzzle-sources h3 {
+  color: #bacaad;
+}
+.puzzle-sources details[open] summary {
+  background: #33422c;
+  border-color: #5b6a4e;
+}
+.source-text {
+  color: #dce3d1;
+}
+.sequence-result {
+  background: #192219;
+  color: #c9d5bc;
+}
+.puzzle-options button span {
+  color: #c0cbb3;
+}
+.puzzle-options button[aria-pressed="true"] {
+  background: #3f5034;
+  border-color: #b7c293;
+  color: #f2f6e7;
+}
+.clue-card {
+  background: #2b3526;
+  border-color: #677354;
+  border-radius: 4px;
+}
+.clue-number {
+  color: #c2c9ae;
+}
+.clue-card p {
+  color: #c5ceba;
+}
+.choice {
+  background: #293325;
+  border-color: #5b6a50;
+  border-radius: 4px;
+}
+.choice:has(input:checked) {
+  background: #435037;
+  border-color: #b7bf92;
+}
+.taskbar {
+  background: #111912;
+  border-top-color: #46513d;
+}
+.task {
+  background: #293525;
+  border-color: #4e5e42;
+  border-radius: 3px;
+}
+.active-task {
+  border-bottom-color: #d2bc8b;
+}
+.task-clock {
+  color: #d9dfcb;
+}
+.task-clock small {
+  color: #aab69c;
+}
+.edition-notice,
+.stage-notice {
+  border-color: #687155;
+  color: #d0d6c0;
+  border-radius: 4px;
+}
+
+/* Paper and chat still have distinct, readable surfaces. No filter is applied
+   to photos, video, coloured puzzle indicators, or their time stamps. */
+.os-window[data-view="document"] {
+  background: #e7e3d7;
+  border-color: #a7a48b;
+}
+.os-window[data-view="document"] .window-header {
+  background: #d4d1c3;
+  color: #353d30;
+  border-color: #acae99;
+}
+.os-window[data-view="document"] .window-controls button {
+  color: #43503b;
+}
+.os-window[data-view="document"] .window-controls button:hover {
+  background: #b9bfaa;
+}
+.os-window[data-view="document"] .window-led {
+  border-color: #667057;
+}
+.document.document-reader {
+  color: #30382a;
+  background: #edeadd;
+}
+.document-reader .document-meta {
+  color: #58604c;
+  background: #e2dfd0;
+  border-color: #c2c5b1;
+}
+.document-reader .evidence-found {
+  color: #466039;
+  border-color: #b8c1a5;
+}
+.document-reader.log-document {
+  background: #151e15;
+  color: #cddcc2;
+}
+.log-document .document-meta {
+  background: #263321;
+  border-color: #526848;
+  color: #bccdab;
+}
+.log-document .evidence-found {
+  color: #c4d5ad;
+  border-color: #526848;
+}
+.os-window[data-view="chat"] {
+  background: #1a2822;
+  border-color: #627866;
+}
+.os-window[data-view="chat"] .window-header {
+  background: #304336;
+  border-color: #667e66;
+}
+.chat-content {
+  background: #1a2822;
+  color: #e7eee1;
+}
+.chat-person {
+  background: #263b2e;
+  border-color: #52684f;
+}
+.chat-person > .avatar {
+  background: #b8c5a4;
+  color: #30452d;
+}
+.chat-person span,
+.chat-date,
+.message-meta {
+  color: #b8c8af;
+}
+.chat-person button {
+  color: #d5e3cd;
+  border-color: #6c8264;
+}
+.chat-date span {
+  background: #334731;
+}
+.message-avatar {
+  background: #c8d1b7;
+  color: #35472e;
+}
+.message-avatar.speaker-1 {
+  background: #b8c5bd;
+  color: #34483e;
+}
+.message-avatar.speaker-2 {
+  background: #cdc4b9;
+  color: #544936;
+}
+.message-author {
+  color: #d6e2cb;
+}
+.chat-thread .message p {
+  background: #dde4d3;
+  color: #2a3c28;
+  border-radius: 0 8px 8px 8px;
+}
+.chat-note {
+  color: #b8c8af;
+  border-color: #52684f;
+}
+.evidence-view {
+  background: #111711;
+  color: #d8dfce;
+}
+.media-thumbnails button {
+  background: #293325;
+  border-color: #617153;
+}
+.media-thumbnails button[aria-pressed="true"] {
+  border-color: #d3bc85;
+  background: #3b4731;
+}
+.video-controls input[type="range"] {
+  accent-color: #c9b17f;
+}
+.video-controls > span {
+  color: #b7c5aa;
+}
+.video-controls .capture-frame {
+  background: #3c4b31;
+  color: #e9eedb;
+  border-color: #a6b783;
+}
+.captured-scene {
+  background: #152014;
+}
+.visual-choice input {
+  accent-color: #c9b17f;
+}
+.observation-tabs button[aria-pressed="true"],
+.motion-answer .puzzle-options button[aria-pressed="true"] {
+  background: #3f5034;
+  border-color: #b7c293;
+}
+
+.modal {
+  background: linear-gradient(145deg, #2b3427, #1c271e);
+  color: #e8eddf;
+  border-color: #a49c73;
+  border-radius: 6px;
+  box-shadow:
+    0 32px 100px #000a,
+    inset 0 2px 0 #c9b17f;
+}
+.modal::backdrop {
+  background: #080d0bd9;
+}
+.hint-step {
+  background: #313c2a;
+  border-color: #626d4d;
+}
+.hint-step b {
+  color: #caba8f;
+}
+.account-form small,
+.account-form .muted {
+  color: #b9c2ae;
+}
+.account-message {
+  background: #38432e;
+}
+.account-links .account-text-button:hover:not(:disabled) {
+  background: #3c4832;
+  color: #ead1a1;
+}
+.toast,
+.global-notice {
+  background: #e4ddc8;
+  color: #25301e;
+  border: 1px solid #aaa787;
+  border-radius: 4px;
+}
+
+@media (max-width: 1000px) {
+  .case-hero {
+    padding: 28px;
+    gap: 24px;
+    grid-template-columns: 1fr 1fr;
+  }
+  .case-visual {
+    padding: 18px;
+  }
+}
+@media (max-width: 760px) {
+  .launch {
+    gap: 26px;
+    padding-top: 20px;
+  }
+  .account-strip {
+    padding: 12px 14px;
+  }
+  .library-heading {
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .library-heading h2 {
+    font-size: 1.15rem;
+  }
+  .case-cards {
+    padding-top: 10px;
+  }
+  .case-card {
+    min-height: 120px;
+  }
+  .case-hero {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 26px 20px;
+    gap: 26px;
+    background-position: 65% center;
+    background-image:
+      linear-gradient(#0d110fed, #0d110fe0), url("./assets/archive-night.webp");
+  }
+  .case-hero::before {
+    inset: 7px;
+  }
+  .case-intro h1 {
+    font-size: clamp(30px, 8.5vw, 44px);
+  }
+  .case-visual {
+    width: 100%;
+    padding: 20px;
+  }
+  .big-clock {
+    font-size: 72px;
+    height: 90px;
+  }
+  .big-clock.word-clock {
+    font-size: clamp(32px, 9vw, 55px);
+  }
+  .launch-actions {
+    gap: 10px;
+  }
+  .launch-actions button,
+  .launch-actions .primary {
+    min-width: 0;
+    flex: 1 1 150px;
+  }
+  .studio-link,
+  .import-link {
+    padding: 16px;
+  }
+}
