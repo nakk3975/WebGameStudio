@@ -20,6 +20,7 @@ export function CCTVPlayer({
   const video = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
   const [time, setTime] = useState(0);
+  const [frameTime, setFrameTime] = useState<number | null>(null);
   const [duration, setDuration] = useState(item.recording?.duration || 0);
   const [ready, setReady] = useState(false);
   const [decoded, setDecoded] = useState(false);
@@ -28,6 +29,20 @@ export function CCTVPlayer({
   const [error, setError] = useState("");
   const step = item.recording?.step || 0.25;
   const lastFrame = Math.max(0, duration - 1 / RECORDING_FPS);
+  useEffect(() => {
+    const el = video.current;
+    setFrameTime(null);
+    if (!el?.requestVideoFrameCallback) return;
+    let callback: number;
+    const trackFrame: VideoFrameRequestCallback = (_, metadata) => {
+      // The playback clock can be on the other side of a second boundary
+      // from the frame actually displayed, especially in the 10 fps meter.
+      setFrameTime(metadata.mediaTime);
+      callback = el.requestVideoFrameCallback(trackFrame);
+    };
+    callback = el.requestVideoFrameCallback(trackFrame);
+    return () => el.cancelVideoFrameCallback(callback);
+  }, [item.video]);
   useEffect(() => {
     if (paused) video.current?.pause();
   }, [paused]);
@@ -100,7 +115,8 @@ export function CCTVPlayer({
           <span className="cctv-badge">화면 표지 · LIVE</span>
         )}
         <span className="cctv-stamp">
-          {item.recording?.stamp(time) || recordingTime(time)}
+          {item.recording?.stamp(frameTime ?? time) ||
+            recordingTime(frameTime ?? time)}
         </span>
         <span className="cctv-reconstruction">
           {item.recording?.label || "기록 재현 영상"}
