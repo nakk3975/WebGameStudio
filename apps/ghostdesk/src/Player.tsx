@@ -1265,12 +1265,17 @@ export default function Player({
       {state.mode === "PAUSED" && (
         <Modal title="조사를 잠시 멈췄습니다">
           <p>자리를 비운 동안 사건 속 시간은 흐르지 않았습니다.</p>
-          <button className="primary" onClick={() => send({ type: "RESUME" })}>
-            <PlayIcon /> 조사 계속하기
-          </button>
-          <button className="secondary" onClick={leave}>
-            {isTest ? "제작기로 돌아가기" : "홈으로"}
-          </button>
+          <div className="pause-actions">
+            <button
+              className="primary"
+              onClick={() => send({ type: "RESUME" })}
+            >
+              <PlayIcon /> 조사 계속하기
+            </button>
+            <button className="secondary" onClick={leave}>
+              {isTest ? "제작기로 돌아가기" : "홈으로"}
+            </button>
+          </div>
         </Modal>
       )}
       {state.mode === "ERROR" && (
