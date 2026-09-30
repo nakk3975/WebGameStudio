@@ -66,10 +66,24 @@ const investigationFolders: Record<string, string[]> = {
   ],
 };
 
+export function isVideoFile(c: CasePackage, file: CaseFile): boolean {
+  return (
+    isOfficialCaseVersion(c) &&
+    ((c.caseId === "hotel-404" && file.id === "hotel-404-f3") ||
+      /\.(cam|mp4)$/i.test(file.title))
+  );
+}
+
 export function fileTitle(c: CasePackage, file: CaseFile): string {
   if (!isOfficialCaseVersion(c)) return file.title;
   if (c.caseId === "demo-0317" && file.id === "f-photo")
     return "시계_대조기록.txt";
+  if (c.caseId === "auction-seven" && file.id === "auction-seven-f1")
+    return "입찰_접수표.txt";
+  if (isVideoFile(c, file))
+    return file.id === "hotel-404-f3"
+      ? "CAM-404_복도기록.mp4"
+      : file.title.replace(/\.cam$/i, ".mp4");
   const index = investigationFolders[c.caseId]?.findIndex(
     (_, i) => file.id === `${c.caseId}-stage-${i + 1}`,
   );
@@ -118,13 +132,21 @@ export function recordText(c: CasePackage, f: CaseFile) {
   )
     return "아래 원본 자료는 후속 조사의 근거입니다. 새로 열린 조사 폴더에서 남은 의문을 확인하세요.";
   if (c.caseId === "hotel-404" && isOfficialCaseVersion(c)) {
+    if (f.id === "hotel-404-record-9b")
+      return f.text.replaceAll("06-12 14:20", "06-12 14:32");
     if (f.id === "hotel-404-f0")
       return f.text.replace(
         "00:04, 폐쇄된 4층의 404호 앞에 흰 형체가 지나갔습니다.",
         "00:04, 프런트 화면에 폐쇄된 4층 복도가 보였습니다. 404호 문이 살짝 열려 있고, 그 앞을 흰 형체가 카트를 밀며 지나갔습니다.",
       );
     if (f.id === "hotel-404-record-3")
-      return "프런트 모니터 관찰 안내\n\n복도 기록은 연속 영상으로 확인할 수 있습니다. 흰 옷을 입은 인물과 카트의 이동을 살펴보세요. 같은 영상에서 추출한 정지 화면은 ‘이미지 자료’에 따로 보관했습니다.\n화면 아래 재생 위치는 보관한 기록의 경과 시간이며, 원본 장면 번호와는 다릅니다.\n\n카트의 위치와 움직임을 앞뒤로 비교하고 같은 장면이 처음 다시 나타나는 두 시점을 담아 주세요. 전체 기록의 길이가 곧 반복 간격은 아닙니다.";
+      return (
+        "프런트 모니터 관찰 안내\n\n복도 기록은 연속 영상으로 확인할 수 있습니다. 흰 옷을 입은 인물과 카트의 이동을 살펴보세요. 같은 영상에서 추출한 정지 화면은 ‘이미지 자료’에 따로 보관했습니다.\n화면 아래 재생 위치는 보관한 기록의 경과 시간이며, 원본 장면 번호와는 다릅니다.\n\n" +
+        (c.puzzles.some((p) => p.visualId === "hotel-repeat")
+          ? "카트의 위치와 움직임을 앞뒤로 비교하고 같은 장면이 처음 다시 나타나는 두 시점을 담아 주세요."
+          : "카트의 위치와 움직임을 앞뒤로 비교하고 같은 장면이 처음 다시 나타나기까지 걸린 초를 입력하세요.") +
+        " 전체 기록의 길이가 곧 반복 간격은 아닙니다."
+      );
   }
   return f.text;
 }
@@ -180,7 +202,9 @@ export function evidenceFile(c: CasePackage, file: CaseFile): CaseFile {
   if (file.assetId === "island")
     return {
       ...file,
-      text: "세 번째 아침의 관측소. 수신 신호 영상은 이 수신기의 불빛 길이와 간격을 재현한 기록입니다.",
+      text: c.puzzles.some((p) => p.visualId === "island-signal")
+        ? "세 번째 아침의 관측소. 수신 신호 영상은 이 수신기의 불빛 길이와 간격을 재현한 기록입니다."
+        : "세 번째 아침의 관측소. 수신기의 신호는 수신_신호.txt에 점과 선으로 옮겨 적었습니다.",
       observations: [
         {
           label: "관측 책상",

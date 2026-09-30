@@ -11,6 +11,7 @@ import {
 import {
   evidenceFile,
   fileTitle,
+  isVideoFile,
   messageText,
   recordText,
 } from "../apps/ghostdesk/src/presentation";
@@ -97,23 +98,100 @@ it.each(caseLibrary)(
 );
 
 it.each(caseLibrary)(
-  "$number accepts all five new answers through the player controls",
+  "$number accepts all ten answers and advances through all player controls",
   async ({ case: c, number }) => {
     const walkthrough: Record<string, string[]> = {
-      "001": ["A", "0312", "3142", "C", "B"],
-      "002": ["C", "2358", "2413", "B", "A"],
-      "003": ["B", "222", "3241", "C", "B"],
-      "004": ["C", "B2", "2413", "A", "B"],
-      "005": ["B", "0642", "2413", "C", "B"],
+      "001": ["0310", "C", "2413", "B:0", "B", "A", "0312", "3142", "C", "B"],
+      "002": [
+        "B204",
+        "C:0612",
+        "12",
+        "3142",
+        "12",
+        "C",
+        "2358",
+        "2413",
+        "B",
+        "A",
+      ],
+      "003": ["ORBIT", "B", "222", "7", "2413", "B", "222", "3241", "C", "B"],
+      "004": ["2413", "B", "138", "3241", "B:C", "C", "B2", "2413", "A", "B"],
+      "005": [
+        "SOS",
+        "1086",
+        "0916",
+        "B:B",
+        "3142",
+        "B",
+        "0642",
+        "2413",
+        "C",
+        "B",
+      ],
     };
-    await mount(c, 5);
-    for (let index = 5; index < 10; index++) {
+    await mount(c, 0);
+    for (let index = 0; index < 10; index++) {
       const p = c.puzzles[index];
       const f = c.files.find((f) => f.puzzleId === p.id)!;
       await openFile(f.id);
       const win = windowByTitle(fileTitle(c, f));
-      const answer = walkthrough[number][index - 5];
-      if (p.inputMode === "text") {
+      const answer = walkthrough[number][index];
+      if (p.inputMode === "visual") {
+        const click = async (selector: string) => {
+          const b = win.querySelector<HTMLButtonElement>(selector)!;
+          expect(b, selector).toBeTruthy();
+          await act(async () => b.click());
+        };
+        const fill = async (input: HTMLInputElement, value: string) => {
+          await act(async () => {
+            Object.getOwnPropertyDescriptor(
+              HTMLInputElement.prototype,
+              "value",
+            )!.set!.call(input, value);
+            input.dispatchEvent(new Event("input", { bubbles: true }));
+          });
+        };
+        if (p.visualId === "hotel-repeat" || p.visualId === "auction-timing") {
+          const times =
+            p.visualId === "hotel-repeat"
+              ? ["00:00.00", "00:12.00"]
+              : ["00:02.00", "00:09.00"];
+          for (const time of times) {
+            const b = [
+              ...win.querySelectorAll<HTMLButtonElement>(
+                ".scene-description button",
+              ),
+            ].find((b) => b.textContent === time + " 장면 담기")!;
+            await act(async () => b.click());
+          }
+        } else if (p.visualId === "stage-cues") {
+          for (const color of ["주황빛", "파란빛", "흰빛", "붉은빛"]) {
+            const b = [
+              ...win.querySelectorAll<HTMLButtonElement>(
+                ".puzzle-options button",
+              ),
+            ].find((b) => b.textContent === color)!;
+            await act(async () => b.click());
+          }
+        } else if (p.visualId === "island-signal") {
+          await fill(
+            win.querySelector<HTMLInputElement>(
+              'input[aria-label="해독한 신호"]',
+            )!,
+            answer,
+          );
+        } else {
+          const [pin, value] = answer.split(":");
+          await click(`button[aria-label="사진 ${pin} 선택"]`);
+          if (value !== undefined) {
+            const input = win.querySelector<HTMLInputElement>(
+              'input[name="visual-answer"]',
+            );
+            if (input) await fill(input, value);
+            else await click(`input[type="radio"][value="${value}"]`);
+          }
+        }
+      } else if (p.inputMode === "text") {
         const input = win.querySelector<HTMLInputElement>(
           'input[name="answer"]',
         )!;
@@ -138,7 +216,7 @@ it.each(caseLibrary)(
         }
       }
       const submit = win.querySelector<HTMLButtonElement>(
-        'button[type="submit"]',
+        'button[type="submit"], .visual-puzzle > button.primary',
       )!;
       expect(submit.disabled).toBe(false);
       await act(async () => submit.click());
@@ -182,8 +260,31 @@ it.each(caseLibrary)(
       expect(win.querySelectorAll("img"), f.title).toHaveLength(0);
       const attached = availableMedia(c, state, f.id);
       expect(win.querySelectorAll("video")).toHaveLength(
-        attached.filter((m) => m.video).length,
+        isVideoFile(c, f) ? attached.filter((m) => m.video).length : 0,
       );
+      if (isVideoFile(c, f)) {
+        expect(
+          host.querySelector(`#desktop-${f.id} .file-symbol.video`),
+        ).toBeTruthy();
+        expect(win.querySelector(".document-meta")?.textContent).toContain(
+          "영상 기록",
+        );
+      }
+      if (!isVideoFile(c, f)) {
+        for (const item of attached.filter((m) => m.video)) {
+          const b = [...win.querySelectorAll("button")].find((b) =>
+            b.textContent?.includes(item.title + " · 영상 열기"),
+          )!;
+          expect(b).toBeTruthy();
+          await act(async () => b.click());
+          expect(
+            windowByTitle(item.title)
+              .querySelector("video")
+              ?.getAttribute("src"),
+          ).toBe(item.video);
+          expect(win.querySelector("video")).toBeNull();
+        }
+      }
       for (const item of attached.filter((m) => !m.video)) {
         const button = [...win.querySelectorAll("button")].find((b) =>
           b.textContent?.includes(item.title + " · 이미지 열기"),

@@ -37,7 +37,9 @@ export const auctionClip: CaseMedia = {
     duration: 11,
     step: 0.25,
     label: "전광판 기록 재현",
-    stamp: (t) => `서버 시각 ${clock(21 * 3600 + 59 * 60 + 51 + t)}`,
+    // The 11s endpoint holds frame 263 (10 + 23/24 seconds), not a new frame.
+    stamp: (t) =>
+      `서버 시각 ${clock(21 * 3600 + 59 * 60 + 51 + Math.min(t, 11 - 1 / 24))}`,
   },
 };
 export const receiverClip: CaseMedia = {

@@ -12,6 +12,7 @@ import {
   Trash2,
   MessageSquare,
   Image as ImageIcon,
+  Video,
   LockKeyhole,
   Network,
   ClipboardCheck,
@@ -45,6 +46,7 @@ import {
   recordText,
   messageText,
   evidenceFile,
+  isVideoFile,
 } from "./presentation";
 import EvidenceView from "./EvidenceView";
 import MediaGallery from "./MediaGallery";
@@ -276,10 +278,18 @@ export default function Player({
   const photos = separatePhotos
     ? availableMedia(c, state).filter((m) => !m.video)
     : [];
+  const videos = separatePhotos
+    ? availableMedia(c, state).filter((m) => m.video)
+    : [];
   function open(id: string) {
     if (
       id.startsWith("@photo:") &&
       !photos.some((m) => id === `@photo:${m.id}`)
+    )
+      return;
+    if (
+      id.startsWith("@video:") &&
+      !videos.some((m) => id === `@video:${m.id}`)
     )
       return;
     const f = files.find((x) => x.id === id);
@@ -403,6 +413,7 @@ export default function Player({
   function title(id: string) {
     return (
       photos.find((m) => id === `@photo:${m.id}`)?.title ||
+      videos.find((m) => id === `@video:${m.id}`)?.title ||
       files.find((f) => f.id === id)?.title ||
       (id === "@photos"
         ? "이미지 자료"
@@ -434,8 +445,13 @@ export default function Player({
         }}
         aria-label={f.title}
       >
-        <span className={"file-symbol " + f.type.toLowerCase()}>
-          <Icon file={f} />
+        <span
+          className={
+            "file-symbol " +
+            (isVideoFile(c, f) ? "video" : f.type.toLowerCase())
+          }
+        >
+          {isVideoFile(c, f) ? <Video /> : <Icon file={f} />}
           {f.puzzleId && !state.solvedPuzzleIds.includes(f.puzzleId) && (
             <LockKeyhole className="lock-badge" size={13} />
           )}
@@ -452,13 +468,23 @@ export default function Player({
     if (!separatePhotos)
       return <MediaGallery key={fileId} items={items} paused={paused} />;
     const pictures = items.filter((item) => !item.video);
+    const source = files.find((f) => f.id === fileId);
+    const embedded = source && isVideoFile(c, source);
+    const clips = items.filter((item) => item.video);
     return (
       <>
-        <MediaGallery
-          key={fileId}
-          items={items.filter((item) => item.video)}
-          paused={paused}
-        />
+        {embedded && (
+          <MediaGallery key={fileId} items={clips} paused={paused} />
+        )}
+        {!embedded && clips.length > 0 && (
+          <nav className="photo-links" aria-label="별도 영상 자료">
+            {clips.map((item) => (
+              <button key={item.id} onClick={() => open(`@video:${item.id}`)}>
+                <Video size={16} aria-hidden="true" /> {item.title} · 영상 열기
+              </button>
+            ))}
+          </nav>
+        )}
         {pictures.length ? (
           <nav className="photo-links" aria-label="별도 이미지 자료">
             {pictures.map((item) => (
@@ -491,6 +517,12 @@ export default function Player({
       );
     if (id.startsWith("@photo:")) {
       const item = photos.find((m) => id === `@photo:${m.id}`);
+      return item ? (
+        <MediaGallery key={item.id} items={[item]} paused={mediaPaused} />
+      ) : null;
+    }
+    if (id.startsWith("@video:")) {
+      const item = videos.find((m) => id === `@video:${m.id}`);
       return item ? (
         <MediaGallery key={item.id} items={[item]} paused={mediaPaused} />
       ) : null;
@@ -861,8 +893,16 @@ export default function Player({
       >
         <div className="document-meta">
           <span>
-            <FileText size={16} aria-hidden="true" />
-            {isLogFile(f) ? "시스템 기록" : "메모장"}
+            {isVideoFile(c, f) ? (
+              <Video size={16} aria-hidden="true" />
+            ) : (
+              <FileText size={16} aria-hidden="true" />
+            )}
+            {isVideoFile(c, f)
+              ? "영상 기록"
+              : isLogFile(f)
+                ? "시스템 기록"
+                : "메모장"}
           </span>
           <span>읽기 전용</span>
         </div>

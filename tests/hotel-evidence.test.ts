@@ -96,8 +96,14 @@ it("opens the night handover as text and its photograph in a separate window", a
 it("uses the recording frame for the separate photo and date puzzle, with no unrelated gallery", async () => {
   await mount(1);
   await openFile("hotel-404-f3");
+  expect(
+    host.querySelector("#desktop-hotel-404-f3 .file-symbol.video"),
+  ).toBeTruthy();
   const clip = windowByTitle(
-    c.files.find((f) => f.id === "hotel-404-f3")!.title,
+    fileTitle(
+      c,
+      c.files.find((f) => f.id === "hotel-404-f3")!,
+    ),
   );
   expect(clip.querySelector("video")?.getAttribute("poster")).toBe(
     hotelStill.src,

@@ -270,15 +270,24 @@ export function availableMedia(
         ),
     )
     .map((item) =>
-      item.id === "auction-envelopes" &&
-      c.puzzles.some((p) => p.visualId === "auction-seal")
+      item.id === "auction-display" &&
+      !mediaAttachments
+        .find((m) => m.id === "auction-monitor")
+        ?.versionIds?.includes(c.versionId)
         ? {
             ...item,
-            src: auctionEvidencePhoto(c),
-            alt: "왼쪽 봉인은 파란 선 한 줄, 가운데는 두 줄의 온전한 봉인, 오른쪽은 두 줄 표시가 있는 봉인이 갈라져 있습니다.",
             caption:
-              "검수 표시와 봉인 종이의 상태를 확대해 대조할 수 있는 사진입니다.",
+              "22:00:00 마감 표시가 나타난 순간의 전광판입니다. 이름과 금액만으로 낙찰자를 판단할 수 없으므로 갱신 기록과 입찰 원장을 함께 확인하세요.",
           }
-        : item,
+        : item.id === "auction-envelopes" &&
+            c.puzzles.some((p) => p.visualId === "auction-seal")
+          ? {
+              ...item,
+              src: auctionEvidencePhoto(c),
+              alt: "왼쪽 봉인은 파란 선 한 줄, 가운데는 두 줄의 온전한 봉인, 오른쪽은 두 줄 표시가 있는 봉인이 갈라져 있습니다.",
+              caption:
+                "검수 표시와 봉인 종이의 상태를 확대해 대조할 수 있는 사진입니다.",
+            }
+          : item,
     );
 }
