@@ -3432,7 +3432,13 @@ button:not(:disabled):active {
   padding: 24px;
 }
 .stage-puzzle .vault-lock {
-  margin: 0 0 16px;
+  float: left;
+  width: 48px;
+  height: 48px;
+  margin: 0 14px 12px 0;
+}
+.folder-lock-notice {
+  clear: both;
 }
 .stage-puzzle h2 {
   margin: 8px 0 12px;
