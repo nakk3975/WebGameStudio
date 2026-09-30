@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { caseLibrary } from "../apps/ghostdesk/src/cases";
+import { tenStageLibrary as caseLibrary } from "../apps/ghostdesk/src/cases";
 import { validateCase } from "../packages/contracts/src";
 import {
   canInspect,

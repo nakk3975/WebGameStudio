@@ -5,10 +5,12 @@ export default function PuzzleAnswer({
   puzzle: p,
   onSubmit,
   paused = false,
+  submitLabel = "폴더 열기",
 }: {
   puzzle: CasePackage["puzzles"][number];
   onSubmit: (answer: string) => void;
   paused?: boolean;
+  submitLabel?: string;
 }) {
   const [answer, setAnswer] = useState("");
   const sequence = p.inputMode === "sequence",
@@ -91,7 +93,7 @@ export default function PuzzleAnswer({
           (sequence && answer.length !== p.choices?.length)
         }
       >
-        폴더 열기
+        {submitLabel}
       </button>
     </form>
   );

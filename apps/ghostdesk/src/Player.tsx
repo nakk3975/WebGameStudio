@@ -40,7 +40,7 @@ import {
   type State,
 } from "../../../packages/engine-ghostdesk/src";
 import { writePlay, download, createSaveQueue, type Save } from "./storage";
-import { caseEntry, isOfficialCaseVersion } from "./cases";
+import { caseEntry, isOfficialCaseVersion, isResolutionCase } from "./cases";
 import {
   boardRecord,
   recordText,
@@ -415,6 +415,7 @@ export default function Player({
     (x) => !state.readMessageIds.includes(x),
   ).length;
   const entry = caseEntry(c);
+  const resolution = isResolutionCase(c);
   const nextHint =
     c.puzzles.find((p) => !state.solvedPuzzleIds.includes(p.id))?.id ||
     c.puzzles[0]?.id ||
@@ -428,7 +429,9 @@ export default function Player({
       : !state.readFileIds.length
         ? "첫 메모를 확인하세요."
         : c.puzzles.some((p) => !state.solvedPuzzleIds.includes(p.id))
-          ? "기록을 대조해 잠금을 해제하세요."
+          ? resolution && state.solvedPuzzleIds.length === c.puzzles.length - 1
+            ? "앞서 읽은 기록을 다시 대조해 마지막 승인을 완성하세요."
+            : "기록을 대조해 잠금을 해제하세요."
           : requiredClues.some((id) => !state.clueIds.includes(id))
             ? "새로 열린 파일에서 근거를 확인하세요."
             : "수집한 증거로 결론을 작성하세요.";
@@ -442,7 +445,9 @@ export default function Player({
         : id === "@board"
           ? "증거 보드"
           : id === "@conclusion"
-            ? "결론 작성"
+            ? resolution
+              ? "조사 목적"
+              : "결론 작성"
             : "") ||
       id
     );
@@ -606,6 +611,30 @@ export default function Player({
           </small>
         </div>
       );
+    if (id === "@conclusion" && resolution) {
+      const next = files.find(
+        (f) =>
+          f.puzzleId &&
+          !state.solvedPuzzleIds.includes(f.puzzleId) &&
+          canInspect(c, state, f.id),
+      );
+      return (
+        <div className="conclusion-content">
+          <div className="section-kicker">조사 의뢰</div>
+          <h2>{c.title}</h2>
+          <p>{c.description}</p>
+          <p>
+            암호 규칙은 인계 메모와 업무 기록에 남아 있습니다. 마지막 폴더에서는
+            앞서 확인한 사실을 연결해 사건을 해결할 승인을 작성합니다.
+          </p>
+          {next && (
+            <button className="primary" onClick={() => open(next.id)}>
+              {next.title} 열기 <ChevronRight size={16} />
+            </button>
+          )}
+        </div>
+      );
+    }
     if (id === "@conclusion")
       return (
         <div className="conclusion-content">
@@ -695,6 +724,9 @@ export default function Player({
             key={p.id}
             puzzle={p}
             paused={mediaPaused}
+            submitLabel={
+              resolution && p === c.puzzles.at(-1) ? "해결 승인" : "폴더 열기"
+            }
             onSubmit={(answer) => {
               const r = transition(c, state, {
                 type: "SOLVE",
@@ -1176,7 +1208,11 @@ export default function Player({
               }
             >
               <ClipboardCheck size={17} />
-              {state.mode === "ENDED" ? "결론 다시 보기" : "결론 작성"}
+              {state.mode === "ENDED"
+                ? "결론 다시 보기"
+                : resolution
+                  ? "조사 목적"
+                  : "결론 작성"}
             </button>
             <button className="quiet" onClick={() => setHintId(nextHint)}>
               <Lightbulb size={15} /> 단계별 힌트
@@ -1222,10 +1258,12 @@ export default function Player({
           onClick={() =>
             state.mode === "ENDED" ? setEndVisible(true) : open("@conclusion")
           }
-          aria-label="결론 작성"
+          aria-label={resolution ? "조사 목적" : "결론 작성"}
         >
           <ClipboardCheck size={18} />
-          <span className="mobile-nav-label">결론</span>
+          <span className="mobile-nav-label">
+            {resolution ? "의뢰" : "결론"}
+          </span>
         </button>
         <button
           className="mobile-board"

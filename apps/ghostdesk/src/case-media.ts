@@ -1,6 +1,6 @@
 import type { CasePackage } from "../../../packages/contracts/src";
 import { canOpen, type State } from "../../../packages/engine-ghostdesk/src";
-import { isOfficialCaseVersion } from "./cases";
+import { isOfficialCaseVersion, isResolutionCase } from "./cases";
 import labReceipts from "./assets/lab-receipts.webp";
 import labNetwork from "./assets/lab-network.webp";
 import hotelFrontdesk from "./assets/hotel-frontdesk.webp";
@@ -89,7 +89,7 @@ export const mediaAttachments: Attachment[] = [
     title,
     alt,
     sourceIds: [`${caseId}-record-${stage}`],
-    versionIds: [`${caseId}-v5`],
+    versionIds: [`${caseId}-v5`, `${caseId}-v6`],
     caption:
       "후속 조사 문서 이미지입니다. 표의 모든 값은 연결된 원문에서도 읽을 수 있습니다.",
   })),
@@ -99,7 +99,7 @@ export const mediaAttachments: Attachment[] = [
     src: outputPoster,
     video: outputMeter,
     sourceIds: ["encore-last-record-9b"],
-    versionIds: ["encore-last-v5"],
+    versionIds: ["encore-last-v5", "encore-last-v6"],
     title: "두 출력 버스 기록",
     caption:
       "출력 기록을 같은 시간 간격으로 옮겼습니다. 객석과 헤드셋을 구분해 살펴보세요.",
@@ -124,19 +124,19 @@ export const mediaAttachments: Attachment[] = [
     ...stageClip,
     caseId: "encore-last",
     sourceIds: ["encore-last-f1"],
-    versionIds: ["encore-last-v4", "encore-last-v5"],
+    versionIds: ["encore-last-v4", "encore-last-v5", "encore-last-v6"],
   },
   {
     ...auctionClip,
     caseId: "auction-seven",
     sourceIds: ["auction-seven-record-4"],
-    versionIds: ["auction-seven-v4", "auction-seven-v5"],
+    versionIds: ["auction-seven-v4", "auction-seven-v5", "auction-seven-v6"],
   },
   {
     ...receiverClip,
     caseId: "monday-loop",
     sourceIds: ["monday-loop-f1"],
-    versionIds: ["monday-loop-v4", "monday-loop-v5"],
+    versionIds: ["monday-loop-v4", "monday-loop-v5", "monday-loop-v6"],
   },
   {
     id: "lab-receipts",
@@ -249,7 +249,8 @@ export const mediaAttachments: Attachment[] = [
 ];
 
 export function auctionEvidencePhoto(c: CasePackage) {
-  return c.puzzles.some((p) => p.visualId === "auction-seal")
+  return isResolutionCase(c) ||
+    c.puzzles.some((p) => p.visualId === "auction-seal")
     ? auctionSeals
     : auctionEnvelopes;
 }
@@ -280,7 +281,8 @@ export function availableMedia(
               "22:00:00 마감 표시가 나타난 순간의 전광판입니다. 이름과 금액만으로 낙찰자를 판단할 수 없으므로 갱신 기록과 입찰 원장을 함께 확인하세요.",
           }
         : item.id === "auction-envelopes" &&
-            c.puzzles.some((p) => p.visualId === "auction-seal")
+            (isResolutionCase(c) ||
+              c.puzzles.some((p) => p.visualId === "auction-seal"))
           ? {
               ...item,
               src: auctionEvidencePhoto(c),

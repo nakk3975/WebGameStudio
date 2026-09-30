@@ -1,6 +1,6 @@
 import type { CaseFile, CasePackage } from "../../../packages/contracts/src";
 import type { Save } from "./storage";
-import { isOfficialCaseVersion } from "./cases";
+import { isOfficialCaseVersion, isResolutionCase } from "./cases";
 
 // View names only: account saves must still match their immutable case package.
 const investigationFolders: Record<string, string[]> = {
@@ -75,6 +75,7 @@ export function isVideoFile(c: CasePackage, file: CaseFile): boolean {
 }
 
 export function fileTitle(c: CasePackage, file: CaseFile): string {
+  if (isResolutionCase(c)) return file.title;
   if (!isOfficialCaseVersion(c)) return file.title;
   if (c.caseId === "demo-0317" && file.id === "f-photo")
     return "시계_대조기록.txt";
@@ -113,6 +114,7 @@ export function boardRecord(c: CasePackage, clueId: string) {
 
 // The archived package remains immutable; its viewer now plays continuous motion.
 export function recordText(c: CasePackage, f: CaseFile) {
+  if (isResolutionCase(c)) return f.text;
   if (isOfficialCaseVersion(c)) {
     if (c.caseId === "demo-0317" && f.id === "f-photo")
       return "야간 점검 / 시계 대조 기록\n\n같은 순간에 확인한 표시 시각\n벽시계      03:10\n기록용 PC   03:17\n\n야간 점검 담당자가 두 시계의 표시값을 옮겨 적었습니다.";
@@ -201,9 +203,11 @@ export function evidenceFile(c: CasePackage, file: CaseFile): CaseFile {
   if (file.assetId === "island")
     return {
       ...file,
-      text: c.puzzles.some((p) => p.visualId === "island-signal")
-        ? "세 번째 아침의 관측소. 수신 신호 영상은 이 수신기의 불빛 길이와 간격을 재현한 기록입니다."
-        : "세 번째 아침의 관측소. 수신기의 신호는 수신_신호.txt에 점과 선으로 옮겨 적었습니다.",
+      text:
+        isResolutionCase(c) ||
+        c.puzzles.some((p) => p.visualId === "island-signal")
+          ? "세 번째 아침의 관측소. 수신 신호 영상은 이 수신기의 불빛 길이와 간격을 재현한 기록입니다."
+          : "세 번째 아침의 관측소. 수신기의 신호는 수신_신호.txt에 점과 선으로 옮겨 적었습니다.",
       observations: [
         {
           label: "관측 책상",

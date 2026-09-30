@@ -3,6 +3,7 @@ import {
   archivedCases,
   caseLibrary,
   legacyCases,
+  tenStageLibrary,
 } from "../apps/ghostdesk/src/cases";
 import {
   availableMedia,
@@ -64,7 +65,7 @@ it("does not expose pictures attached only to a locked ancestor or another case"
 });
 
 it("does not retrofit the three new video puzzles into archived editions", () => {
-  for (const c of archivedCases.filter((c) => !c.versionId.endsWith("-v4"))) {
+  for (const c of archivedCases.filter((c) => !/-v[45]$/.test(c.versionId))) {
     let s = initialState(c);
     for (const p of c.puzzles)
       s = transition(c, s, { type: "SOLVE", id: p.id, answer: p.answer }).state;
@@ -152,7 +153,7 @@ it("does not promise unavailable video controls in archived text-only investigat
 });
 
 it("keeps hotel frame 8821 at its original clock time without changing the published evidence", () => {
-  const c = caseLibrary.find((e) => e.case.caseId === "hotel-404")!.case;
+  const c = tenStageLibrary.find((e) => e.case.caseId === "hotel-404")!.case;
   const record = c.files.find((f) => f.id === "hotel-404-record-9b")!;
   expect(record.text).toContain("06-12 14:20");
   expect(recordText(c, record)).toContain(

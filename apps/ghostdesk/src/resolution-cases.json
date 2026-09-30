@@ -1,0 +1,4775 @@
+[
+  {
+    "schemaVersion": 1,
+    "engineVersion": "ghostdesk-core-1",
+    "caseId": "demo-0317",
+    "versionId": "demo-0317-v6",
+    "title": "03:17에 멈춘 전송",
+    "description": "03:17 전송 기록 뒤 사라진 작업 목록. 야간 근무자로서 유출 여부와 담당자의 행방을 확인하고, 보존된 사본으로 목록을 복구하세요.",
+    "estimatedMinutes": 55,
+    "contentWarning": "실종을 암시하는 허구의 이야기. 공포 이미지·점프 스케어 없음.",
+    "files": [
+      {
+        "id": "f-handover",
+        "type": "TEXT",
+        "title": "인수인계.txt",
+        "parentId": null,
+        "visible": true,
+        "clueId": "c-clock",
+        "text": "03:17 전송 기록 뒤 사라진 작업 목록. 야간 근무자로서 유출 여부와 담당자의 행방을 확인하고, 보존된 사본으로 목록을 복구하세요.\n\n담당자가 남긴 메모\n기록 담당 윤서에게 연락이 닿지 않고 작업 목록도 비었습니다. 저는 야간 기록 검토를 맡은 다음 근무자입니다. 외부 유출 여부를 가리고, 남은 자료를 안전하게 복구해야 합니다.\n\n업무 폴더에는 담당자가 기록을 대조해 정한 암호가 걸려 있습니다. 암호 규칙은 인계 메모와 각 업무 기록의 끝에 적어 두었습니다. 한 번 연 기록도 지우지 마세요.\n\n「업무 자료」 폴더 암호: 마지막 외부 전송 요청의 실제 시각을 시·분 네 자리로. PC 표시와 실제 시각은 다르니 동시 측정 기록으로 보정해 주세요."
+      },
+      {
+        "id": "f-chat",
+        "type": "CHAT_LINK",
+        "title": "메신저",
+        "parentId": null,
+        "visible": true,
+        "text": ""
+      },
+      {
+        "id": "f-photo",
+        "type": "TEXT",
+        "title": "시계_대조기록.txt",
+        "parentId": null,
+        "visible": true,
+        "text": "같은 순간에 옮겨 적은 표시 시각\n벽시계 03:10\n기록용 PC 03:17\n점검 구간에 오차는 일정했습니다.",
+        "clueId": "c-photo"
+      },
+      {
+        "id": "trash",
+        "type": "FOLDER",
+        "title": "휴지통",
+        "parentId": null,
+        "visible": true,
+        "text": "삭제된 기록도 흔적을 남깁니다."
+      },
+      {
+        "id": "f-queue",
+        "type": "TEXT",
+        "title": "transfer_queue.log",
+        "parentId": "trash",
+        "visible": true,
+        "clueId": "c-queue",
+        "text": "ARCHIVE NODE / OUTBOUND QUEUE\n──────────────────────────\n시각 기준: 기록용 PC\n\n[03:17:00] SEND_REQUEST\n요청 ID      : TX-0917\n목적지       : EXTERNAL_ARCHIVE\n상태         : QUEUED\n완료 시각    : —\n\nQUEUED = 승인 대기열 등록\n전송 완료는 별도 영수증에서 확인합니다.\n──────────────────────────\n이 로그는 요청 사실만 기록합니다."
+      },
+      {
+        "id": "f-receipt",
+        "type": "TEXT",
+        "title": "전송_처리_영수증.txt",
+        "parentId": "demo-0317-stage-5",
+        "visible": false,
+        "clueId": "c-receipt",
+        "text": "OUTBOUND TRANSFER RECEIPT\n──────────────────────────\n요청 ID      : TX-0917\n승인 처리    : CANCELLED\n최종 상태    : 전송 승인 취소\n전송 완료    : 0건\n외부 전송량  : 0 bytes\n\n승인이 취소되어 대기열의 요청은 실행되지 않았습니다.\n\n이 영수증의 요청 ID와 큐 로그의 요청 ID를 대조하세요."
+      },
+      {
+        "id": "demo-0317-scene",
+        "type": "IMAGE",
+        "title": "연구실_점검사진",
+        "parentId": null,
+        "visible": true,
+        "text": "점검 담당자가 남긴 현장 사진.",
+        "assetId": "lab",
+        "alt": "야간 연구실의 책상과 두 컴퓨터, 기록 보관 장치.",
+        "observations": [
+          {
+            "label": "촬영 시각",
+            "text": "점검 촬영: 벽시계 기준 03:20. 두 컴퓨터와 보관 장치, 분리된 연결선이 보입니다."
+          },
+          {
+            "label": "시계 대조표",
+            "text": "동시 측정 / 벽시계 03:10 / 기록용 PC 03:17. 사진 속 작은 문자 대신 점검표에 옮긴 측정값입니다."
+          }
+        ]
+      },
+      {
+        "id": "demo-0317-stage-1",
+        "type": "FOLDER",
+        "title": "업무 자료",
+        "parentId": null,
+        "visible": true,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "puzzleId": "demo-0317-p1-v6"
+      },
+      {
+        "id": "demo-0317-record-2",
+        "type": "TEXT",
+        "title": "요청_연결하기.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "분리된 접수표 / 시각은 모두 PC 기준\n\n접수표 A · TX-0916 · 03:16:00 · 외부 보관소\n접수표 B · TX-0917 · 03:17:00 · 내부 복제본\n접수표 C · TX-0917 · 03:17:00 · 외부 보관소\n\n한 요청을 외부 전송과 내부 복제에 각각 사용한 기록입니다. 요청 번호와 목적지가 모두 같은 접수표를 찾아야 합니다.\n\n접수 보관 번호: A=4621, B=7158, C=8306. 행의 문자 대신 보관 번호를 사용합니다.\n\n「접수 내역」 폴더 암호: 큐와 요청 번호·목적지가 모두 같은 접수표의 보관 번호 네 자리 뒤에, 그 요청의 실제 시각 네 자리를 붙입니다.",
+        "clueId": "demo-0317-record-clue-2"
+      },
+      {
+        "id": "demo-0317-stage-2",
+        "type": "FOLDER",
+        "title": "접수 내역",
+        "parentId": null,
+        "visible": false,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "puzzleId": "demo-0317-p2-v6"
+      },
+      {
+        "id": "demo-0317-record-3",
+        "type": "TEXT",
+        "title": "처리_순서_복원.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "처리 단편 / 모두 같은 PC 시각\n\n단편 1 · 03:17:09 · 승인 취소 접수\n단편 2 · 03:17:00 · 요청 생성\n단편 3 · 03:17:11 · 처리 내역 보관\n단편 4 · 03:17:02 · 승인 대기 등록\n\n사진은 03:20 점검 때 촬영되었습니다. 사진 속 선의 연결 상태만으로 그 이전 작업을 판단할 수는 없습니다.\n\n「작업 기록」 폴더 암호: 요청 생성부터 승인 취소 접수까지 걸린 초입니다. 대기 등록부터가 아닙니다.",
+        "clueId": "demo-0317-record-clue-3"
+      },
+      {
+        "id": "demo-0317-stage-3",
+        "type": "FOLDER",
+        "title": "작업 기록",
+        "parentId": null,
+        "visible": false,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "puzzleId": "demo-0317-p3-v6"
+      },
+      {
+        "id": "demo-0317-record-4",
+        "type": "TEXT",
+        "title": "전송량_대조.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "네트워크 계량기 / 03:16:50 → 03:17:20\n\n외부 회선 누적량: 8192 → 8192 바이트\n내부 복제 누적량: 4096 → 6144 바이트\n\n두 계량기는 서로 다른 회선입니다. 누적량은 초기화되지 않았습니다. 해당 구간에 다른 외부 작업은 없었습니다.\n\n「장비 관리」 폴더 암호: 내부 복제 증가량-외부 전송 증가량. 누적값 자체가 아니라 이번 작업의 바이트 수를 씁니다. 예: 128-64.",
+        "clueId": "demo-0317-record-clue-4"
+      },
+      {
+        "id": "demo-0317-stage-4",
+        "type": "FOLDER",
+        "title": "장비 관리",
+        "parentId": null,
+        "visible": false,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "puzzleId": "demo-0317-p4-v6"
+      },
+      {
+        "id": "demo-0317-record-5",
+        "type": "TEXT",
+        "title": "최종_영수증_찾기.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "보관소 영수증 색인\n\nA · TX-0917 · 외부 보관소 · 완료 1건 · 2048바이트\nB · TX-0917 · 외부 보관소 · 승인 취소 · 0바이트\nC · TX-0916 · 외부 보관소 · 승인 취소 · 0바이트\n\n선택한 색인을 원본 영수증과 대조합니다.\n\n영수증 보관 키: A=5132, B=9274, C=6801. 상태와 실제 전송량이 모두 맞는 한 건만 유효합니다.\n\n「전송 내역」 폴더 암호: 검증된 영수증의 보관 키-요청이 취소되기까지 걸린 초. 큐 번호·목적지·계량기까지 맞는 영수증만 사용합니다.",
+        "clueId": "demo-0317-record-clue-5"
+      },
+      {
+        "id": "demo-0317-stage-5",
+        "type": "FOLDER",
+        "title": "전송 내역",
+        "parentId": null,
+        "visible": false,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "puzzleId": "demo-0317-p5-v6"
+      },
+      {
+        "id": "demo-0317-record-6a",
+        "type": "TEXT",
+        "title": "이관_신청서.txt",
+        "parentId": null,
+        "text": "윤서의 내부 보존 신청 / 03:09 실제 시각\n\n요청 TX-0917 · 내용 2048바이트 · 내용 식별값 7C21. 내부 복사 작업은 외부 전송과 별도로 기록한다. 같은 파일 이름을 가진 시험용 자료는 식별값이 다르다.\n\n“작업실 PC를 비우기 전에 자료실 보존함으로 사본 하나를 남겨 둔다.”\n\n「보관 자료」 폴더 암호: 이관 신청과 일치하는 보관 사본의 내용 식별값-내부 계량기의 증가 바이트 수. 사본의 이름만으로 결정하지 않습니다.",
+        "visible": false,
+        "clueId": "demo-0317-clue-6a"
+      },
+      {
+        "id": "demo-0317-record-6b",
+        "type": "TEXT",
+        "title": "보관함_인덱스.txt",
+        "parentId": null,
+        "text": "03:20 내부 보관함 목록 / 이미지 원문\n\nA / TX-0917 / 2048바이트 / 7C21\nB / TX-0917 / 2048바이트 / 9A06\nC / TX-0920 / 2048바이트 / 7C21\n\n세 항목의 화면상 파일 이름은 모두 야간기록이다. 위 식별값은 이 사건에서 내용을 구분하는 검증 코드이며 사람의 신원을 뜻하지 않는다.",
+        "visible": false,
+        "clueId": "demo-0317-clue-6b"
+      },
+      {
+        "id": "demo-0317-stage-6",
+        "type": "FOLDER",
+        "title": "보관 자료",
+        "parentId": null,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "visible": false,
+        "puzzleId": "demo-0317-p6-v6"
+      },
+      {
+        "id": "demo-0317-record-7a",
+        "type": "TEXT",
+        "title": "자료실_출입표.log",
+        "parentId": null,
+        "text": "자료실 입구 카드 단말\n\n표시 03:17:00 / 카드 Y-04 / 입장 인식\n표시 03:26:00 / 카드 M-02 / 입장 인식\n\n카드 대여 여부와 실제 인계는 별도 서명부에서 확인한다. 이 기록은 PC가 아니라 자료실 입구 단말이 남겼다.",
+        "visible": false,
+        "clueId": "demo-0317-clue-7a"
+      },
+      {
+        "id": "demo-0317-record-7b",
+        "type": "TEXT",
+        "title": "장비별_시계점검.txt",
+        "parentId": null,
+        "text": "같은 기준시각 03:00:00에서 읽은 값\n\n기준 시계 03:00:00\n작업실 PC 03:07:00\n자료실 입구 단말 03:05:00\n\n그날 점검 구간에는 각 오차가 일정했다. 카드 Y-04는 윤서, M-02는 민재에게 발급됐다. PC의 오차를 다른 장비에 그대로 적용하지 않는다.\n\n「출입 관리」 폴더 암호: 윤서 카드의 실제 입장 시각 네 자리-외부 요청의 실제 시각부터 입장까지 지난 분. 장비별 오차를 각각 적용합니다.",
+        "visible": false,
+        "clueId": "demo-0317-clue-7b"
+      },
+      {
+        "id": "demo-0317-stage-7",
+        "type": "FOLDER",
+        "title": "출입 관리",
+        "parentId": null,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "visible": false,
+        "puzzleId": "demo-0317-p7-v6"
+      },
+      {
+        "id": "demo-0317-record-8a",
+        "type": "TEXT",
+        "title": "보존_조각.log",
+        "parentId": null,
+        "text": "같은 사본 7C21의 작업 조각\n\n조각 1 / PC 03:17:12 / 복사 완료\n조각 2 / 기준 03:13:00 / 자료실 인수\n조각 3 / 기준 03:10:03 / 내용 검증\n조각 4 / PC 03:17:18 / 운반함 봉인",
+        "visible": false,
+        "clueId": "demo-0317-clue-8a"
+      },
+      {
+        "id": "demo-0317-record-8b",
+        "type": "TEXT",
+        "title": "시계_적용표.txt",
+        "parentId": null,
+        "text": "작업 조각을 읽는 법\n\nPC 표시는 기준시각보다 7분 빠르다. 기준 표시는 보정하지 않는다. 복사 완료와 운반함 봉인은 PC가 썼고, 내용 검증과 인수는 독립 기록계가 썼다.\n\n운반함은 종이 문서를 넣는 상자가 아니라 내부 저장 장치를 옮기는 봉인함이다. 외부 전송 큐와 혼동하지 않는다.\n\n「파일 정리」 폴더 암호: 내용 검증을 시작한 실제 시각-자료실에서 인수한 실제 시각. 각각 시·분·초 여섯 자리로 적습니다. 중간 조각도 보정해 순서가 이어지는지 확인하세요.",
+        "visible": false,
+        "clueId": "demo-0317-clue-8b"
+      },
+      {
+        "id": "demo-0317-stage-8",
+        "type": "FOLDER",
+        "title": "파일 정리",
+        "parentId": null,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "visible": false,
+        "puzzleId": "demo-0317-p8-v6"
+      },
+      {
+        "id": "demo-0317-record-9a",
+        "type": "TEXT",
+        "title": "인계_서명부.txt",
+        "parentId": null,
+        "text": "A / 03:13 / 7C21 / 인계 민재 · 인수 윤서 / 시험 양식\nB / 03:13 / 9A06 / 인계 윤서 · 인수 보존 담당 / 확정\nC / 03:13 / 7C21 / 인계 윤서 · 인수 보존 담당 / 확정\n\n확정 항목만 보존 담당자가 대면 확인한 문서다.\n\n문서 보관 키: A=5021, B=7736, C=9418.",
+        "visible": false,
+        "clueId": "demo-0317-clue-9a"
+      },
+      {
+        "id": "demo-0317-record-9b",
+        "type": "TEXT",
+        "title": "양식_상태설명.txt",
+        "parentId": null,
+        "text": "시험 양식은 연습용 이름을 자동으로 채운다. 실제 인계의 근거로 사용하지 않는다. 확정 문서라도 내용 식별값이 다르면 다른 사본의 기록이다.\n\n윤서의 카드 입장 시각은 이동 가능성을 설명하지만, 해당 사본을 누가 넘겼는지는 이 서명부와 보존 조각을 함께 대조해야 한다.\n\n「인수인계」 폴더 암호: 해당 사본의 확정 인계 문서 키-윤서의 실제 입장부터 인계까지 지난 분. 시험 문서와 다른 사본은 제외합니다.",
+        "visible": false,
+        "clueId": "demo-0317-clue-9b"
+      },
+      {
+        "id": "demo-0317-stage-9",
+        "type": "FOLDER",
+        "title": "인수인계",
+        "parentId": null,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "visible": false,
+        "puzzleId": "demo-0317-p9-v6"
+      },
+      {
+        "id": "demo-0317-record-10a",
+        "type": "TEXT",
+        "title": "목록_필터설정.txt",
+        "parentId": null,
+        "text": "작업 목록 설정\n\n표시: 처리 중 항목만\n숨김: 보존 인수 확정 항목\n03:14 새로고침 결과: TX-0917 표시 대상에서 제외\n\n이 설정은 화면 목록만 바꾸며 저장 자료를 지우거나 외부로 보내지 않는다.",
+        "visible": false,
+        "clueId": "demo-0317-clue-10a"
+      },
+      {
+        "id": "demo-0317-record-10b",
+        "type": "TEXT",
+        "title": "보존_조회회신.txt",
+        "parentId": null,
+        "text": "보존 담당 / 03:25 기준시각\n\n보관함 조회는 성공했지만 작업 목록 복구는 아직 승인되지 않았습니다. 윤서는 자료실에서 훼손 문서를 복구 중입니다. 같은 이름의 시험 사본을 연결하지 않도록, 초반 전송 기록부터 다시 대조해 복구 요청을 작성해 주세요.\n\n복구 동작표\nVIEW: 보존된 사본을 작업 목록에 다시 연결\nSEND: 사본을 외부로 전송\nPURGE: 보존 사본 제거\n\n원본 보존과 외부 전송 금지가 이번 인계 조건입니다. 승인하면 VIEW로 연결한 목록만 복원되며 보존 원본은 그대로 남습니다.\n\n「백업」 폴더 암호: 실행할 동작-보존 사본 식별값-최초 요청의 실제 시각 네 자리-검증된 외부 전송 바이트 수. 예전 기록을 다시 대조한 이 요청이 백업 복구 승인입니다.",
+        "visible": false,
+        "clueId": "demo-0317-clue-10b"
+      },
+      {
+        "id": "demo-0317-stage-10",
+        "type": "FOLDER",
+        "title": "백업",
+        "parentId": null,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "visible": false,
+        "puzzleId": "demo-0317-p10-v6"
+      }
+    ],
+    "clues": [
+      {
+        "id": "c-clock",
+        "title": "인수인계.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "c-photo",
+        "title": "시계_대조기록.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "c-queue",
+        "title": "transfer_queue.log",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "c-receipt",
+        "title": "전송_처리_영수증.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "demo-0317-record-clue-2",
+        "title": "요청_연결하기.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "demo-0317-record-clue-3",
+        "title": "처리_순서_복원.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "demo-0317-record-clue-4",
+        "title": "전송량_대조.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "demo-0317-record-clue-5",
+        "title": "최종_영수증_찾기.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "demo-0317-clue-6a",
+        "title": "이관_신청서.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "demo-0317-clue-6b",
+        "title": "보관함_인덱스.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "demo-0317-clue-7a",
+        "title": "자료실_출입표.log",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "demo-0317-clue-7b",
+        "title": "장비별_시계점검.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "demo-0317-clue-8a",
+        "title": "보존_조각.log",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "demo-0317-clue-8b",
+        "title": "시계_적용표.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "demo-0317-clue-9a",
+        "title": "인계_서명부.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "demo-0317-clue-9b",
+        "title": "양식_상태설명.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "demo-0317-clue-10a",
+        "title": "목록_필터설정.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "demo-0317-clue-10b",
+        "title": "보존_조회회신.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      }
+    ],
+    "puzzles": [
+      {
+        "id": "demo-0317-p1-v6",
+        "title": "업무 자료의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "0310",
+        "ignoreCase": true,
+        "hints": [
+          "「업무 자료」 폴더 암호: 마지막 외부 전송 요청의 실제 시각을 시·분 네 자리로. PC 표시와 실제 시각은 다르니 동시 측정 기록으로 보정해 주세요.",
+          "동시 측정에서 PC는 7분 빠릅니다. PC의 03:17 요청을 벽시계 기준으로 바꾸세요.",
+          "정답: 0310"
+        ],
+        "stageTitle": "업무 자료",
+        "evidenceIds": [
+          "f-handover",
+          "f-photo",
+          "f-queue"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "demo-0317-p2-v6",
+        "title": "접수 내역의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "83060310",
+        "ignoreCase": true,
+        "hints": [
+          "「접수 내역」 폴더 암호: 큐와 요청 번호·목적지가 모두 같은 접수표의 보관 번호 네 자리 뒤에, 그 요청의 실제 시각 네 자리를 붙입니다.",
+          "내부 복제 접수는 제외합니다. 외부 TX-0917에 해당하는 C의 보관 번호와 앞서 보정한 요청 시각을 연결하세요.",
+          "정답: 83060310"
+        ],
+        "stageTitle": "접수 내역",
+        "evidenceIds": [
+          "demo-0317-record-2",
+          "f-queue",
+          "f-photo"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "demo-0317-p3-v6",
+        "title": "작업 기록의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "9",
+        "ignoreCase": true,
+        "hints": [
+          "「작업 기록」 폴더 암호: 요청 생성부터 승인 취소 접수까지 걸린 초입니다. 대기 등록부터가 아닙니다.",
+          "같은 PC 시계이므로 차이에는 7분 보정이 필요 없습니다. 03:17:00부터 03:17:09까지입니다.",
+          "정답: 9"
+        ],
+        "stageTitle": "작업 기록",
+        "evidenceIds": [
+          "demo-0317-record-3",
+          "f-queue"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "demo-0317-p4-v6",
+        "title": "장비 관리의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "2048-0",
+        "ignoreCase": true,
+        "hints": [
+          "「장비 관리」 폴더 암호: 내부 복제 증가량-외부 전송 증가량. 누적값 자체가 아니라 이번 작업의 바이트 수를 씁니다. 예: 128-64.",
+          "내부는 6144−4096, 외부는 8192−8192입니다. 연결선 사진만으로 전송량을 단정하지 마세요.",
+          "정답: 2048-0"
+        ],
+        "stageTitle": "장비 관리",
+        "evidenceIds": [
+          "demo-0317-record-4",
+          "demo-0317-record-3"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "demo-0317-p5-v6",
+        "title": "전송 내역의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "9274-9",
+        "ignoreCase": true,
+        "hints": [
+          "「전송 내역」 폴더 암호: 검증된 영수증의 보관 키-요청이 취소되기까지 걸린 초. 큐 번호·목적지·계량기까지 맞는 영수증만 사용합니다.",
+          "완료 2048바이트라는 A는 외부 계량기와 충돌합니다. B의 키에 생성→취소의 9초를 연결하세요.",
+          "정답: 9274-9"
+        ],
+        "stageTitle": "전송 내역",
+        "evidenceIds": [
+          "demo-0317-record-5",
+          "f-queue",
+          "demo-0317-record-3",
+          "demo-0317-record-4"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "demo-0317-p6-v6",
+        "title": "보관 자료의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "7C21-2048",
+        "ignoreCase": true,
+        "stageTitle": "보관 자료",
+        "evidenceIds": [
+          "demo-0317-record-6a",
+          "demo-0317-record-6b",
+          "demo-0317-record-4"
+        ],
+        "inputMode": "text",
+        "hints": [
+          "「보관 자료」 폴더 암호: 이관 신청과 일치하는 보관 사본의 내용 식별값-내부 계량기의 증가 바이트 수. 사본의 이름만으로 결정하지 않습니다.",
+          "요청 TX-0917과 내용 식별값, 크기를 모두 대조합니다. 보관 사본 크기가 내부 회선의 증가량과도 같아야 합니다.",
+          "정답: 7C21-2048"
+        ]
+      },
+      {
+        "id": "demo-0317-p7-v6",
+        "title": "출입 관리의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "0312-2",
+        "ignoreCase": true,
+        "stageTitle": "출입 관리",
+        "evidenceIds": [
+          "demo-0317-record-7b",
+          "demo-0317-record-7a",
+          "f-queue",
+          "f-photo"
+        ],
+        "inputMode": "text",
+        "hints": [
+          "「출입 관리」 폴더 암호: 윤서 카드의 실제 입장 시각 네 자리-외부 요청의 실제 시각부터 입장까지 지난 분. 장비별 오차를 각각 적용합니다.",
+          "자료실 단말 03:17은 5분 빠르므로 03:12입니다. PC 요청의 실제 03:10과는 2분 차이입니다.",
+          "정답: 0312-2"
+        ]
+      },
+      {
+        "id": "demo-0317-p8-v6",
+        "title": "파일 정리의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "031003-031300",
+        "ignoreCase": true,
+        "stageTitle": "파일 정리",
+        "evidenceIds": [
+          "demo-0317-record-8b",
+          "demo-0317-record-8a",
+          "f-photo"
+        ],
+        "inputMode": "text",
+        "hints": [
+          "「파일 정리」 폴더 암호: 내용 검증을 시작한 실제 시각-자료실에서 인수한 실제 시각. 각각 시·분·초 여섯 자리로 적습니다. 중간 조각도 보정해 순서가 이어지는지 확인하세요.",
+          "검증은 기준 03:10:03, 복사는 보정 후 03:10:12, 봉인은 03:10:18, 인수는 03:13:00입니다.",
+          "정답: 031003-031300"
+        ]
+      },
+      {
+        "id": "demo-0317-p9-v6",
+        "title": "인수인계의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "9418-1",
+        "ignoreCase": true,
+        "stageTitle": "인수인계",
+        "evidenceIds": [
+          "demo-0317-record-9b",
+          "demo-0317-record-9a",
+          "demo-0317-record-6a",
+          "demo-0317-record-7a",
+          "demo-0317-record-7b"
+        ],
+        "inputMode": "text",
+        "hints": [
+          "「인수인계」 폴더 암호: 해당 사본의 확정 인계 문서 키-윤서의 실제 입장부터 인계까지 지난 분. 시험 문서와 다른 사본은 제외합니다.",
+          "7C21을 윤서가 인계한 확정 문서는 C입니다. 실제 입장은 03:12, 인계는 03:13입니다.",
+          "정답: 9418-1"
+        ]
+      },
+      {
+        "id": "demo-0317-p10-v6",
+        "title": "백업의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "VIEW-7C21-0310-0",
+        "ignoreCase": true,
+        "stageTitle": "백업",
+        "evidenceIds": [
+          "demo-0317-record-10b",
+          "demo-0317-record-10a",
+          "demo-0317-record-6a",
+          "demo-0317-record-6b",
+          "f-queue",
+          "f-photo",
+          "demo-0317-record-4"
+        ],
+        "inputMode": "text",
+        "hints": [
+          "「백업」 폴더 암호: 실행할 동작-보존 사본 식별값-최초 요청의 실제 시각 네 자리-검증된 외부 전송 바이트 수. 예전 기록을 다시 대조한 이 요청이 백업 복구 승인입니다.",
+          "필터 때문에 숨은 사본을 VIEW로 연결합니다. 7C21 사본, 실제 요청 03:10, 외부 증가량 0을 초기 기록에서 다시 검증하세요.",
+          "정답: VIEW-7C21-0310-0"
+        ]
+      }
+    ],
+    "messages": [
+      {
+        "id": "m-1",
+        "author": "민재",
+        "time": "03:24",
+        "text": "아직 연구실이야? 기록 담당자에게 연락이 안 돼.",
+        "initial": true
+      },
+      {
+        "id": "m-2",
+        "author": "민재",
+        "time": "03:25",
+        "text": "난 03:10에는 이미 밖에 있었어. 근데 컴퓨터에 전송 기록이 남아 있다며?",
+        "initial": true
+      },
+      {
+        "id": "m-3",
+        "author": "민재",
+        "time": "03:27",
+        "text": "혹시 그거 실제로 전송된 게 맞아? 대기열에 들어간 것과 완료된 건 다를 수 있어.",
+        "initial": false
+      },
+      {
+        "id": "m-4",
+        "author": "민재",
+        "time": "03:28",
+        "text": "보관함이 열렸구나. 영수증의 요청 번호도 꼭 확인해 줘.",
+        "initial": false
+      },
+      {
+        "id": "demo-0317-chapter-6",
+        "author": "기록 담당 윤서",
+        "time": "03:28",
+        "text": "외부 전송은 없었군요. 그런데 내부 보관함에는 파일 이름이 같은 복사본이 셋 남아 있어요. 제가 남긴 이관 신청과 맞는 자료가 무엇인지 확인해 주세요. 이름이 같아도 같은 파일은 아닙니다.",
+        "initial": false
+      },
+      {
+        "id": "demo-0317-chapter-8",
+        "author": "기록 담당 윤서",
+        "time": "03:29",
+        "text": "제 출입 카드와 실제 인계 서명은 따로 확인해 주세요. 카드가 찍혔다는 사실만으로 누가 안에 있었는지 단정할 수는 없어요.",
+        "initial": false
+      },
+      {
+        "id": "demo-0317-chapter-complete",
+        "author": "기록 담당 윤서",
+        "time": "03:30",
+        "text": "백업 복구 요청이 승인됐습니다. 7C21 사본이 작업 목록에 다시 나타났고 외부 전송은 실행되지 않았습니다.",
+        "initial": false
+      }
+    ],
+    "rules": [
+      {
+        "id": "demo-0317-advance-1",
+        "priority": 1,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "demo-0317-p1-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "demo-0317-stage-2"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "demo-0317-record-2"
+          },
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "m-3"
+          }
+        ]
+      },
+      {
+        "id": "demo-0317-advance-2",
+        "priority": 2,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "demo-0317-p2-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "demo-0317-stage-3"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "demo-0317-record-3"
+          }
+        ]
+      },
+      {
+        "id": "demo-0317-advance-3",
+        "priority": 3,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "demo-0317-p3-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "demo-0317-stage-4"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "demo-0317-record-4"
+          }
+        ]
+      },
+      {
+        "id": "demo-0317-advance-4",
+        "priority": 4,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "demo-0317-p4-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "demo-0317-stage-5"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "demo-0317-record-5"
+          }
+        ]
+      },
+      {
+        "id": "demo-0317-advance-5",
+        "priority": 5,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "demo-0317-p5-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "f-receipt"
+          },
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "m-4"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "demo-0317-stage-6"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "demo-0317-record-6a"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "demo-0317-record-6b"
+          },
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "demo-0317-chapter-6"
+          }
+        ]
+      },
+      {
+        "id": "demo-0317-advance-6",
+        "priority": 6,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "demo-0317-p6-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "demo-0317-stage-7"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "demo-0317-record-7a"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "demo-0317-record-7b"
+          }
+        ]
+      },
+      {
+        "id": "demo-0317-advance-7",
+        "priority": 7,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "demo-0317-p7-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "demo-0317-stage-8"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "demo-0317-record-8a"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "demo-0317-record-8b"
+          },
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "demo-0317-chapter-8"
+          }
+        ]
+      },
+      {
+        "id": "demo-0317-advance-8",
+        "priority": 8,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "demo-0317-p8-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "demo-0317-stage-9"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "demo-0317-record-9a"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "demo-0317-record-9b"
+          }
+        ]
+      },
+      {
+        "id": "demo-0317-advance-9",
+        "priority": 9,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "demo-0317-p9-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "demo-0317-stage-10"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "demo-0317-record-10a"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "demo-0317-record-10b"
+          }
+        ]
+      },
+      {
+        "id": "demo-0317-advance-10",
+        "priority": 10,
+        "once": true,
+        "when": {
+          "type": "ALL",
+          "conditions": [
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "demo-0317-p1-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "demo-0317-p2-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "demo-0317-p3-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "demo-0317-p4-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "demo-0317-p5-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "demo-0317-p6-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "demo-0317-p7-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "demo-0317-p8-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "demo-0317-p9-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "demo-0317-p10-v6"
+            }
+          ]
+        },
+        "then": [
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "demo-0317-chapter-complete"
+          },
+          {
+            "type": "END_CASE",
+            "id": "ending-a"
+          }
+        ]
+      }
+    ],
+    "endings": [
+      {
+        "id": "ending-a",
+        "title": "목록이 돌아왔다",
+        "text": "백업 복구 요청이 승인됐습니다. 7C21 사본이 작업 목록에 다시 나타났고 외부 전송은 실행되지 않았습니다.\n\n03:17은 빠른 PC의 표시였습니다. 취소된 요청과 내부 복제를 분리하니 빈 목록은 유출이나 삭제의 증거가 아니었습니다. 확정 서명부는 윤서가 자료실에서 사본을 인계했음을 보여 줍니다.\n\n윤서가 빈 책상으로 돌아와 말합니다. “자료도, 내가 한 일도 남아 있었네요.” 당신은 원본을 보존한 채 다음 근무자가 확인할 수 있는 목록을 남겼습니다.",
+        "revisitable": false
+      },
+      {
+        "id": "ending-b",
+        "title": "기록보다 앞선 의심",
+        "text": "민재가 자리를 떠났다는 말과 PC의 시각만으로 자료 유출을 단정했습니다. 하지만 시계의 오차와 실제 전송 결과가 확인되지 않았습니다.\n\n이 결론에는 근거가 부족합니다. 조사로 돌아가 요청 로그와 처리 영수증을 대조하세요.",
+        "revisitable": true
+      }
+    ],
+    "hypotheses": [
+      {
+        "id": "h-no-transfer",
+        "label": "보존 사본으로 작업 목록 복구",
+        "endingId": "ending-a",
+        "requiredClues": [
+          "c-queue",
+          "c-receipt",
+          "demo-0317-clue-10a",
+          "demo-0317-clue-10b"
+        ]
+      },
+      {
+        "id": "h-accuse",
+        "label": "민재가 자료를 외부로 전송했다.",
+        "endingId": "ending-b",
+        "requiredClues": []
+      }
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "engineVersion": "ghostdesk-core-1",
+    "caseId": "hotel-404",
+    "versionId": "hotel-404-v6",
+    "title": "자정의 404호",
+    "description": "닫힌 4층, 살짝 열린 404호와 흰 형체. 원격 점검 담당으로서 실제 출입과 보관 영상을 구분하고, 프런트가 현재 화면을 확인할 수 있도록 복구 인계를 마치세요.",
+    "estimatedMinutes": 60,
+    "contentWarning": "허구의 사건입니다. 긴장감 있는 상황·실종 암시가 있지만 잔혹한 묘사나 점프 스케어는 없습니다.",
+    "files": [
+      {
+        "id": "hotel-404-f0",
+        "type": "TEXT",
+        "title": "야간_인계.txt",
+        "parentId": null,
+        "visible": true,
+        "text": "닫힌 4층, 살짝 열린 404호와 흰 형체. 원격 점검 담당으로서 실제 출입과 보관 영상을 구분하고, 프런트가 현재 화면을 확인할 수 있도록 복구 인계를 마치세요.\n\n담당자가 남긴 메모\n저는 원격 야간 점검 담당입니다. 서린은 00:04에 프런트 화면에서 살짝 열린 404호 문과 카트를 미는 흰 옷의 사람을 봤습니다. 객실 키는 모두 프런트에 있습니다. 현장에 사람을 보내기 전에 오늘 실제로 열린 문과 영상의 출처부터 가려 주세요.\n\n업무 폴더에는 담당자가 기록을 대조해 정한 암호가 걸려 있습니다. 암호 규칙은 인계 메모와 각 업무 기록의 끝에 적어 두었습니다. 한 번 연 기록도 지우지 마세요.\n\n「객실 자료」 폴더 암호: 오늘 실제로 열린 문의 대장 번호-열린 뒤 자동 잠금까지의 초. 카메라 이름을 문 번호로 쓰지 마세요.",
+        "clueId": "hotel-404-c0"
+      },
+      {
+        "id": "hotel-404-f1",
+        "type": "TEXT",
+        "title": "출입_이벤트.log",
+        "parentId": null,
+        "visible": true,
+        "text": "호텔 출입 제어기 / 오늘의 원본 이벤트\n\n00:03:58  장치 D-07  원격 개방 요청\n00:04:00  장치 D-07  개방 성공\n00:04:12  장치 D-07  자동 잠금\n\n오늘 4층 객실 장치 D-41~D-48의 개방 이벤트는 0건입니다.\n\n주의: 프런트에 보이는 카메라 이름은 출입 장치의 위치를 뜻하지 않습니다.",
+        "clueId": "hotel-404-c1"
+      },
+      {
+        "id": "hotel-404-f2",
+        "type": "TEXT",
+        "title": "시설_장치대장.txt",
+        "parentId": null,
+        "visible": true,
+        "text": "시설팀 장치 대장 / 개보수 반영본\n\nD-03 → 0103 / 1층 창고\nD-07 → B204 / 지하 2층 세탁물 통로\nD-41 → 0401 / 4층 401호\nD-44 → 0404 / 4층 404호\n\n지하 통로는 배송 로봇 R17도 이용합니다. 층수 표시의 B는 지하층을 뜻하며 암호에 포함합니다.",
+        "clueId": "hotel-404-c2"
+      },
+      {
+        "id": "hotel-404-f3",
+        "type": "IMAGE",
+        "title": "CAM-404_복도기록.mp4",
+        "parentId": null,
+        "visible": true,
+        "text": "복도 기록을 재현한 영상. 흰 작업복을 입은 인물이 카트를 밀며 앞으로 이동합니다. 404호 문은 살짝 열려 있습니다. 같은 영상에서 추출한 정지 화면은 이미지 자료에서 따로 확인할 수 있습니다.",
+        "clueId": "hotel-404-c3",
+        "assetId": "hotel",
+        "alt": "호텔 복도의 카트 위에 흰 시트가 접혀 있고 오른쪽에 노란 공사 덮개가 있는 녹화 장면.",
+        "observations": [
+          {
+            "label": "원본 기록",
+            "text": "06-12 14:32 / F-8821"
+          },
+          {
+            "label": "복도 우측",
+            "text": "복도 오른쪽에 노란 공사용 덮개가 있습니다."
+          },
+          {
+            "label": "중앙 카트",
+            "text": "접힌 흰 시트가 금속 카트에 여러 겹 놓여 있습니다."
+          }
+        ]
+      },
+      {
+        "id": "hotel-404-f4",
+        "type": "TEXT",
+        "title": "재생_진단서.txt",
+        "parentId": "hotel-404-stage-5",
+        "visible": false,
+        "text": "CAM-404 재생 진단\n\n실시간 입력: 연결 끊김\n대체 소스: 06-12 보수공사 녹화\n재생 방식: 마지막 정상 영상 반복\n화면 위 LIVE 표지: 연결 상태와 무관하게 고정 표시\n\n오늘 00:04에도 F-8821 프레임이 재생됐습니다. 고정 표지 때문에 프런트 직원이 현재 영상으로 오인했습니다.",
+        "clueId": "hotel-404-c4"
+      },
+      {
+        "id": "hotel-404-f5",
+        "type": "TEXT",
+        "title": "배송_완료증.txt",
+        "parentId": "hotel-404-stage-5",
+        "visible": false,
+        "text": "세탁 배송 로봇 R17\n\n작업 번호: LINEN-0928\n00:04:00 B204 개방 신호 확인\n00:04:08 지하 세탁물 통로 통과\n00:06:21 세탁실 도착 / 시트 12묶음 인계\n\n오늘 4층 운행 명령 없음. 객실 손님 인식 기록 없음.\n\n프런트의 오래된 영상과 오늘의 문 개방은 별개의 사건이었습니다.",
+        "clueId": "hotel-404-c5"
+      },
+      {
+        "id": "hotel-404-chat",
+        "type": "CHAT_LINK",
+        "title": "메신저",
+        "parentId": null,
+        "visible": true,
+        "text": ""
+      },
+      {
+        "id": "hotel-404-stage-1",
+        "type": "FOLDER",
+        "title": "객실 자료",
+        "parentId": null,
+        "visible": true,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "puzzleId": "hotel-404-p1-v6"
+      },
+      {
+        "id": "hotel-404-record-2",
+        "type": "TEXT",
+        "title": "화면_속_날짜.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "시설 점검 메모\n\n오늘: 09-28\n6월 보수공사: 06-10 시작 / 06-15 종료\n복도 우측 노란 덮개: 보수공사 종료일 철거\n\n캡처에서 원본 기록과 프런트 화면 표지를 각각 확인하세요.\n\n시설 문서에서 쓰는 날짜는 같은 해입니다. 날짜 차이는 시작일 다음 날부터 종료일까지의 일수로 셉니다.\n\n「촬영 자료」 폴더 암호: 영상 원본 촬영일 네 자리-그 촬영 뒤 노란 덮개가 철거될 때까지 남은 일수. LIVE 표지가 아니라 원본에 찍힌 날짜를 읽습니다.",
+        "clueId": "hotel-404-record-clue-2"
+      },
+      {
+        "id": "hotel-404-stage-2",
+        "type": "FOLDER",
+        "title": "촬영 자료",
+        "parentId": null,
+        "visible": false,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "puzzleId": "hotel-404-p2-v6"
+      },
+      {
+        "id": "hotel-404-record-3",
+        "type": "TEXT",
+        "title": "반복_구간_찾기.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "프런트 모니터 점검 메모\n\n보관 영상에서는 인물이 카트를 밀고 한 방향으로 지나갑니다. 같은 이동이 되돌아오는 편집 경계를 찾아 주세요. 원본에서 추출한 정지 화면은 이미지 자료에 있습니다.\n\n진단용 관찰 구간: 재생 시작부터 30초 직전까지. 두 번째·세 번째 재생도 새 영상으로 세면 안 됩니다.\n\n「CCTV」 폴더 암호: 동일 장면이 처음 되돌아오기까지의 초-0초를 제외하고 30초 직전까지 시작될 재반복 횟수. 영상 전체 길이는 반복 간격이 아닙니다.",
+        "clueId": "hotel-404-record-clue-3"
+      },
+      {
+        "id": "hotel-404-stage-3",
+        "type": "FOLDER",
+        "title": "CCTV",
+        "parentId": null,
+        "visible": false,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "puzzleId": "hotel-404-p3-v6"
+      },
+      {
+        "id": "hotel-404-record-4",
+        "type": "TEXT",
+        "title": "오늘의_이동_경로.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "배송 장치 R17 / 09-28 위치 기록\n\n지점 1 · B204 문 · 00:04:08\n지점 2 · 세탁실 · 00:06:21\n지점 3 · 지하 적재대 · 00:03:42\n지점 4 · 지하 연결 통로 · 00:05:10\n\n모두 오늘의 장치 시계로 기록했습니다. 지점 번호는 지도에 붙인 번호이며 이동 순서가 아닙니다.\n\n「근무 기록」 폴더 암호: R17이 실제로 열린 문을 통과한 뒤 세탁실에 도착할 때까지 걸린 초. 적재대 출발 시각은 사용하지 않습니다.",
+        "clueId": "hotel-404-record-clue-4"
+      },
+      {
+        "id": "hotel-404-stage-4",
+        "type": "FOLDER",
+        "title": "근무 기록",
+        "parentId": null,
+        "visible": false,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "puzzleId": "hotel-404-p4-v6"
+      },
+      {
+        "id": "hotel-404-record-5",
+        "type": "TEXT",
+        "title": "배송_수량_검산.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "야간 세탁물 재고표 / 09-28\n\n적재 전 지하 창고: 20묶음\nR17 출발 후 창고: 8묶음\n세탁실 인수 전: 3묶음\n세탁실 인수 후: 15묶음\n\n점검 구간에 다른 반출입은 없었습니다. 창고 감소량과 세탁실 증가량이 일치하는지 확인한 뒤 완료증을 열어 주세요.\n\n「배송 내역」 폴더 암호: 창고에서 나간 묶음 수-그중 세탁실 증가량으로 확인되지 않는 묶음 수. 양쪽 재고를 독립적으로 계산합니다.",
+        "clueId": "hotel-404-record-clue-5"
+      },
+      {
+        "id": "hotel-404-stage-5",
+        "type": "FOLDER",
+        "title": "배송 내역",
+        "parentId": null,
+        "visible": false,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "puzzleId": "hotel-404-p5-v6"
+      },
+      {
+        "id": "hotel-404-record-6a",
+        "type": "TEXT",
+        "title": "대체입력_목록.txt",
+        "parentId": null,
+        "text": "연결이 끊겼을 때 재생하는 프로필 / 이미지 원문\n\nA / CAM-402 / 06-12 / 12초\nB / CAM-404 / 09-27 / 20초\nC / CAM-404 / 06-12 / 12초\n\n이 목록은 객실 배정표가 아니라 카메라별 보관 영상 선택표다.",
+        "visible": false,
+        "clueId": "hotel-404-clue-6a"
+      },
+      {
+        "id": "hotel-404-record-6b",
+        "type": "TEXT",
+        "title": "야간_접수메모.txt",
+        "parentId": null,
+        "text": "서린의 점검 요청\n\n프런트에서 조사한 화면은 CAM-404다. 촬영일은 앞서 원본에서 확인했고, 같은 카트 움직임이 반복되는 간격도 직접 비교했다. 세 조건을 목록과 연결해 대체 소스를 특정해 달라.\n\n06-12 근무 대장: 4층 보수 구역 세탁물 회수 / 흰 작업복 착용. 인물의 얼굴이나 이름은 보관하지 않았다. 영상 속 404호는 실제 문이며 노란 덮개는 문 사이 공사 구역이다.\n\n대체 입력의 설정 번호는 카메라 숫자 세 자리, 촬영 월일 네 자리, 주기 두 자리를 하이픈으로 연결합니다. 표의 A·B·C는 행 표시일 뿐입니다.\n\n「장비 설정」 폴더 암호: 점검한 카메라-원본 촬영일-최초 반복 주기로 대체 입력의 설정 번호를 만듭니다. 서로 다른 프로필의 값을 섞지 않습니다.",
+        "visible": false,
+        "clueId": "hotel-404-clue-6b"
+      },
+      {
+        "id": "hotel-404-stage-6",
+        "type": "FOLDER",
+        "title": "장비 설정",
+        "parentId": null,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "visible": false,
+        "puzzleId": "hotel-404-p6-v6"
+      },
+      {
+        "id": "hotel-404-record-7a",
+        "type": "TEXT",
+        "title": "전환_패널.log",
+        "parentId": null,
+        "text": "프런트 전환 패널 표시\n\n09-28 00:00:00 / CAM-404 입력 끊김\n09-28 00:00:01 / 대체 프로필 재생 시작\n\n패널 자체 시계를 사용한다. 카메라 원본에 찍힌 날짜와는 다른 시계다.",
+        "visible": false,
+        "clueId": "hotel-404-clue-7a"
+      },
+      {
+        "id": "hotel-404-record-7b",
+        "type": "TEXT",
+        "title": "패널_시계교정.txt",
+        "parentId": null,
+        "text": "09-27 저녁 교정\n\n기준 23:50:00일 때 패널은 23:52:00을 표시했다. 다음 날 00:10까지 오차는 일정했다.\n\n자정을 넘겨 보정할 때 날짜도 함께 바뀐다. 화면 원본의 06-12는 촬영일이며 오늘 연결이 끊긴 날짜가 아니다.\n\n「네트워크」 폴더 암호: 실시간 입력이 끊긴 실제 날짜 네 자리-시각 네 자리. 패널 오차를 빼다가 자정을 넘으면 날짜도 바꿉니다.",
+        "visible": false,
+        "clueId": "hotel-404-clue-7b"
+      },
+      {
+        "id": "hotel-404-stage-7",
+        "type": "FOLDER",
+        "title": "네트워크",
+        "parentId": null,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "visible": false,
+        "puzzleId": "hotel-404-p7-v6"
+      },
+      {
+        "id": "hotel-404-record-8a",
+        "type": "TEXT",
+        "title": "시설팀_작업표.txt",
+        "parentId": null,
+        "text": "기준시각 / 09-27\n\n조각 2 / 23:57:50 / 통신 중계기 교체 점검 승인\n조각 3 / 23:58:05 / 프런트 표시 검수 보류\n\n교체 작업표에는 대체 입력 확인은 완료, 프런트 표시 확인은 미완료로 남아 있다.\n\n「시설 관리」 폴더 암호: 교체 승인에서 입력 끊김까지의 초-입력 끊김에서 검수 보류까지의 초. 패널과 기준 시계를 맞춘 뒤 계산합니다.",
+        "visible": false,
+        "clueId": "hotel-404-clue-8a"
+      },
+      {
+        "id": "hotel-404-record-8b",
+        "type": "TEXT",
+        "title": "전환_추가조각.log",
+        "parentId": null,
+        "text": "패널시각 / 09-28\n\n조각 4 / 00:00:00 / 실시간 입력 끊김\n조각 1 / 00:00:01 / 대체 영상 시작\n\n패널은 기준시각보다 2분 빠르다. 표시 검수란 대체 재생 때 LIVE 표지를 제거했는지 사람이 확인하는 절차다.",
+        "visible": false,
+        "clueId": "hotel-404-clue-8b"
+      },
+      {
+        "id": "hotel-404-stage-8",
+        "type": "FOLDER",
+        "title": "시설 관리",
+        "parentId": null,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "visible": false,
+        "puzzleId": "hotel-404-p8-v6"
+      },
+      {
+        "id": "hotel-404-record-9a",
+        "type": "TEXT",
+        "title": "재연결_검수기준.txt",
+        "parentId": null,
+        "text": "현재 입력 판별\n\n조건 1: 원본 촬영 시각이 점검 구간 09-28 00:12 이후다.\n조건 2: 5초 뒤 수신한 원본 번호가 앞선 번호보다 증가한다.\n\nLIVE 글자나 복도에 사람이 없다는 사실은 이 두 조건을 대신하지 못한다.\n\n「복구 자료」 폴더 암호: 현재 입력 조건을 만족하는 쌍의 뒤쪽 원본 번호-초당 번호 증가량. 움직인다는 이유만으로 과거 영상은 통과시키지 않습니다.",
+        "visible": false,
+        "clueId": "hotel-404-clue-9a"
+      },
+      {
+        "id": "hotel-404-record-9b",
+        "type": "TEXT",
+        "title": "수신_쌍기록.txt",
+        "parentId": null,
+        "text": "5초 간격으로 보관한 원본 두 장의 메타데이터\n\nA / 06-12 14:32:00, 번호 8821 → 06-12 14:32:05, 번호 8941 / LIVE\nB / 09-28 00:12:10, 번호 9101 → 09-28 00:12:15, 번호 9221 / LIVE 없음\nC / 09-28 00:12:10, 번호 9101 → 09-28 00:12:10, 번호 9101 / LIVE\n\n이는 점검 뒤의 수신 기록이며 처음 보았던 6월 영상의 설명을 바꾸지 않는다.",
+        "visible": false,
+        "clueId": "hotel-404-clue-9b"
+      },
+      {
+        "id": "hotel-404-stage-9",
+        "type": "FOLDER",
+        "title": "복구 자료",
+        "parentId": null,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "visible": false,
+        "puzzleId": "hotel-404-p9-v6"
+      },
+      {
+        "id": "hotel-404-record-10a",
+        "type": "TEXT",
+        "title": "표시_배선설명.txt",
+        "parentId": null,
+        "text": "프런트 표시 구조\n\n영상 영역: 카메라 또는 대체 프로필 입력을 표시\nLIVE 글자: 모니터 위에 붙인 고정 표지. 입력과 연결되지 않음\n출입 알림: 별도 D-07 제어기에서 수신\n\n세 항목은 같은 화면 주변에 보여도 같은 사건을 뜻하지 않는다.",
+        "visible": false,
+        "clueId": "hotel-404-clue-10a"
+      },
+      {
+        "id": "hotel-404-record-10b",
+        "type": "TEXT",
+        "title": "시설팀_확인회신.txt",
+        "parentId": null,
+        "text": "시설팀 / 최종 인계 승인 대기\n\n교체 점검은 MT-0927로 확인됐습니다. 현재 입력 후보를 받았지만 프런트 복구 인계는 아직 서명하지 않았습니다. 과거 복도와 오늘 열린 문을 분리하고, 실시간임을 검수한 입력으로 전환해야 합니다.\n\n표시 처리 코드\nFIXED: 기존 LIVE 고정 표지 유지\nSTAMP: 마지막 수신 원본의 촬영 시각 표시\n\n고정 표지는 입력 상태와 연결되지 않습니다. 인계 승인을 하면 검수된 현재 입력을 연결하고 선택한 표시 방식을 적용합니다.\n\n「인수인계」 폴더 암호: 표시 처리 코드-오늘 열린 문-대체 영상 촬영일 네 자리-검수된 현재 입력의 마지막 원본 번호. 이 조합으로 프런트 복구 인계를 승인합니다.",
+        "visible": false,
+        "clueId": "hotel-404-clue-10b"
+      },
+      {
+        "id": "hotel-404-stage-10",
+        "type": "FOLDER",
+        "title": "인수인계",
+        "parentId": null,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "visible": false,
+        "puzzleId": "hotel-404-p10-v6"
+      }
+    ],
+    "clues": [
+      {
+        "id": "hotel-404-c0",
+        "title": "야간_인계.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "hotel-404-c1",
+        "title": "출입_이벤트.log",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "hotel-404-c2",
+        "title": "시설_장치대장.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "hotel-404-c3",
+        "title": "CAM-404_복도기록.mp4",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "hotel-404-c4",
+        "title": "재생_진단서.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "hotel-404-c5",
+        "title": "배송_완료증.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "hotel-404-record-clue-2",
+        "title": "화면_속_날짜.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "hotel-404-record-clue-3",
+        "title": "반복_구간_찾기.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "hotel-404-record-clue-4",
+        "title": "오늘의_이동_경로.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "hotel-404-record-clue-5",
+        "title": "배송_수량_검산.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "hotel-404-clue-6a",
+        "title": "대체입력_목록.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "hotel-404-clue-6b",
+        "title": "야간_접수메모.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "hotel-404-clue-7a",
+        "title": "전환_패널.log",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "hotel-404-clue-7b",
+        "title": "패널_시계교정.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "hotel-404-clue-8a",
+        "title": "시설팀_작업표.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "hotel-404-clue-8b",
+        "title": "전환_추가조각.log",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "hotel-404-clue-9a",
+        "title": "재연결_검수기준.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "hotel-404-clue-9b",
+        "title": "수신_쌍기록.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "hotel-404-clue-10a",
+        "title": "표시_배선설명.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "hotel-404-clue-10b",
+        "title": "시설팀_확인회신.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      }
+    ],
+    "puzzles": [
+      {
+        "id": "hotel-404-p1-v6",
+        "title": "객실 자료의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "B204-12",
+        "ignoreCase": true,
+        "hints": [
+          "「객실 자료」 폴더 암호: 오늘 실제로 열린 문의 대장 번호-열린 뒤 자동 잠금까지의 초. 카메라 이름을 문 번호로 쓰지 마세요.",
+          "개방 성공 장치는 D-07, 위치는 B204입니다. 00:04:00 성공부터 00:04:12 잠금까지 12초입니다.",
+          "정답: B204-12"
+        ],
+        "stageTitle": "객실 자료",
+        "evidenceIds": [
+          "hotel-404-f0",
+          "hotel-404-f1",
+          "hotel-404-f2"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "hotel-404-p2-v6",
+        "title": "촬영 자료의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "0612-3",
+        "ignoreCase": true,
+        "hints": [
+          "「촬영 자료」 폴더 암호: 영상 원본 촬영일 네 자리-그 촬영 뒤 노란 덮개가 철거될 때까지 남은 일수. LIVE 표지가 아니라 원본에 찍힌 날짜를 읽습니다.",
+          "원본 날짜는 6월 12일, 철거일은 6월 15일입니다. 실제 문과 문 사이 가림막을 혼동하지 마세요.",
+          "정답: 0612-3"
+        ],
+        "stageTitle": "촬영 자료",
+        "evidenceIds": [
+          "hotel-404-record-2",
+          "hotel-404-f3"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "hotel-404-p3-v6",
+        "title": "CCTV의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "12-2",
+        "ignoreCase": true,
+        "hints": [
+          "「CCTV」 폴더 암호: 동일 장면이 처음 되돌아오기까지의 초-0초를 제외하고 30초 직전까지 시작될 재반복 횟수. 영상 전체 길이는 반복 간격이 아닙니다.",
+          "장면은 12초 뒤 다시 시작합니다. 0초 다음 시작은 12초, 24초이며 36초는 구간 밖입니다.",
+          "정답: 12-2"
+        ],
+        "stageTitle": "CCTV",
+        "evidenceIds": [
+          "hotel-404-record-3",
+          "hotel-404-f3"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "hotel-404-p4-v6",
+        "title": "근무 기록의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "133",
+        "ignoreCase": true,
+        "hints": [
+          "「근무 기록」 폴더 암호: R17이 실제로 열린 문을 통과한 뒤 세탁실에 도착할 때까지 걸린 초. 적재대 출발 시각은 사용하지 않습니다.",
+          "D-07의 실제 위치 B204를 이동 기록에서 찾으세요. 00:04:08→00:06:21은 2분 13초입니다.",
+          "정답: 133"
+        ],
+        "stageTitle": "근무 기록",
+        "evidenceIds": [
+          "hotel-404-record-4",
+          "hotel-404-f1",
+          "hotel-404-f2"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "hotel-404-p5-v6",
+        "title": "배송 내역의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "12-0",
+        "ignoreCase": true,
+        "hints": [
+          "「배송 내역」 폴더 암호: 창고에서 나간 묶음 수-그중 세탁실 증가량으로 확인되지 않는 묶음 수. 양쪽 재고를 독립적으로 계산합니다.",
+          "창고는 20−8=12, 세탁실은 15−3=12입니다. 경로 끝까지 12묶음이 일치하므로 미확인 수는 0입니다.",
+          "정답: 12-0"
+        ],
+        "stageTitle": "배송 내역",
+        "evidenceIds": [
+          "hotel-404-record-5",
+          "hotel-404-record-4"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "hotel-404-p6-v6",
+        "title": "장비 설정의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "404-0612-12",
+        "ignoreCase": true,
+        "stageTitle": "장비 설정",
+        "evidenceIds": [
+          "hotel-404-record-6b",
+          "hotel-404-record-6a",
+          "hotel-404-f3",
+          "hotel-404-record-3"
+        ],
+        "inputMode": "text",
+        "hints": [
+          "「장비 설정」 폴더 암호: 점검한 카메라-원본 촬영일-최초 반복 주기로 대체 입력의 설정 번호를 만듭니다. 서로 다른 프로필의 값을 섞지 않습니다.",
+          "CAM-404, 6월 12일, 12초를 함께 만족하는 입력만 사용할 수 있습니다. 카메라 번호는 숫자 부분만 적으세요.",
+          "정답: 404-0612-12"
+        ]
+      },
+      {
+        "id": "hotel-404-p7-v6",
+        "title": "네트워크의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "0927-2358",
+        "ignoreCase": true,
+        "stageTitle": "네트워크",
+        "evidenceIds": [
+          "hotel-404-record-7b",
+          "hotel-404-record-7a"
+        ],
+        "inputMode": "text",
+        "hints": [
+          "「네트워크」 폴더 암호: 실시간 입력이 끊긴 실제 날짜 네 자리-시각 네 자리. 패널 오차를 빼다가 자정을 넘으면 날짜도 바꿉니다.",
+          "패널은 2분 빠릅니다. 09-28 00:00에서 2분을 빼면 전날 23:58입니다.",
+          "정답: 0927-2358"
+        ]
+      },
+      {
+        "id": "hotel-404-p8-v6",
+        "title": "시설 관리의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "10-5",
+        "ignoreCase": true,
+        "stageTitle": "시설 관리",
+        "evidenceIds": [
+          "hotel-404-record-8a",
+          "hotel-404-record-8b",
+          "hotel-404-record-7b"
+        ],
+        "inputMode": "text",
+        "hints": [
+          "「시설 관리」 폴더 암호: 교체 승인에서 입력 끊김까지의 초-입력 끊김에서 검수 보류까지의 초. 패널과 기준 시계를 맞춘 뒤 계산합니다.",
+          "승인 23:57:50, 끊김 23:58:00, 검수 보류 23:58:05입니다. 두 구간은 10초와 5초입니다.",
+          "정답: 10-5"
+        ]
+      },
+      {
+        "id": "hotel-404-p9-v6",
+        "title": "복구 자료의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "9221-24",
+        "ignoreCase": true,
+        "stageTitle": "복구 자료",
+        "evidenceIds": [
+          "hotel-404-record-9a",
+          "hotel-404-record-9b"
+        ],
+        "inputMode": "text",
+        "hints": [
+          "「복구 자료」 폴더 암호: 현재 입력 조건을 만족하는 쌍의 뒤쪽 원본 번호-초당 번호 증가량. 움직인다는 이유만으로 과거 영상은 통과시키지 않습니다.",
+          "B만 오늘 날짜이며 원본 번호가 증가합니다. 뒤 번호는 9221, (9221−9101)÷5=24입니다.",
+          "정답: 9221-24"
+        ]
+      },
+      {
+        "id": "hotel-404-p10-v6",
+        "title": "인수인계의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "STAMP-B204-0612-9221",
+        "ignoreCase": true,
+        "stageTitle": "인수인계",
+        "evidenceIds": [
+          "hotel-404-record-10b",
+          "hotel-404-record-10a",
+          "hotel-404-f1",
+          "hotel-404-f2",
+          "hotel-404-f3",
+          "hotel-404-record-9a",
+          "hotel-404-record-9b"
+        ],
+        "inputMode": "text",
+        "hints": [
+          "「인수인계」 폴더 암호: 표시 처리 코드-오늘 열린 문-대체 영상 촬영일 네 자리-검수된 현재 입력의 마지막 원본 번호. 이 조합으로 프런트 복구 인계를 승인합니다.",
+          "현재와 연결된 STAMP 표시를 사용합니다. 오늘 출입은 B204, 과거 촬영은 0612, 검수된 현재 쌍의 끝은 9221입니다.",
+          "정답: STAMP-B204-0612-9221"
+        ]
+      }
+    ],
+    "messages": [
+      {
+        "id": "hotel-404-m0",
+        "author": "서린",
+        "time": "00:07",
+        "text": "키는 전부 여기 있어. 그럼 저 복도에 있는 건 누구지?",
+        "initial": true
+      },
+      {
+        "id": "hotel-404-m1",
+        "author": "서린",
+        "time": "00:08",
+        "text": "LIVE라는 글자를 믿어도 되는 걸까?",
+        "initial": true
+      },
+      {
+        "id": "hotel-404-m2",
+        "author": "시설팀",
+        "time": "00:09",
+        "text": "카메라 이름과 출입 제어기 번호를 혼동하지 마세요. 대장을 다시 보냈습니다.",
+        "initial": false
+      },
+      {
+        "id": "hotel-404-m3",
+        "author": "서린",
+        "time": "00:11",
+        "text": "진단서가 열렸네. 흰 형체보다 화면 구석의 날짜가 더 중요했구나.",
+        "initial": false
+      },
+      {
+        "id": "hotel-404-chapter-6",
+        "author": "서린",
+        "time": "00:14",
+        "text": "오늘 지하 배송과 6월 복도는 다른 일이었구나. 그래도 화면이 왜 오늘 밤에 저 영상으로 바뀌었는지는 모르겠어. 시설팀이 야간 점검 묶음을 보내 줬어.",
+        "initial": false
+      },
+      {
+        "id": "hotel-404-chapter-8",
+        "author": "서린",
+        "time": "00:15",
+        "text": "흰 옷은 6월 세탁 직원 작업복이래. 얼굴로 이름을 맞히려 하지 말고 근무 기록으로만 확인해 달라고 했어. 지금 확인할 건 화면이 현재로 돌아왔는지야.",
+        "initial": false
+      },
+      {
+        "id": "hotel-404-chapter-complete",
+        "author": "서린",
+        "time": "00:16",
+        "text": "인계 승인이 접수됐습니다. 프런트는 검수된 현재 입력으로 전환했고, 고정 LIVE 표지 대신 마지막 원본의 촬영 시각을 표시합니다.",
+        "initial": false
+      }
+    ],
+    "rules": [
+      {
+        "id": "hotel-404-advance-1",
+        "priority": 1,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "hotel-404-p1-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-stage-2"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-record-2"
+          },
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "hotel-404-m2"
+          }
+        ]
+      },
+      {
+        "id": "hotel-404-advance-2",
+        "priority": 2,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "hotel-404-p2-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-stage-3"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-record-3"
+          }
+        ]
+      },
+      {
+        "id": "hotel-404-advance-3",
+        "priority": 3,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "hotel-404-p3-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-stage-4"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-record-4"
+          }
+        ]
+      },
+      {
+        "id": "hotel-404-advance-4",
+        "priority": 4,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "hotel-404-p4-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-stage-5"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-record-5"
+          }
+        ]
+      },
+      {
+        "id": "hotel-404-advance-5",
+        "priority": 5,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "hotel-404-p5-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-f4"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-f5"
+          },
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "hotel-404-m3"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-stage-6"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-record-6a"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-record-6b"
+          },
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "hotel-404-chapter-6"
+          }
+        ]
+      },
+      {
+        "id": "hotel-404-advance-6",
+        "priority": 6,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "hotel-404-p6-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-stage-7"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-record-7a"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-record-7b"
+          }
+        ]
+      },
+      {
+        "id": "hotel-404-advance-7",
+        "priority": 7,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "hotel-404-p7-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-stage-8"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-record-8a"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-record-8b"
+          },
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "hotel-404-chapter-8"
+          }
+        ]
+      },
+      {
+        "id": "hotel-404-advance-8",
+        "priority": 8,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "hotel-404-p8-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-stage-9"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-record-9a"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-record-9b"
+          }
+        ]
+      },
+      {
+        "id": "hotel-404-advance-9",
+        "priority": 9,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "hotel-404-p9-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-stage-10"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-record-10a"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "hotel-404-record-10b"
+          }
+        ]
+      },
+      {
+        "id": "hotel-404-advance-10",
+        "priority": 10,
+        "once": true,
+        "when": {
+          "type": "ALL",
+          "conditions": [
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "hotel-404-p1-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "hotel-404-p2-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "hotel-404-p3-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "hotel-404-p4-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "hotel-404-p5-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "hotel-404-p6-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "hotel-404-p7-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "hotel-404-p8-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "hotel-404-p9-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "hotel-404-p10-v6"
+            }
+          ]
+        },
+        "then": [
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "hotel-404-chapter-complete"
+          },
+          {
+            "type": "END_CASE",
+            "id": "hotel-404-good"
+          }
+        ]
+      }
+    ],
+    "endings": [
+      {
+        "id": "hotel-404-good",
+        "title": "프런트가 현재로 돌아왔다",
+        "text": "인계 승인이 접수됐습니다. 프런트는 검수된 현재 입력으로 전환했고, 고정 LIVE 표지 대신 마지막 원본의 촬영 시각을 표시합니다.\n\n살짝 열린 404호 앞의 사람은 6월 보수공사 당시 세탁 직원이었습니다. 오늘 열린 문은 지하 B204였고 R17의 배송량도 양쪽 재고와 일치합니다.\n\n서린은 빈 4층 복도를 다시 봅니다. “이번에는 언제 찍힌 화면인지 알겠어.” 당신이 남긴 검수 번호와 인계 기록 덕분에 다음 근무자는 같은 오인을 반복하지 않습니다.",
+        "revisitable": false
+      },
+      {
+        "id": "hotel-404-retry",
+        "title": "객실 번호가 만든 유령",
+        "text": "CAM-404라는 이름과 LIVE 표시만으로 손님이 돌아왔다고 판단했습니다. 하지만 화면의 원본 날짜와 출입 장치 번호가 맞지 않습니다.\n\n재생 진단서와 배송 완료증을 함께 확인하고 다시 결론을 내려 주세요.",
+        "revisitable": true
+      }
+    ],
+    "hypotheses": [
+      {
+        "id": "hotel-404-truth",
+        "label": "현재 입력과 촬영 시각 표시로 복구 인계",
+        "endingId": "hotel-404-good",
+        "requiredClues": [
+          "hotel-404-c1",
+          "hotel-404-c4",
+          "hotel-404-c5",
+          "hotel-404-clue-10a",
+          "hotel-404-clue-10b"
+        ]
+      },
+      {
+        "id": "hotel-404-guess",
+        "label": "체크아웃한 손님이 404호로 몰래 돌아왔다.",
+        "endingId": "hotel-404-retry",
+        "requiredClues": []
+      }
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "engineVersion": "ghostdesk-core-1",
+    "caseId": "auction-seven",
+    "versionId": "auction-seven-v6",
+    "title": "낙찰 7초 전",
+    "description": "전광판 이름과 결제 대상이 다른 경매. 마감 검수 담당으로서 취소·동률·결제 기록을 가리고, 잘못된 인수표를 회수한 뒤 올바른 작품 반출을 승인하세요.",
+    "estimatedMinutes": 65,
+    "contentWarning": "허구의 사건입니다. 긴장감 있는 상황·실종 암시가 있지만 잔혹한 묘사나 점프 스케어는 없습니다.",
+    "files": [
+      {
+        "id": "auction-seven-f0",
+        "type": "TEXT",
+        "title": "운영자_요청.txt",
+        "parentId": null,
+        "visible": true,
+        "text": "전광판 이름과 결제 대상이 다른 경매. 마감 검수 담당으로서 취소·동률·결제 기록을 가리고, 잘못된 인수표를 회수한 뒤 올바른 작품 반출을 승인하세요.\n\n담당자가 남긴 메모\n저는 마감 검수 담당입니다. 전광판은 MOTH, 결제 요청은 ORBIT를 가리킵니다. 작품은 아직 포장대에 있고 반출은 보류했습니다. 정당한 입찰과 물품·결제를 연결한 뒤에만 인계할 수 있습니다.\n\n업무 폴더에는 담당자가 기록을 대조해 정한 암호가 걸려 있습니다. 암호 규칙은 인계 메모와 각 업무 기록의 끝에 적어 두었습니다. 한 번 연 기록도 지우지 마세요.\n\n「입찰 자료」 폴더 암호: 유효 낙찰의 입찰 번호-낙찰가(만 원). 마감 뒤 접수, 유효 취소를 제외한 뒤 동률은 먼저 접수된 입찰로 정합니다.",
+        "clueId": "auction-seven-c0"
+      },
+      {
+        "id": "auction-seven-f1",
+        "type": "TEXT",
+        "title": "입찰_접수표.txt",
+        "parentId": null,
+        "visible": true,
+        "text": "LOT-27 / 마감 접수 순번 120까지 유효\n단위: 만 원 / 시간 표시는 참고용\n\n순번 115 / B-71 / ORBIT / 240\n순번 116 / B-72 / MOTH  / 310\n순번 118 / B-73 / LARK  / 240\n순번 120 / B-74 / PEARL / 235\n순번 121 / B-75 / MOTH  / 400\n\n화면 가격은 마지막 수신 값이며 최종 낙찰 처리가 아닙니다.",
+        "clueId": "auction-seven-c1"
+      },
+      {
+        "id": "auction-seven-f2",
+        "type": "TEXT",
+        "title": "취소_요청함.txt",
+        "parentId": null,
+        "visible": true,
+        "text": "유효 취소 접수 / 마감 전 처리 완료\n\nC-19 → 입찰 B-72 전액 취소 / 본인 확인 완료\nC-20 → 다른 물품 LOT-11의 입찰 X-04 취소\n\n취소 대상은 닉네임 전체가 아니라 개별 입찰 번호입니다.\nMOTH의 접속 종료 자체는 입찰 취소 근거가 아닙니다.",
+        "clueId": "auction-seven-c2"
+      },
+      {
+        "id": "auction-seven-f3",
+        "type": "TEXT",
+        "title": "경매_규칙.txt",
+        "parentId": null,
+        "visible": true,
+        "text": "낙찰 판정 순서\n\n1. 현재 물품 LOT-27만 본다.\n2. 접수 순번 120 뒤에 들어온 입찰을 제외한다.\n3. 유효 취소 접수에 적힌 입찰 번호를 제외한다.\n4. 남은 입찰 중 가격이 가장 높은 것을 고른다.\n5. 같은 가격이면 접수 순번이 빠른 입찰을 고른다.\n\n전광판의 순위는 지연될 수 있습니다. 낙찰 확정서의 입찰 번호가 최종 근거입니다.",
+        "clueId": "auction-seven-c3"
+      },
+      {
+        "id": "auction-seven-f4",
+        "type": "TEXT",
+        "title": "낙찰_확정서.txt",
+        "parentId": "auction-seven-stage-5",
+        "visible": false,
+        "text": "LOT-27 봉인 원장 / 검증 완료\n\n유효 최고가: 240만 원\n선정 입찰: B-71\n낙찰자: ORBIT\n동률 제외: B-73 / 더 늦은 접수\n취소 제외: B-72\n마감 뒤 제외: B-75\n\n확정서는 경매 종료 뒤 생성됐습니다. 접수표·취소 접수·경매 규칙을 모두 반영한 결과입니다.",
+        "clueId": "auction-seven-c4"
+      },
+      {
+        "id": "auction-seven-f5",
+        "type": "TEXT",
+        "title": "전광판_갱신기록.log",
+        "parentId": "auction-seven-stage-5",
+        "visible": false,
+        "text": "전광판 표시 기록\n\n마지막 반영: B-72 / MOTH / 310\n취소 알림 C-19: 전광판 대기열에 남음\n종료 뒤 화면 잠금: 이전 최고가 유지\n\n결제 요청 생성: B-71 / ORBIT\nMOTH에게 생성된 결제 요청: 없음\n\n빈 자리는 음모가 아니라 표시 지연을 남겼습니다.",
+        "clueId": "auction-seven-c5"
+      },
+      {
+        "id": "auction-seven-chat",
+        "type": "CHAT_LINK",
+        "title": "메신저",
+        "parentId": null,
+        "visible": true,
+        "text": ""
+      },
+      {
+        "id": "auction-seven-scene",
+        "type": "IMAGE",
+        "title": "경매_검수대_사진",
+        "parentId": null,
+        "visible": true,
+        "text": "사건 자료에 첨부된 현장 사진.",
+        "assetId": "auction",
+        "alt": "경매 검수대 위 봉투 세 개와 포장된 그림.",
+        "observations": [
+          {
+            "label": "검수대",
+            "text": "봉투 세 개와 포장된 푸른 궤도가 놓여 있습니다. 봉인표의 판독 기준은 검수 기록에서 확인하세요."
+          }
+        ]
+      },
+      {
+        "id": "auction-seven-stage-1",
+        "type": "FOLDER",
+        "title": "입찰 자료",
+        "parentId": null,
+        "visible": true,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "puzzleId": "auction-seven-p1-v6"
+      },
+      {
+        "id": "auction-seven-record-2",
+        "type": "TEXT",
+        "title": "봉인표_대조.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "원본 봉투 대조 / LOT-27 · 입찰 B-71\n\n접수 때 봉인 위에 남긴 검수 표시: 평행한 파란 선 두 줄.\n원본 봉투는 접수 뒤 개봉하지 않았으므로 봉인 종이가 끊기지 않아야 합니다.\n\n사진에는 원본과 대조용 봉투가 함께 놓여 있습니다. 표시의 모양과 봉인 상태를 모두 확인하세요. 접수 때의 봉인 상태를 그대로 보존한 봉투를 찾아 주세요.\n\n봉투 위치별 보관 키: 왼쪽=4158, 가운데=6829, 오른쪽=9304. 검수 키 뒤에는 이 원본이 뒷받침하는 입찰의 접수 순번을 붙입니다.\n\n「검수 자료」 폴더 암호: 접수 때의 표시와 봉인이 모두 유지된 봉투의 보관 키-그 원본 입찰의 접수 순번. 사진만 보고 입찰자를 정하지 않습니다.",
+        "clueId": "auction-seven-record-clue-2"
+      },
+      {
+        "id": "auction-seven-stage-2",
+        "type": "FOLDER",
+        "title": "검수 자료",
+        "parentId": null,
+        "visible": false,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "puzzleId": "auction-seven-p2-v6"
+      },
+      {
+        "id": "auction-seven-record-3",
+        "type": "TEXT",
+        "title": "정산_금액_확인.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "LOT-27 정산 규정\n\n유효 낙찰가: 입찰 접수표 참조\n구매 수수료: 낙찰가의 5%\n이미 낸 보증금: 30만 원\n추가 납부액 = 낙찰가 + 수수료 − 보증금\n\n추가 세금과 배송비는 없습니다. 모두 만 원 단위입니다.\n\n「정산 내역」 폴더 암호: 낙찰가에 구매 수수료를 더하고 이미 낸 보증금을 뺀 추가 납부액. 만 원 단위 정수로 적습니다.",
+        "clueId": "auction-seven-record-clue-3"
+      },
+      {
+        "id": "auction-seven-stage-3",
+        "type": "FOLDER",
+        "title": "정산 내역",
+        "parentId": null,
+        "visible": false,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "puzzleId": "auction-seven-p3-v6"
+      },
+      {
+        "id": "auction-seven-record-4",
+        "type": "TEXT",
+        "title": "전광판_감시기록.mp4",
+        "parentId": null,
+        "visible": false,
+        "text": "전광판 감시 기록 / 서버 시각\n\n왼쪽 MOTH 옆 작은 불빛은 접속 상태를 나타냅니다.\nOPEN: 경매 진행 중\nCLOSED: 마감 처리됨\n\n접속 불빛이 꺼지는 순간과 마감 표시로 바뀌는 순간을 영상에서 확인하세요. 이름과 금액이 화면에 남아 있어도 입찰이 유효하다는 뜻은 아닙니다. 접속 상태 기록과 입찰 원장은 별도로 남습니다.\n\n감시 메모: 접속 종료를 기록한 별도 단말은 표시 시각이 서버보다 4초 빠릅니다. 감시 영상의 서버 시각과 혼동하지 마세요.\n\n「전광판」 폴더 암호: 별도 단말에 남을 접속 종료 시각 여섯 자리-접속 종료부터 마감까지 실제 경과 초. 영상의 서버 시각을 읽고 단말 오차를 적용합니다.",
+        "clueId": "auction-seven-record-clue-4"
+      },
+      {
+        "id": "auction-seven-stage-4",
+        "type": "FOLDER",
+        "title": "전광판",
+        "parentId": null,
+        "visible": false,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "puzzleId": "auction-seven-p4-v6"
+      },
+      {
+        "id": "auction-seven-record-5",
+        "type": "TEXT",
+        "title": "접수_순서_재구성.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "LOT-27 접수 조각\n\n조각 1 · 순번 120 · PEARL 입찰\n조각 2 · 순번 115 · ORBIT 입찰\n조각 3 · 순번 121 · MOTH 재입찰\n조각 4 · 순번 117 · B-72 취소 처리\n\n취소 처리도 접수 순번을 사용합니다. 마감 이후 기록까지 포함해 원장의 순서를 복원하세요.\n\n「접수 기록」 폴더 암호: 취소 접수부터 마감 접수까지 순번 차이-마감 뒤 재입찰까지 순번 차이. 조각 번호가 아닌 접수 순번으로 계산합니다.",
+        "clueId": "auction-seven-record-clue-5"
+      },
+      {
+        "id": "auction-seven-stage-5",
+        "type": "FOLDER",
+        "title": "접수 기록",
+        "parentId": null,
+        "visible": false,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "puzzleId": "auction-seven-p5-v6"
+      },
+      {
+        "id": "auction-seven-record-6a",
+        "type": "TEXT",
+        "title": "작품_원장.txt",
+        "parentId": null,
+        "text": "LOT-27 / 푸른 궤도 / 가로 60 × 세로 80cm\n\n추상적인 푸른 궤도를 그린 작품. 검수대 사진에 포장된 작품이 보인다. 사진의 입찰 봉투는 작품 포장 상자와 별개다.\n\n물품 번호와 실측 치수를 모두 확인한다. 같은 제목의 다른 작품이 있을 수 있다.\n\n운반 표찰에는 물품 번호-작품 면적(cm²)을 적습니다. 포장 대조표에서 가로·세로까지 일치하는 상자의 치수로 계산합니다.\n\n「포장 자료」 폴더 암호: 실제 반출할 물품 번호-일치하는 상자 속 작품의 면적. 제목만 같은 상자는 통과시킬 수 없습니다.",
+        "visible": false,
+        "clueId": "auction-seven-clue-6a"
+      },
+      {
+        "id": "auction-seven-record-6b",
+        "type": "TEXT",
+        "title": "포장_대조표.txt",
+        "parentId": null,
+        "text": "포장대 검수표 / 이미지 원문\n\nA / LOT-26 / 푸른 궤도 / 60×80cm\nB / LOT-27 / 푸른 궤도 / 60×80cm\nC / LOT-27 / 푸른 궤도 / 50×70cm\n\n이는 상자 안의 작품 표찰에서 옮긴 값이다. 앞서 비교한 입찰 봉투의 A·B·C와는 독립된 표 번호다.",
+        "visible": false,
+        "clueId": "auction-seven-clue-6b"
+      },
+      {
+        "id": "auction-seven-stage-6",
+        "type": "FOLDER",
+        "title": "포장 자료",
+        "parentId": null,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "visible": false,
+        "puzzleId": "auction-seven-p6-v6"
+      },
+      {
+        "id": "auction-seven-record-7a",
+        "type": "TEXT",
+        "title": "결제_알림함.log",
+        "parentId": null,
+        "text": "22:04:00 / 완료 알림 / 결제 P-71 / ORBIT / 222만 원\n22:04:03 / 재전송 알림 / 결제 P-71 / ORBIT / 222만 원\n22:04:07 / 요청 접수 / 결제 P-73 / LARK / 222만 원\n\n통신 재연결 때 같은 완료 알림이 다시 도착할 수 있다.\n\n22:04:09 / 완료 알림 / 결제 P-69 / ORBIT / 80만 원",
+        "visible": false,
+        "clueId": "auction-seven-clue-7a"
+      },
+      {
+        "id": "auction-seven-record-7b",
+        "type": "TEXT",
+        "title": "결제_원장규칙.txt",
+        "parentId": null,
+        "text": "결제 완료 집계 규칙\n\n같은 결제 번호의 완료와 재전송 알림은 한 건으로 셉니다. 요청 접수는 결제가 아닙니다. 같은 사람이어도 다른 물품의 결제를 합치지 않습니다.\n\n결제 원장 연결\nP-71 / LOT-27 / 추가 결제\nP-69 / LOT-11 / 추가 결제\nP-73 / LOT-27 / 추가 결제\n\n보증금은 이미 정산식에서 차감했으므로 완료 알림 합계에 다시 더하지 않습니다.\n\n「결제 내역」 폴더 암호: 이 작품에 완료된 추가 결제의 고유 건수-정산액 대비 아직 부족한 만 원. 재전송과 다른 물품 결제를 제외합니다.",
+        "visible": false,
+        "clueId": "auction-seven-clue-7b"
+      },
+      {
+        "id": "auction-seven-stage-7",
+        "type": "FOLDER",
+        "title": "결제 내역",
+        "parentId": null,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "visible": false,
+        "puzzleId": "auction-seven-p7-v6"
+      },
+      {
+        "id": "auction-seven-record-8a",
+        "type": "TEXT",
+        "title": "출력_작업함.log",
+        "parentId": null,
+        "text": "조각 1 / 작업 L-71 / 확정 인수표 / 생성 조건: B-71 낙찰 확정 뒤\n조각 3 / 작업 T-72 / 임시 인수표 / 접수 순번 116 뒤, 117 이전\n\n임시 인수표는 전광판의 그때 이름을 복사한다. 확정 인수표는 봉인 원장의 선정 입찰을 사용한다.",
+        "visible": false,
+        "clueId": "auction-seven-clue-8a"
+      },
+      {
+        "id": "auction-seven-record-8b",
+        "type": "TEXT",
+        "title": "원장_전환표.txt",
+        "parentId": null,
+        "text": "조각 2 / 접수 순번 117 / B-72 취소 접수\n조각 4 / 접수 순번 120 마감 처리 뒤 / B-71 낙찰 확정\n\nT-72 출력 뒤 취소가 들어와도 이미 나온 종이의 이름은 자동으로 바뀌지 않는다. 종이의 생성 순서와 내용 출처를 구별하라.\n\n「출력 기록」 폴더 암호: 회수해야 할 임시 출력 작업 번호-그 대신 사용할 확정 출력 작업 번호. 취소 접수와 마감 전후의 생성 조건을 대조합니다.",
+        "visible": false,
+        "clueId": "auction-seven-clue-8b"
+      },
+      {
+        "id": "auction-seven-stage-8",
+        "type": "FOLDER",
+        "title": "출력 기록",
+        "parentId": null,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "visible": false,
+        "puzzleId": "auction-seven-p8-v6"
+      },
+      {
+        "id": "auction-seven-record-9a",
+        "type": "TEXT",
+        "title": "인수표_세장.txt",
+        "parentId": null,
+        "text": "A / T-72 / LOT-27 / MOTH / 결제 없음 / 임시\nB / L-73 / LOT-27 / LARK / P-73 요청 중 / 확정 아님\nC / L-71 / LOT-27 / ORBIT / P-71 완료 / 확정\n\n금액의 크기나 출력된 종이의 색은 인수 자격을 정하지 않는다.",
+        "visible": false,
+        "clueId": "auction-seven-clue-9a"
+      },
+      {
+        "id": "auction-seven-record-9b",
+        "type": "TEXT",
+        "title": "작품_인계규칙.txt",
+        "parentId": null,
+        "text": "작품 인계 규칙\n\n봉인 원장의 선정 입찰자, 작품 번호, 추가 결제 완료, 확정 표 네 조건이 모두 필요합니다. 앞에서 확인한 원장을 다시 가져와 대조하세요. 금액이나 이름 한 칸만 맞는 표는 사용할 수 없습니다.\n\n검수 보관 키: 표 A=2864, 표 B=7093, 표 C=5417. 인계 승인에는 유효 표의 키와 그 표가 가리키는 결제 번호를 연결합니다.\n\n「반출 서류」 폴더 암호: 네 인계 조건을 충족한 표의 검수 키-같은 작품의 완료 결제 번호. 접수만 된 결제는 제외합니다.",
+        "visible": false,
+        "clueId": "auction-seven-clue-9b"
+      },
+      {
+        "id": "auction-seven-stage-9",
+        "type": "FOLDER",
+        "title": "반출 서류",
+        "parentId": null,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "visible": false,
+        "puzzleId": "auction-seven-p9-v6"
+      },
+      {
+        "id": "auction-seven-record-10a",
+        "type": "TEXT",
+        "title": "출력_설정백업.txt",
+        "parentId": null,
+        "text": "임시 출력 T 계열: 전광판의 현재 표시 복사\n확정 출력 L 계열: 마감 뒤 봉인 원장 조회\n\n임시 종이 회수 항목: 미완료\n취소 알림 C-19: 전광판 대기열 미처리\n\n확정 원장은 취소를 반영했으나 전광판과 이미 출력한 종이는 그렇지 않았다.",
+        "visible": false,
+        "clueId": "auction-seven-clue-10a"
+      },
+      {
+        "id": "auction-seven-record-10b",
+        "type": "TEXT",
+        "title": "포장팀_인계회신.txt",
+        "parentId": null,
+        "text": "포장팀 / 반출 보류\n\n작품과 서류는 준비됐지만 아직 인계하지 않았습니다. 전광판의 옛 이름과 임시 종이가 함께 남아 있어 회수 대상을 먼저 지정해야 합니다.\n\n반출 승인서는 회수할 출력 번호, 실제 수령인, 해당 작품에 완료된 추가 결제액, 원장과 치수가 맞는 상자의 작품 면적을 하나의 요청으로 받습니다. 수령인 닉네임은 최초 입찰 원장과 같은 영문을 사용합니다. 승인 후 임시 표는 증빙 보관함으로 옮기고 확정 표를 사용합니다.\n\n「인수인계」 폴더 암호: 회수 출력 번호-실제 수령인-완료된 추가 결제액(만 원)-반출 작품 면적(cm²). 처음 입찰과 포장·결제를 다시 맞춘 뒤 반출을 승인합니다.",
+        "visible": false,
+        "clueId": "auction-seven-clue-10b"
+      },
+      {
+        "id": "auction-seven-stage-10",
+        "type": "FOLDER",
+        "title": "인수인계",
+        "parentId": null,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "visible": false,
+        "puzzleId": "auction-seven-p10-v6"
+      }
+    ],
+    "clues": [
+      {
+        "id": "auction-seven-c0",
+        "title": "운영자_요청.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "auction-seven-c1",
+        "title": "입찰_접수표.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "auction-seven-c2",
+        "title": "취소_요청함.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "auction-seven-c3",
+        "title": "경매_규칙.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "auction-seven-c4",
+        "title": "낙찰_확정서.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "auction-seven-c5",
+        "title": "전광판_갱신기록.log",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "auction-seven-record-clue-2",
+        "title": "봉인표_대조.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "auction-seven-record-clue-3",
+        "title": "정산_금액_확인.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "auction-seven-record-clue-4",
+        "title": "전광판_감시기록.mp4",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "auction-seven-record-clue-5",
+        "title": "접수_순서_재구성.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "auction-seven-clue-6a",
+        "title": "작품_원장.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "auction-seven-clue-6b",
+        "title": "포장_대조표.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "auction-seven-clue-7a",
+        "title": "결제_알림함.log",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "auction-seven-clue-7b",
+        "title": "결제_원장규칙.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "auction-seven-clue-8a",
+        "title": "출력_작업함.log",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "auction-seven-clue-8b",
+        "title": "원장_전환표.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "auction-seven-clue-9a",
+        "title": "인수표_세장.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "auction-seven-clue-9b",
+        "title": "작품_인계규칙.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "auction-seven-clue-10a",
+        "title": "출력_설정백업.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "auction-seven-clue-10b",
+        "title": "포장팀_인계회신.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      }
+    ],
+    "puzzles": [
+      {
+        "id": "auction-seven-p1-v6",
+        "title": "입찰 자료의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "B-71-240",
+        "ignoreCase": true,
+        "hints": [
+          "「입찰 자료」 폴더 암호: 유효 낙찰의 입찰 번호-낙찰가(만 원). 마감 뒤 접수, 유효 취소를 제외한 뒤 동률은 먼저 접수된 입찰로 정합니다.",
+          "B-72는 취소, B-75는 마감 뒤입니다. 240만 원의 B-71과 B-73 중 먼저 접수된 B-71이 남습니다.",
+          "정답: B-71-240"
+        ],
+        "stageTitle": "입찰 자료",
+        "evidenceIds": [
+          "auction-seven-f0",
+          "auction-seven-f1",
+          "auction-seven-f2",
+          "auction-seven-f3"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "auction-seven-p2-v6",
+        "title": "검수 자료의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "6829-115",
+        "ignoreCase": true,
+        "hints": [
+          "「검수 자료」 폴더 암호: 접수 때의 표시와 봉인이 모두 유지된 봉투의 보관 키-그 원본 입찰의 접수 순번. 사진만 보고 입찰자를 정하지 않습니다.",
+          "파란 두 줄이 있고 봉인 종이가 이어진 것은 가운데입니다. 원본 입찰 B-71의 접수 순번은 115입니다.",
+          "정답: 6829-115"
+        ],
+        "stageTitle": "검수 자료",
+        "evidenceIds": [
+          "auction-seven-record-2",
+          "auction-seven-scene",
+          "auction-seven-f1",
+          "auction-seven-f2",
+          "auction-seven-f3"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "auction-seven-p3-v6",
+        "title": "정산 내역의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "222",
+        "ignoreCase": true,
+        "hints": [
+          "「정산 내역」 폴더 암호: 낙찰가에 구매 수수료를 더하고 이미 낸 보증금을 뺀 추가 납부액. 만 원 단위 정수로 적습니다.",
+          "유효 낙찰가 240의 5%는 12입니다. 240+12−30을 계산하세요.",
+          "정답: 222"
+        ],
+        "stageTitle": "정산 내역",
+        "evidenceIds": [
+          "auction-seven-record-3",
+          "auction-seven-f1",
+          "auction-seven-f2",
+          "auction-seven-f3"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "auction-seven-p4-v6",
+        "title": "전광판의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "215957-7",
+        "ignoreCase": true,
+        "hints": [
+          "「전광판」 폴더 암호: 별도 단말에 남을 접속 종료 시각 여섯 자리-접속 종료부터 마감까지 실제 경과 초. 영상의 서버 시각을 읽고 단말 오차를 적용합니다.",
+          "영상의 불빛은 서버 21:59:53에 꺼지고 마감은 22:00:00입니다. 단말 표시에는 4초를 더하지만 실제 간격은 7초입니다.",
+          "정답: 215957-7"
+        ],
+        "stageTitle": "전광판",
+        "evidenceIds": [
+          "auction-seven-record-4",
+          "auction-seven-f0"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "auction-seven-p5-v6",
+        "title": "접수 기록의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "3-1",
+        "ignoreCase": true,
+        "hints": [
+          "「접수 기록」 폴더 암호: 취소 접수부터 마감 접수까지 순번 차이-마감 뒤 재입찰까지 순번 차이. 조각 번호가 아닌 접수 순번으로 계산합니다.",
+          "취소는 117, 마감은 120, 늦은 재입찰은 121입니다. 차이는 3과 1입니다.",
+          "정답: 3-1"
+        ],
+        "stageTitle": "접수 기록",
+        "evidenceIds": [
+          "auction-seven-record-5",
+          "auction-seven-f1",
+          "auction-seven-f2"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "auction-seven-p6-v6",
+        "title": "포장 자료의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "LOT-27-4800",
+        "ignoreCase": true,
+        "stageTitle": "포장 자료",
+        "evidenceIds": [
+          "auction-seven-record-6a",
+          "auction-seven-record-6b"
+        ],
+        "inputMode": "text",
+        "hints": [
+          "「포장 자료」 폴더 암호: 실제 반출할 물품 번호-일치하는 상자 속 작품의 면적. 제목만 같은 상자는 통과시킬 수 없습니다.",
+          "원장은 LOT-27, 60×80cm입니다. 맞는 상자는 B이며 면적은 4800cm²입니다. 봉투 검수표와 다른 물건입니다.",
+          "정답: LOT-27-4800"
+        ]
+      },
+      {
+        "id": "auction-seven-p7-v6",
+        "title": "결제 내역의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "1-0",
+        "ignoreCase": true,
+        "stageTitle": "결제 내역",
+        "evidenceIds": [
+          "auction-seven-record-7b",
+          "auction-seven-record-7a",
+          "auction-seven-record-3",
+          "auction-seven-f1",
+          "auction-seven-f2",
+          "auction-seven-f3"
+        ],
+        "inputMode": "text",
+        "hints": [
+          "「결제 내역」 폴더 암호: 이 작품에 완료된 추가 결제의 고유 건수-정산액 대비 아직 부족한 만 원. 재전송과 다른 물품 결제를 제외합니다.",
+          "LOT-27의 완료 결제는 P-71 한 건 222만 원입니다. 정산액도 222이므로 부족액은 0입니다. P-69는 다른 작품입니다.",
+          "정답: 1-0"
+        ]
+      },
+      {
+        "id": "auction-seven-p8-v6",
+        "title": "출력 기록의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "T-72-L-71",
+        "ignoreCase": true,
+        "stageTitle": "출력 기록",
+        "evidenceIds": [
+          "auction-seven-record-8b",
+          "auction-seven-record-8a",
+          "auction-seven-record-5"
+        ],
+        "inputMode": "text",
+        "hints": [
+          "「출력 기록」 폴더 암호: 회수해야 할 임시 출력 작업 번호-그 대신 사용할 확정 출력 작업 번호. 취소 접수와 마감 전후의 생성 조건을 대조합니다.",
+          "취소 전에 전광판을 복사한 T-72는 이름이 자동 갱신되지 않습니다. 마감 뒤 원장으로 만든 L-71이 대체 표입니다.",
+          "정답: T-72-L-71"
+        ]
+      },
+      {
+        "id": "auction-seven-p9-v6",
+        "title": "반출 서류의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "5417-P-71",
+        "ignoreCase": true,
+        "stageTitle": "반출 서류",
+        "evidenceIds": [
+          "auction-seven-record-9b",
+          "auction-seven-record-9a",
+          "auction-seven-f4",
+          "auction-seven-record-6a",
+          "auction-seven-record-7a",
+          "auction-seven-record-7b"
+        ],
+        "inputMode": "text",
+        "hints": [
+          "「반출 서류」 폴더 암호: 네 인계 조건을 충족한 표의 검수 키-같은 작품의 완료 결제 번호. 접수만 된 결제는 제외합니다.",
+          "확정 L-71은 ORBIT, LOT-27, 완료 P-71과 이어집니다. 유효 표 C의 검수 키를 사용하세요.",
+          "정답: 5417-P-71"
+        ]
+      },
+      {
+        "id": "auction-seven-p10-v6",
+        "title": "인수인계의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "T-72-ORBIT-222-4800",
+        "ignoreCase": true,
+        "stageTitle": "인수인계",
+        "evidenceIds": [
+          "auction-seven-record-10b",
+          "auction-seven-record-10a",
+          "auction-seven-f1",
+          "auction-seven-f2",
+          "auction-seven-f3",
+          "auction-seven-record-6a",
+          "auction-seven-record-6b",
+          "auction-seven-record-7b"
+        ],
+        "inputMode": "text",
+        "hints": [
+          "「인수인계」 폴더 암호: 회수 출력 번호-실제 수령인-완료된 추가 결제액(만 원)-반출 작품 면적(cm²). 처음 입찰과 포장·결제를 다시 맞춘 뒤 반출을 승인합니다.",
+          "T-72를 회수합니다. 마감·취소·동률 규칙으로 ORBIT를 확인하고, 추가 결제 222와 맞는 작품 면적 4800을 연결하세요.",
+          "정답: T-72-ORBIT-222-4800"
+        ]
+      }
+    ],
+    "messages": [
+      {
+        "id": "auction-seven-m0",
+        "author": "경매 운영자",
+        "time": "22:00",
+        "text": "전광판은 MOTH인데 ORBIT에게 결제 요청이 갔어요. 누구에게 작품을 줘야 하죠?",
+        "initial": true
+      },
+      {
+        "id": "auction-seven-m1",
+        "author": "ORBIT",
+        "time": "22:01",
+        "text": "전 마지막에 더 높은 가격을 쓴 적 없어요. 처음 접수한 입찰 그대로예요.",
+        "initial": true
+      },
+      {
+        "id": "auction-seven-m2",
+        "author": "경매 운영자",
+        "time": "22:02",
+        "text": "취소는 닉네임이 아니라 입찰 번호에 붙습니다. 다른 물품 기록도 섞여 있으니 조심해요.",
+        "initial": false
+      },
+      {
+        "id": "auction-seven-m3",
+        "author": "ORBIT",
+        "time": "22:03",
+        "text": "봉인 원장까지 확인됐나요? 이제 다른 참가자들에게 설명할 수 있겠네요.",
+        "initial": false
+      },
+      {
+        "id": "auction-seven-chapter-6",
+        "author": "경매 운영자",
+        "time": "22:06",
+        "text": "낙찰 원장은 맞는데 포장대의 임시 인수표에는 아직 MOTH가 적혀 있어요. 이름만 갈아 붙여도 될까요? 작품 대장과 출력 이력부터 보내 드릴게요.",
+        "initial": false
+      },
+      {
+        "id": "auction-seven-chapter-8",
+        "author": "경매 운영자",
+        "time": "22:07",
+        "text": "봉투는 입찰 서류를 넣은 것이고 운반 상자는 작품 포장입니다. 두 봉인을 같은 물건으로 보면 안 되겠네요. 검수 사진의 파란 두 줄 봉투는 계속 같은 원본이에요.",
+        "initial": false
+      },
+      {
+        "id": "auction-seven-chapter-complete",
+        "author": "경매 운영자",
+        "time": "22:09",
+        "text": "반출 승인이 완료됐습니다. T-72는 증빙 보관함으로 회수됐고, 포장팀은 확정 표와 결제 원장을 대조해 LOT-27을 ORBIT에게 인계했습니다.",
+        "initial": false
+      }
+    ],
+    "rules": [
+      {
+        "id": "auction-seven-advance-1",
+        "priority": 1,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "auction-seven-p1-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-stage-2"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-record-2"
+          },
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "auction-seven-m2"
+          }
+        ]
+      },
+      {
+        "id": "auction-seven-advance-2",
+        "priority": 2,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "auction-seven-p2-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-stage-3"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-record-3"
+          }
+        ]
+      },
+      {
+        "id": "auction-seven-advance-3",
+        "priority": 3,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "auction-seven-p3-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-stage-4"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-record-4"
+          }
+        ]
+      },
+      {
+        "id": "auction-seven-advance-4",
+        "priority": 4,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "auction-seven-p4-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-stage-5"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-record-5"
+          }
+        ]
+      },
+      {
+        "id": "auction-seven-advance-5",
+        "priority": 5,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "auction-seven-p5-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-f4"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-f5"
+          },
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "auction-seven-m3"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-stage-6"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-record-6a"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-record-6b"
+          },
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "auction-seven-chapter-6"
+          }
+        ]
+      },
+      {
+        "id": "auction-seven-advance-6",
+        "priority": 6,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "auction-seven-p6-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-stage-7"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-record-7a"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-record-7b"
+          }
+        ]
+      },
+      {
+        "id": "auction-seven-advance-7",
+        "priority": 7,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "auction-seven-p7-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-stage-8"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-record-8a"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-record-8b"
+          },
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "auction-seven-chapter-8"
+          }
+        ]
+      },
+      {
+        "id": "auction-seven-advance-8",
+        "priority": 8,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "auction-seven-p8-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-stage-9"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-record-9a"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-record-9b"
+          }
+        ]
+      },
+      {
+        "id": "auction-seven-advance-9",
+        "priority": 9,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "auction-seven-p9-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-stage-10"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-record-10a"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "auction-seven-record-10b"
+          }
+        ]
+      },
+      {
+        "id": "auction-seven-advance-10",
+        "priority": 10,
+        "once": true,
+        "when": {
+          "type": "ALL",
+          "conditions": [
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "auction-seven-p1-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "auction-seven-p2-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "auction-seven-p3-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "auction-seven-p4-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "auction-seven-p5-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "auction-seven-p6-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "auction-seven-p7-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "auction-seven-p8-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "auction-seven-p9-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "auction-seven-p10-v6"
+            }
+          ]
+        },
+        "then": [
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "auction-seven-chapter-complete"
+          },
+          {
+            "type": "END_CASE",
+            "id": "auction-seven-good"
+          }
+        ]
+      }
+    ],
+    "endings": [
+      {
+        "id": "auction-seven-good",
+        "title": "작품은 올바른 손으로",
+        "text": "반출 승인이 완료됐습니다. T-72는 증빙 보관함으로 회수됐고, 포장팀은 확정 표와 결제 원장을 대조해 LOT-27을 ORBIT에게 인계했습니다.\n\n가장 큰 화면 숫자는 유효 낙찰이 아니었습니다. 취소된 입찰과 늦은 입찰을 제외하고 동률 접수 순번까지 확인해야 수령인이 정해졌습니다.\n\n파란 두 줄의 원본 봉투는 그대로 남았습니다. 작품 상자, 입찰 봉투, 출력된 종이를 서로 구분한 기록이 잘못된 인계를 막았습니다.",
+        "revisitable": false
+      },
+      {
+        "id": "auction-seven-retry",
+        "title": "가장 큰 숫자의 함정",
+        "text": "전광판의 310이나 뒤늦은 400을 그대로 믿었습니다. 높은 가격이라도 취소됐거나 마감 뒤라면 낙찰 대상이 아닙니다.\n\n접수 순번과 취소 입찰 번호를 대조한 뒤 봉인 확정서를 확인해 주세요.",
+        "revisitable": true
+      }
+    ],
+    "hypotheses": [
+      {
+        "id": "auction-seven-truth",
+        "label": "임시 표 회수와 작품 반출 승인",
+        "endingId": "auction-seven-good",
+        "requiredClues": [
+          "auction-seven-c1",
+          "auction-seven-c2",
+          "auction-seven-c4",
+          "auction-seven-clue-10a",
+          "auction-seven-clue-10b"
+        ]
+      },
+      {
+        "id": "auction-seven-guess",
+        "label": "MOTH가 가장 큰 금액을 적었으므로 정당한 낙찰자다.",
+        "endingId": "auction-seven-retry",
+        "requiredClues": []
+      }
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "engineVersion": "ghostdesk-core-1",
+    "caseId": "encore-last",
+    "versionId": "encore-last-v6",
+    "title": "마지막 앙코르",
+    "description": "사람이 사라진 무대에서 계속된 앵콜. 공연 기록 담당으로서 해온의 안전과 소리의 출처를 확인하고, 누락된 안내를 바로잡을 방송 요청을 완성하세요.",
+    "estimatedMinutes": 60,
+    "contentWarning": "허구의 사건입니다. 긴장감 있는 상황·실종 암시가 있지만 잔혹한 묘사나 점프 스케어는 없습니다.",
+    "files": [
+      {
+        "id": "encore-last-f0",
+        "type": "TEXT",
+        "title": "무대감독_메모.txt",
+        "parentId": null,
+        "visible": true,
+        "text": "사람이 사라진 무대에서 계속된 앵콜. 공연 기록 담당으로서 해온의 안전과 소리의 출처를 확인하고, 누락된 안내를 바로잡을 방송 요청을 완성하세요.\n\n담당자가 남긴 메모\n저는 공연 기록 검토 담당입니다. 앵콜은 계속 들렸지만 해온은 무대에서 사라졌고 정문 영상에도 보이지 않습니다. 먼저 안전을 확인하고, 관객이 들은 소리와 실제 이동을 가려 정정 안내를 준비해 주세요.\n\n업무 폴더에는 담당자가 기록을 대조해 정한 암호가 걸려 있습니다. 암호 규칙은 인계 메모와 각 업무 기록의 끝에 적어 두었습니다. 한 번 연 기록도 지우지 마세요.\n\n「공연 자료」 폴더 암호: 실제로 켜진 네 조명의 카드 번호를 실행 순서로 붙입니다. 예정표와 영상이 다르면 실행 기록을 따릅니다.",
+        "clueId": "encore-last-c0"
+      },
+      {
+        "id": "encore-last-f1",
+        "type": "TEXT",
+        "title": "조명_실행기록.mp4",
+        "parentId": null,
+        "visible": true,
+        "text": "공연 제어기 / 조명 기록\n\n실제로 실행된 조명 순서를 영상으로 재현했습니다. 기다리는 구간은 줄였으며 실제 공연 시각이나 사람의 위치를 증명하는 화면은 아닙니다.\n\n빛이 켜졌다 사라지는 순서와 카드별 큐시트를 비교하세요. 예정표에 적힌 순서가 실제 실행 순서와 같다고 가정하지 마세요.",
+        "clueId": "encore-last-c1"
+      },
+      {
+        "id": "encore-last-f2",
+        "type": "TEXT",
+        "title": "카드별_큐시트.txt",
+        "parentId": null,
+        "visible": true,
+        "text": "조명 카드 대조표\n\n카드 1 / 흰빛 · WHITE / 객석 방향 빛\n카드 2 / 주황빛 · AMBER / 무대 뒤 통로\n카드 3 / 붉은빛 · RED / 암전 직전 안전 표시\n카드 4 / 파란빛 · BLUE / 중앙 스포트라이트\n카드 5 / 초록빛 · GREEN / 사용 취소\n\n당초 예정: 파란빛 → 흰빛 → 주황빛 → 붉은빛\n무대감독 메모: 공연 중 순서 변경 있음. 실제 실행 기록 우선.",
+        "clueId": "encore-last-c2"
+      },
+      {
+        "id": "encore-last-f3",
+        "type": "TEXT",
+        "title": "관객_제보.txt",
+        "parentId": null,
+        "visible": true,
+        "text": "관객 A: 앵콜 첫 소절이 끝날 때 노래가 조금 더 또렷해졌어요.\n관객 B: 정문 쪽에는 아무도 지나가지 않았어요.\n객석 녹음 비교 메모: 21:56:52 이후 들린 기침 소리까지 전날 리허설 녹음과 같은 간격입니다.\n\n제보만으로 누군가가 어디에 있었는지 확정할 수는 없습니다. 공연장에는 정문 외에 무대 뒤 안전 통로도 있습니다.",
+        "clueId": "encore-last-c3"
+      },
+      {
+        "id": "encore-last-f4",
+        "type": "TEXT",
+        "title": "음향_라우팅.log",
+        "parentId": "encore-last-stage-5",
+        "visible": false,
+        "text": "음향 장치 / 입력 전환 기록\n\n21:56:52 보컬 무선 마이크 입력 차단\n21:56:52 비상 트랙 REHEARSAL-06 재생 시작\n21:59:10 비상 트랙 재생 완료\n\n담당자 확인: 녹음 파일에는 리허설 때 해온의 기침도 포함됨.\n관객에게 들린 마지막 앵콜은 이 비상 트랙이었습니다.",
+        "clueId": "encore-last-c4"
+      },
+      {
+        "id": "encore-last-f5",
+        "type": "TEXT",
+        "title": "안전통로_인계서.txt",
+        "parentId": "encore-last-stage-5",
+        "visible": false,
+        "text": "무대 뒤 안전 통로 / 인계 기록\n\n21:56:49 해온이 현기증을 호소함\n21:56:54 스태프 유진과 안전 통로 통과\n21:57:21 휴게실 도착, 보호자 연락\n22:05:00 회복 후 귀가 안내\n\n서명: 해온 / 유진\n\n정문 카메라에는 이 통로가 찍히지 않습니다. 해온은 무대 위에 남아 있지도, 건물에서 실종되지도 않았습니다.",
+        "clueId": "encore-last-c5"
+      },
+      {
+        "id": "encore-last-chat",
+        "type": "CHAT_LINK",
+        "title": "메신저",
+        "parentId": null,
+        "visible": true,
+        "text": ""
+      },
+      {
+        "id": "encore-last-scene",
+        "type": "IMAGE",
+        "title": "공연장_현장사진",
+        "parentId": null,
+        "visible": true,
+        "text": "사건 자료에 첨부된 현장 사진.",
+        "assetId": "stage",
+        "alt": "닫힌 커튼 앞의 빈 마이크 스탠드와 객석 쪽 음향 장비.",
+        "observations": [
+          {
+            "label": "무대",
+            "text": "마이크 스탠드와 닫힌 커튼, 앰버색과 파란색 조명이 보입니다."
+          },
+          {
+            "label": "촬영 시각",
+            "text": "공연 종료 후 22:03 촬영. 이 사진만으로 공연 중 사람의 위치를 확정할 수 없습니다."
+          }
+        ]
+      },
+      {
+        "id": "encore-last-stage-1",
+        "type": "FOLDER",
+        "title": "공연 자료",
+        "parentId": null,
+        "visible": true,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "puzzleId": "encore-last-p1-v6"
+      },
+      {
+        "id": "encore-last-record-2",
+        "type": "TEXT",
+        "title": "음원_흔적_비교.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "음향팀 파형 측정표 / 첫 기침부터 잰 간격\n\n객석 녹음: 4.2초 / 6.8초\n리허설 05: 4.2초 / 7.1초\n리허설 06: 4.2초 / 6.8초\n리허설 07: 3.9초 / 6.8초\n\n두 간격을 모두 비교합니다. 이 비교만으로 사람의 위치까지 알 수는 없습니다.\n\n「음원」 폴더 암호: 객석의 두 기침 간격과 모두 같은 음원 번호 두 자리-그 두 간격의 차이를 0.1초 단위로 나타낸 정수. 음원 하나의 두 값을 사용합니다.",
+        "clueId": "encore-last-record-clue-2"
+      },
+      {
+        "id": "encore-last-stage-2",
+        "type": "FOLDER",
+        "title": "음원",
+        "parentId": null,
+        "visible": false,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "puzzleId": "encore-last-p2-v6"
+      },
+      {
+        "id": "encore-last-record-3",
+        "type": "TEXT",
+        "title": "앵콜_길이_계산.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "음향 재생 시각표\n\n비상 재생 시작: 21:56:52\n비상 재생 종료: 21:59:10\n\n장치 시계는 중간에 조정되지 않았고 일시정지도 없었습니다. 전체 길이를 초로 환산하세요.\n\n「재생 기록」 폴더 암호: 비상 트랙이 끊김 없이 재생된 총 초. 분이 넘어가는 구간을 초로 바꿉니다.",
+        "clueId": "encore-last-record-clue-3"
+      },
+      {
+        "id": "encore-last-stage-3",
+        "type": "FOLDER",
+        "title": "재생 기록",
+        "parentId": null,
+        "visible": false,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "puzzleId": "encore-last-p3-v6"
+      },
+      {
+        "id": "encore-last-record-4",
+        "type": "TEXT",
+        "title": "안전_통로_연결.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "스태프 동행 이동 / 센서 시계 일치 확인\n\n지점 1 · 휴게실 · 21:57:21\n지점 2 · 안전 통로 입구 · 21:56:54\n지점 3 · 무대 뒤 · 21:56:50\n지점 4 · 통로 중간 · 21:57:05\n\n센서는 출입 위치만 기록하며 신원은 최종 인계서에서 확인합니다.\n\n「안전 관리」 폴더 암호: 무대 뒤에서 휴게실까지 걸린 초-그중 안전 통로 입구부터 휴게실까지 걸린 초. 같은 사람의 동행 이동 구간입니다.",
+        "clueId": "encore-last-record-clue-4"
+      },
+      {
+        "id": "encore-last-stage-4",
+        "type": "FOLDER",
+        "title": "안전 관리",
+        "parentId": null,
+        "visible": false,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "puzzleId": "encore-last-p4-v6"
+      },
+      {
+        "id": "encore-last-record-5",
+        "type": "TEXT",
+        "title": "카메라_범위_대조.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "공연장 촬영 구역 안내\n\n정문 카메라: 정문 계단과 매표소만 촬영\n무대 뒤 안전 통로: 카메라 촬영 범위 밖\n휴게실: 건물 내부, 촬영하지 않음\n\n확인 구간 21:56:49~21:57:21의 정문 영상에는 출입자가 없습니다. 센서 기록과 함께 해석하세요.\n\n시설 위치 번호: 정문=1102, 안전 통로=2604, 휴게실=3708. 사진은 공연 뒤 비어 있는 통로를 찍었습니다. 사람의 이동 시각은 센서 기록을 사용하세요.\n\n「현장 자료」 폴더 암호: 센서에서 확인한 최종 도착지의 시설 번호-도착 뒤에도 앵콜이 이어진 초. 정문 영상만으로 실종을 단정하지 않습니다.",
+        "clueId": "encore-last-record-clue-5"
+      },
+      {
+        "id": "encore-last-stage-5",
+        "type": "FOLDER",
+        "title": "현장 자료",
+        "parentId": null,
+        "visible": false,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "puzzleId": "encore-last-p5-v6"
+      },
+      {
+        "id": "encore-last-record-6a",
+        "type": "TEXT",
+        "title": "인터컴_발췌.txt",
+        "parentId": null,
+        "text": "A / 송신 U-2: 잠시 중단하겠습니다 / 수신 H-1: 확인 / 리허설\nB / 송신 H-1: 예정대로 계속합니다 / 수신 U-2: 확인 / 본 공연\nC / 송신 H-1: 잠시 쉬고 싶어요. 중단해 주세요 / 수신 U-2: 확인, 안전 통로로 안내할게요 / 본 공연 21:56:50\n\n관객용 마이크와 인터컴은 서로 다른 장치다.",
+        "visible": false,
+        "clueId": "encore-last-clue-6a"
+      },
+      {
+        "id": "encore-last-record-6b",
+        "type": "TEXT",
+        "title": "단말_배정표.txt",
+        "parentId": null,
+        "text": "본 공연 단말\n\nH-1 / 해온\nU-2 / 유진\nS-3 / 음향 기사\n\n리허설 발췌에는 다른 연습 대사가 들어 있다. 본 공연 표시와 송신자·수신자를 함께 보라. 사람의 이동은 별도 인계서로 확인한다.\n\n「연락 내역」 폴더 암호: 본 공연의 중단 요청 송신 단말-확인한 수신 단말-확인부터 안전 통로 통과까지의 초. 리허설과 다른 대사를 제외합니다.",
+        "visible": false,
+        "clueId": "encore-last-clue-6b"
+      },
+      {
+        "id": "encore-last-stage-6",
+        "type": "FOLDER",
+        "title": "연락 내역",
+        "parentId": null,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "visible": false,
+        "puzzleId": "encore-last-p6-v6"
+      },
+      {
+        "id": "encore-last-record-7a",
+        "type": "TEXT",
+        "title": "음향_연결도.txt",
+        "parentId": null,
+        "text": "음향 배선의 문서화 / 이미지 원문\n\nB1 → 객석 스피커 / 보컬과 비상 트랙 사용\nB2 → 스태프 헤드셋 / 인터컴 사용\n안내 파일 → 선택된 버스 한 곳\n\n두 버스는 자동으로 서로 연결되지 않는다.",
+        "visible": false,
+        "clueId": "encore-last-clue-7a"
+      },
+      {
+        "id": "encore-last-record-7b",
+        "type": "TEXT",
+        "title": "안내_라우팅.log",
+        "parentId": null,
+        "text": "21:56:51 / NOTICE-02 / 출력 대상 스태프 헤드셋\n21:56:52 / REHEARSAL-06 / 출력 대상 객석 스피커\n\n안내 파일 재생 성공 표시는 파일이 끝까지 처리됐다는 뜻이다. 어느 출력으로 보냈는지는 대상과 연결도로 확인한다.\n\n「음향 설정」 폴더 암호: 안내가 실제로 전달된 버스-관객에게 들리려면 사용해야 할 버스. 두 버스가 자동 연결된다고 가정하지 마세요.",
+        "visible": false,
+        "clueId": "encore-last-clue-7b"
+      },
+      {
+        "id": "encore-last-stage-7",
+        "type": "FOLDER",
+        "title": "음향 설정",
+        "parentId": null,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "visible": false,
+        "puzzleId": "encore-last-p7-v6"
+      },
+      {
+        "id": "encore-last-record-8a",
+        "type": "TEXT",
+        "title": "제어기_처리조각.log",
+        "parentId": null,
+        "text": "조각 1 / 21:56:52 / 마이크 차단, 비상 트랙 시작\n조각 4 / 21:56:51 / 헤드셋으로 안내 재생\n\n위 값은 공연 제어기의 실제 시각이다. 조명 재현 영상은 기다리는 간격을 줄였으므로 영상 재생 초로 이 시각을 계산하지 않는다.",
+        "visible": false,
+        "clueId": "encore-last-clue-8a"
+      },
+      {
+        "id": "encore-last-record-8b",
+        "type": "TEXT",
+        "title": "현장_확인조각.txt",
+        "parentId": null,
+        "text": "조각 2 / 21:56:50 / 해온 요청, 유진 확인\n조각 3 / 21:56:54 / 유진과 해온 안전 통로 통과\n\n현장 확인 시각은 제어기와 동기화했다. 인계서와 조각의 통과 시각은 같은 사건을 가리킨다.\n\n「방송 기록」 폴더 암호: 요청 확인부터 헤드셋 안내까지의 초-비상 트랙 시작부터 안전 통로 통과까지의 초. 조명 영상은 시간 간격을 줄였으므로 제어기 원본을 사용합니다.",
+        "visible": false,
+        "clueId": "encore-last-clue-8b"
+      },
+      {
+        "id": "encore-last-stage-8",
+        "type": "FOLDER",
+        "title": "방송 기록",
+        "parentId": null,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "visible": false,
+        "puzzleId": "encore-last-p8-v6"
+      },
+      {
+        "id": "encore-last-record-9a",
+        "type": "TEXT",
+        "title": "객석_확인서.txt",
+        "parentId": null,
+        "text": "관객 2인의 확인 / 21:56:50~21:57:00\n\n“노래는 이어졌지만 중단 안내는 듣지 못했다.”\n\n이 확인은 객석 스피커에서 들린 소리만 다룬다. 스태프 헤드셋이나 휴게실에서 한 대화는 듣지 못했다.\n\n객석 안내 지연은 중단 요청이 확인된 순간부터 객석에 안내 신호가 처음 나타날 때까지 셉니다. 뒤늦은 안내가 있었다고 초기 제보를 거짓으로 처리하지 않습니다.\n\n「접수 자료」 폴더 암호: 중단 요청 확인부터 객석 안내 시작까지 지연된 초-객석에 실제 안내가 출력된 초. 재생 성공 표시 대신 해당 버스의 시작·종료를 확인합니다.",
+        "visible": false,
+        "clueId": "encore-last-clue-9a"
+      },
+      {
+        "id": "encore-last-record-9b",
+        "type": "TEXT",
+        "title": "버스_출력계.log",
+        "parentId": null,
+        "text": "같은 구간의 출력 기록\n\nB1: REHEARSAL-06 신호 있음 / NOTICE-02 없음\nB2: NOTICE-02 신호 있음\n\n파일 재생 성공과 특정 출력에 신호가 있었다는 기록을 구분한다. 두 버스 출력은 별도로 남긴 원본이다.\n\n후속 출력 이벤트\n21:59:12 / B1 / NOTICE-02 시작\n21:59:15 / B1 / NOTICE-02 종료\n이 후속 구간은 21:57:00까지의 출력 재현 영상 밖입니다.",
+        "visible": false,
+        "clueId": "encore-last-clue-9b"
+      },
+      {
+        "id": "encore-last-stage-9",
+        "type": "FOLDER",
+        "title": "접수 자료",
+        "parentId": null,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "visible": false,
+        "puzzleId": "encore-last-p9-v6"
+      },
+      {
+        "id": "encore-last-record-10a",
+        "type": "TEXT",
+        "title": "출력_선택이력.txt",
+        "parentId": null,
+        "text": "21:40 / 안내 파일 NOTICE-02 청취 점검 / 선택 B2\n21:41 / 점검 종료 / 출력 선택 유지\n21:56:51 / NOTICE-02 재생 / 선택 B2\n21:59:12 / 출력 B1로 변경 뒤 객석 안내\n\n출력 선택은 파일별로 기억된다. 비상 트랙의 B1 설정이 안내 파일에 자동 적용되지 않는다.",
+        "visible": false,
+        "clueId": "encore-last-clue-10a"
+      },
+      {
+        "id": "encore-last-record-10b",
+        "type": "TEXT",
+        "title": "공연팀_검수메모.txt",
+        "parentId": null,
+        "text": "공연팀 / 정정 방송 승인 대기\n\n뒤늦은 짧은 중단 안내만으로는 “노래하는 사람이 사라졌다”는 오해가 풀리지 않았습니다. 해온은 현재 안전하며, 본인 동의로 이동과 음원 전환을 설명하는 정정 파일 NOTICE-03을 준비했습니다.\n\n새 방송은 관객에게 전달돼야 합니다. 출력 버스, 앵콜 때 사용한 음원 번호, 확인된 도착지, 최초 안내 지연 시간을 함께 검증하면 방송 요청을 확정합니다. 장소 번호는 시설 안내에 적힌 네 자리 코드를 사용합니다.\n\n「인수인계」 폴더 암호: 정정 방송의 출력 버스-실제 앵콜 음원 번호 두 자리-해온 도착지 번호-최초 객석 안내 지연 초. 초반 파형과 이동 자료까지 다시 확인해 방송을 승인합니다.",
+        "visible": false,
+        "clueId": "encore-last-clue-10b"
+      },
+      {
+        "id": "encore-last-stage-10",
+        "type": "FOLDER",
+        "title": "인수인계",
+        "parentId": null,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "visible": false,
+        "puzzleId": "encore-last-p10-v6"
+      }
+    ],
+    "clues": [
+      {
+        "id": "encore-last-c0",
+        "title": "무대감독_메모.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "encore-last-c1",
+        "title": "조명_실행기록.mp4",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "encore-last-c2",
+        "title": "카드별_큐시트.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "encore-last-c3",
+        "title": "관객_제보.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "encore-last-c4",
+        "title": "음향_라우팅.log",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "encore-last-c5",
+        "title": "안전통로_인계서.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "encore-last-record-clue-2",
+        "title": "음원_흔적_비교.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "encore-last-record-clue-3",
+        "title": "앵콜_길이_계산.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "encore-last-record-clue-4",
+        "title": "안전_통로_연결.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "encore-last-record-clue-5",
+        "title": "카메라_범위_대조.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "encore-last-clue-6a",
+        "title": "인터컴_발췌.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "encore-last-clue-6b",
+        "title": "단말_배정표.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "encore-last-clue-7a",
+        "title": "음향_연결도.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "encore-last-clue-7b",
+        "title": "안내_라우팅.log",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "encore-last-clue-8a",
+        "title": "제어기_처리조각.log",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "encore-last-clue-8b",
+        "title": "현장_확인조각.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "encore-last-clue-9a",
+        "title": "객석_확인서.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "encore-last-clue-9b",
+        "title": "버스_출력계.log",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "encore-last-clue-10a",
+        "title": "출력_선택이력.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "encore-last-clue-10b",
+        "title": "공연팀_검수메모.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      }
+    ],
+    "puzzles": [
+      {
+        "id": "encore-last-p1-v6",
+        "title": "공연 자료의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "2413",
+        "ignoreCase": true,
+        "hints": [
+          "「공연 자료」 폴더 암호: 실제로 켜진 네 조명의 카드 번호를 실행 순서로 붙입니다. 예정표와 영상이 다르면 실행 기록을 따릅니다.",
+          "실행은 주황빛→파란빛→흰빛→붉은빛입니다. 카드표의 번호로 바꾸고 취소된 초록빛은 제외하세요.",
+          "정답: 2413"
+        ],
+        "stageTitle": "공연 자료",
+        "evidenceIds": [
+          "encore-last-f0",
+          "encore-last-f1",
+          "encore-last-f2"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "encore-last-p2-v6",
+        "title": "음원의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "06-26",
+        "ignoreCase": true,
+        "hints": [
+          "「음원」 폴더 암호: 객석의 두 기침 간격과 모두 같은 음원 번호 두 자리-그 두 간격의 차이를 0.1초 단위로 나타낸 정수. 음원 하나의 두 값을 사용합니다.",
+          "일치 음원은 06입니다. 6.8−4.2=2.6초이므로 0.1초 단위로 26입니다. 첫 간격 하나만 같다는 이유로 05를 고르지 마세요.",
+          "정답: 06-26"
+        ],
+        "stageTitle": "음원",
+        "evidenceIds": [
+          "encore-last-record-2",
+          "encore-last-f3"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "encore-last-p3-v6",
+        "title": "재생 기록의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "138",
+        "ignoreCase": true,
+        "hints": [
+          "「재생 기록」 폴더 암호: 비상 트랙이 끊김 없이 재생된 총 초. 분이 넘어가는 구간을 초로 바꿉니다.",
+          "21:56:52에서 21:59:10까지는 2분 18초, 138초입니다.",
+          "정답: 138"
+        ],
+        "stageTitle": "재생 기록",
+        "evidenceIds": [
+          "encore-last-record-3",
+          "encore-last-record-2"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "encore-last-p4-v6",
+        "title": "안전 관리의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "31-27",
+        "ignoreCase": true,
+        "hints": [
+          "「안전 관리」 폴더 암호: 무대 뒤에서 휴게실까지 걸린 초-그중 안전 통로 입구부터 휴게실까지 걸린 초. 같은 사람의 동행 이동 구간입니다.",
+          "21:56:50→21:57:21은 31초, 21:56:54→21:57:21은 27초입니다. 정문 제보에는 이 통로가 포함되지 않습니다.",
+          "정답: 31-27"
+        ],
+        "stageTitle": "안전 관리",
+        "evidenceIds": [
+          "encore-last-record-4",
+          "encore-last-f3"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "encore-last-p5-v6",
+        "title": "현장 자료의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "3708-109",
+        "ignoreCase": true,
+        "hints": [
+          "「현장 자료」 폴더 암호: 센서에서 확인한 최종 도착지의 시설 번호-도착 뒤에도 앵콜이 이어진 초. 정문 영상만으로 실종을 단정하지 않습니다.",
+          "도착지는 휴게실 3708입니다. 21:57:21부터 비상 트랙 종료 21:59:10까지 109초 동안 사람과 소리는 다른 곳에 있었습니다.",
+          "정답: 3708-109"
+        ],
+        "stageTitle": "현장 자료",
+        "evidenceIds": [
+          "encore-last-record-5",
+          "encore-last-record-4",
+          "encore-last-record-3"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "encore-last-p6-v6",
+        "title": "연락 내역의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "H-1-U-2-4",
+        "ignoreCase": true,
+        "stageTitle": "연락 내역",
+        "evidenceIds": [
+          "encore-last-record-6b",
+          "encore-last-record-6a",
+          "encore-last-f5"
+        ],
+        "inputMode": "text",
+        "hints": [
+          "「연락 내역」 폴더 암호: 본 공연의 중단 요청 송신 단말-확인한 수신 단말-확인부터 안전 통로 통과까지의 초. 리허설과 다른 대사를 제외합니다.",
+          "해온 H-1이 요청하고 유진 U-2가 21:56:50에 확인합니다. 인계서의 통과는 21:56:54입니다.",
+          "정답: H-1-U-2-4"
+        ]
+      },
+      {
+        "id": "encore-last-p7-v6",
+        "title": "음향 설정의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "B2-B1",
+        "ignoreCase": true,
+        "stageTitle": "음향 설정",
+        "evidenceIds": [
+          "encore-last-record-7b",
+          "encore-last-record-7a"
+        ],
+        "inputMode": "text",
+        "hints": [
+          "「음향 설정」 폴더 암호: 안내가 실제로 전달된 버스-관객에게 들리려면 사용해야 할 버스. 두 버스가 자동 연결된다고 가정하지 마세요.",
+          "NOTICE-02는 스태프 헤드셋인 B2로 갔습니다. 객석 스피커는 B1입니다.",
+          "정답: B2-B1"
+        ]
+      },
+      {
+        "id": "encore-last-p8-v6",
+        "title": "방송 기록의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "1-2",
+        "ignoreCase": true,
+        "stageTitle": "방송 기록",
+        "evidenceIds": [
+          "encore-last-record-8b",
+          "encore-last-record-8a",
+          "encore-last-record-6a",
+          "encore-last-f5"
+        ],
+        "inputMode": "text",
+        "hints": [
+          "「방송 기록」 폴더 암호: 요청 확인부터 헤드셋 안내까지의 초-비상 트랙 시작부터 안전 통로 통과까지의 초. 조명 영상은 시간 간격을 줄였으므로 제어기 원본을 사용합니다.",
+          "확인 50초→안내 51초는 1초, 트랙 52초→통과 54초는 2초입니다.",
+          "정답: 1-2"
+        ]
+      },
+      {
+        "id": "encore-last-p9-v6",
+        "title": "접수 자료의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "142-3",
+        "ignoreCase": true,
+        "stageTitle": "접수 자료",
+        "evidenceIds": [
+          "encore-last-record-9a",
+          "encore-last-record-9b",
+          "encore-last-record-6a",
+          "encore-last-record-7a"
+        ],
+        "inputMode": "text",
+        "hints": [
+          "「접수 자료」 폴더 암호: 중단 요청 확인부터 객석 안내 시작까지 지연된 초-객석에 실제 안내가 출력된 초. 재생 성공 표시 대신 해당 버스의 시작·종료를 확인합니다.",
+          "요청 확인 21:56:50에서 객석 안내 21:59:12까지 142초입니다. B1 안내는 12초부터 15초까지 3초입니다.",
+          "정답: 142-3"
+        ]
+      },
+      {
+        "id": "encore-last-p10-v6",
+        "title": "인수인계의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "B1-06-3708-142",
+        "ignoreCase": true,
+        "stageTitle": "인수인계",
+        "evidenceIds": [
+          "encore-last-record-10b",
+          "encore-last-record-10a",
+          "encore-last-record-2",
+          "encore-last-record-4",
+          "encore-last-record-5",
+          "encore-last-record-7a",
+          "encore-last-record-9b",
+          "encore-last-record-6a"
+        ],
+        "inputMode": "text",
+        "hints": [
+          "「인수인계」 폴더 암호: 정정 방송의 출력 버스-실제 앵콜 음원 번호 두 자리-해온 도착지 번호-최초 객석 안내 지연 초. 초반 파형과 이동 자료까지 다시 확인해 방송을 승인합니다.",
+          "관객은 B1, 파형은 음원 06, 센서 도착지는 휴게실 3708입니다. 요청 확인부터 첫 객석 안내까지는 142초입니다.",
+          "정답: B1-06-3708-142"
+        ]
+      }
+    ],
+    "messages": [
+      {
+        "id": "encore-last-m0",
+        "author": "유진",
+        "time": "22:06",
+        "text": "사람들은 해온이 갑자기 사라졌대. 내가 설명해도 믿질 않아.",
+        "initial": true
+      },
+      {
+        "id": "encore-last-m1",
+        "author": "음향 기사",
+        "time": "22:07",
+        "text": "앵콜 때 입력이 전환됐습니다. 비공개 기록에 로그가 있어요.",
+        "initial": true
+      },
+      {
+        "id": "encore-last-m2",
+        "author": "유진",
+        "time": "22:08",
+        "text": "예정 큐가 아니라 실제 실행 순서를 봐 줘. 공연 중에 순서가 바뀌었어.",
+        "initial": false
+      },
+      {
+        "id": "encore-last-m3",
+        "author": "해온",
+        "time": "22:10",
+        "text": "저는 괜찮아요. 유진이 데려다줬어요. 그때 무대에서 들린 노래는 저도 나중에 들었고요.",
+        "initial": false
+      },
+      {
+        "id": "encore-last-chapter-6",
+        "author": "해온",
+        "time": "22:12",
+        "text": "제가 휴게실에 간 건 맞아요. 그런데 중단 요청도 했는데 왜 관객은 아무 설명을 못 들었다고 할까요? 제 요청과 객석 방송이 같은 경로였는지 확인해 주세요.",
+        "initial": false
+      },
+      {
+        "id": "encore-last-chapter-8",
+        "author": "해온",
+        "time": "22:13",
+        "text": "스태프끼리 제 말을 들은 것과 관객이 안내를 들은 건 다르군요. 휴게실에 있었다는 서명은 남겼지만, 방송은 음향 기록으로 확인해야겠어요.",
+        "initial": false
+      },
+      {
+        "id": "encore-last-chapter-complete",
+        "author": "해온",
+        "time": "22:14",
+        "text": "NOTICE-03 정정 방송이 객석 B1으로 전달됐습니다. 해온의 동의를 받은 안내에는 안전 통로 이동, 휴게실 도착, 리허설 음원 전환이 구분되어 담겼습니다.",
+        "initial": false
+      }
+    ],
+    "rules": [
+      {
+        "id": "encore-last-advance-1",
+        "priority": 1,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "encore-last-p1-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-stage-2"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-record-2"
+          },
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "encore-last-m2"
+          }
+        ]
+      },
+      {
+        "id": "encore-last-advance-2",
+        "priority": 2,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "encore-last-p2-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-stage-3"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-record-3"
+          }
+        ]
+      },
+      {
+        "id": "encore-last-advance-3",
+        "priority": 3,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "encore-last-p3-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-stage-4"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-record-4"
+          }
+        ]
+      },
+      {
+        "id": "encore-last-advance-4",
+        "priority": 4,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "encore-last-p4-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-stage-5"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-record-5"
+          }
+        ]
+      },
+      {
+        "id": "encore-last-advance-5",
+        "priority": 5,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "encore-last-p5-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-f4"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-f5"
+          },
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "encore-last-m3"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-stage-6"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-record-6a"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-record-6b"
+          },
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "encore-last-chapter-6"
+          }
+        ]
+      },
+      {
+        "id": "encore-last-advance-6",
+        "priority": 6,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "encore-last-p6-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-stage-7"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-record-7a"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-record-7b"
+          }
+        ]
+      },
+      {
+        "id": "encore-last-advance-7",
+        "priority": 7,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "encore-last-p7-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-stage-8"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-record-8a"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-record-8b"
+          },
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "encore-last-chapter-8"
+          }
+        ]
+      },
+      {
+        "id": "encore-last-advance-8",
+        "priority": 8,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "encore-last-p8-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-stage-9"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-record-9a"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-record-9b"
+          }
+        ]
+      },
+      {
+        "id": "encore-last-advance-9",
+        "priority": 9,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "encore-last-p9-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-stage-10"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-record-10a"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "encore-last-record-10b"
+          }
+        ]
+      },
+      {
+        "id": "encore-last-advance-10",
+        "priority": 10,
+        "once": true,
+        "when": {
+          "type": "ALL",
+          "conditions": [
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "encore-last-p1-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "encore-last-p2-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "encore-last-p3-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "encore-last-p4-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "encore-last-p5-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "encore-last-p6-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "encore-last-p7-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "encore-last-p8-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "encore-last-p9-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "encore-last-p10-v6"
+            }
+          ]
+        },
+        "then": [
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "encore-last-chapter-complete"
+          },
+          {
+            "type": "END_CASE",
+            "id": "encore-last-good"
+          }
+        ]
+      }
+    ],
+    "endings": [
+      {
+        "id": "encore-last-good",
+        "title": "이번에는 객석까지",
+        "text": "NOTICE-03 정정 방송이 객석 B1으로 전달됐습니다. 해온의 동의를 받은 안내에는 안전 통로 이동, 휴게실 도착, 리허설 음원 전환이 구분되어 담겼습니다.\n\n노래가 계속됐다는 사실은 사람이 무대에 남았다는 뜻이 아니었습니다. 마이크와 인터컴, 객석과 헤드셋을 나누어 대조하니 요청은 전달됐지만 관객 안내가 142초 늦었던 이유가 드러났습니다.\n\n유진은 마지막 큐를 지우고 새로운 확인란을 씁니다. “재생 성공이 아니라, 객석 출력 확인.” 빈 무대에 남았던 오해도 이제 내려갑니다.",
+        "revisitable": false
+      },
+      {
+        "id": "encore-last-retry",
+        "title": "목소리를 사람으로 착각하다",
+        "text": "노래가 들렸다는 사실만으로 해온이 무대에 남아 있다고 판단했습니다. 소리가 난 위치와 실제 사람의 위치는 같지 않을 수 있습니다.\n\n음향 라우팅 기록과 안전 통로 인계서를 함께 확인하세요.",
+        "revisitable": true
+      }
+    ],
+    "hypotheses": [
+      {
+        "id": "encore-last-truth",
+        "label": "검증한 사실로 정정 방송 승인",
+        "endingId": "encore-last-good",
+        "requiredClues": [
+          "encore-last-c4",
+          "encore-last-c5",
+          "encore-last-clue-10a",
+          "encore-last-clue-10b"
+        ]
+      },
+      {
+        "id": "encore-last-guess",
+        "label": "노래가 계속 들렸으므로 해온은 끝까지 무대에 남아 있었다.",
+        "endingId": "encore-last-retry",
+        "requiredClues": []
+      }
+    ]
+  },
+  {
+    "schemaVersion": 1,
+    "engineVersion": "ghostdesk-core-1",
+    "caseId": "monday-loop",
+    "versionId": "monday-loop-v6",
+    "title": "월요일이 두 번 온 날",
+    "description": "세 번 반복된 월요일 화면과 바다의 구조 신호. 원격 기록 담당으로서 실제 날짜와 요청의 도착을 검증하고, 원본을 보존한 새 관측 목록을 연결하세요.",
+    "estimatedMinutes": 65,
+    "contentWarning": "허구의 사건입니다. 긴장감 있는 상황·실종 암시가 있지만 잔혹한 묘사나 점프 스케어는 없습니다.",
+    "files": [
+      {
+        "id": "monday-loop-f0",
+        "type": "TEXT",
+        "title": "세_번째_월요일.txt",
+        "parentId": null,
+        "visible": true,
+        "text": "세 번 반복된 월요일 화면과 바다의 구조 신호. 원격 기록 담당으로서 실제 날짜와 요청의 도착을 검증하고, 원본을 보존한 새 관측 목록을 연결하세요.\n\n담당자가 남긴 메모\n저는 원격 관측 기록 담당입니다. 나루는 세 번 연속 월요일 화면을 봤다고 합니다. 우유는 줄고 밧줄에는 해초가 붙었습니다. 실제 날짜와 구조 신호의 처리 여부를 확인하고, 원본을 지우지 않는 새 관측 목록을 만들어 주세요.\n\n업무 폴더에는 담당자가 기록을 대조해 정한 암호가 걸려 있습니다. 암호 규칙은 인계 메모와 각 업무 기록의 끝에 적어 두었습니다. 한 번 연 기록도 지우지 마세요.\n\n「수신 자료」 폴더 암호: 긴 쉼으로 나눈 수신 호출 세 글자-마지막 종이 관측 번호. 서로 다른 두 기록을 연결해 수신 묶음을 엽니다.",
+        "clueId": "monday-loop-c0"
+      },
+      {
+        "id": "monday-loop-f1",
+        "type": "TEXT",
+        "title": "야간_수신기.mp4",
+        "parentId": null,
+        "visible": true,
+        "text": "야간 수신기 / 수신 불빛 기록\n\n짧은 불빛은 점, 긴 불빛은 선입니다.\n불빛 한 번이 곧 글자 하나는 아닙니다. 긴 쉼을 기준으로 묶어서 통신 카드와 대조하세요.\n\n수신기의 불빛 길이와 간격을 재현했습니다. 수신기 전원은 별도 배터리라 관측용 PC의 정전 영향을 받지 않습니다.",
+        "clueId": "monday-loop-c1"
+      },
+      {
+        "id": "monday-loop-f2",
+        "type": "TEXT",
+        "title": "통신_카드.txt",
+        "parentId": null,
+        "visible": true,
+        "text": "자주 쓰는 모스 부호\n\nA  .-\nN  -.\nO  ---\nS  ...\nT  -\n\n예: ... / .- 는 SA입니다.\n영문으로 해독한 뒤 글자 사이의 공백은 빼세요.\n\n이번 수신은 세 글자 호출 뒤에 관측 순번을 붙여 분류합니다. 순번은 화면 날짜가 아니라 종이 노트에 가장 나중에 남은 번호를 사용합니다.",
+        "clueId": "monday-loop-c2"
+      },
+      {
+        "id": "monday-loop-f3",
+        "type": "TEXT",
+        "title": "관측_메모.txt",
+        "parentId": null,
+        "visible": true,
+        "text": "종이 노트 / 나루의 필기\n\n첫 번째 월요일: 부표 수신 번호 1084, 파란 밧줄 마름\n두 번째 월요일: 부표 수신 번호 1085, 밧줄 젖음\n세 번째 월요일: 부표 수신 번호 1086, 밧줄에 해초\n\n매번 화면 날짜만 같습니다. 독립된 부표의 번호는 한 번 관측할 때마다 1씩 증가합니다. 왜 종이에는 다음 날이 남는 걸까요?\n\n「관측 자료」 폴더는 수신 자료 확인 뒤 열립니다. 첫 번호와 마지막 번호의 차이에 처음 기록 한 건을 더하면 관측 횟수를 검산할 수 있습니다.\n\n「관측 자료」 폴더 암호: 이 구간의 실제 관측 횟수-번호 사이에서 누락된 관측 수. 하루 한 번, 번호는 1씩 증가하며 종이 기록은 재전송이 아닙니다.",
+        "clueId": "monday-loop-c3"
+      },
+      {
+        "id": "monday-loop-f4",
+        "type": "TEXT",
+        "title": "복원_작업일지.log",
+        "parentId": "monday-loop-stage-5",
+        "visible": false,
+        "text": "관측 PC 자동 복원 설정\n\n정전 후 동작: 백업 SNAP-MONDAY 복원\n복원 대상: 달력 화면, 시작 안내문, 로컬 작업 목록\n복원하지 않는 대상: 종이 노트, 독립 배터리 부표, 실제 시계\n\n정전 감지: 3회\n각 부팅마다 같은 월요일 화면을 다시 불러왔습니다.",
+        "clueId": "monday-loop-c4"
+      },
+      {
+        "id": "monday-loop-f5",
+        "type": "TEXT",
+        "title": "보내지_못한_쪽지.txt",
+        "parentId": "monday-loop-stage-5",
+        "visible": false,
+        "text": "정비 담당자가 남긴 쪽지\n\n장치가 계속 재시작하면 화면의 달력을 믿지 마세요. 외부 부표 기록에는 실제 관측 날짜가 남습니다.\n\n종이 노트의 마지막 번호로 외부 관측함을 열면 이 세 번이 같은 날인지 다른 날인지 확인할 수 있습니다.\n\n신호는 제가 정비선에서 보낸 SOS였습니다. 통신이 복구된 뒤에는 구조 요청을 이미 전달했습니다. 누구도 섬에 혼자 남겨두지 않았습니다.",
+        "clueId": "monday-loop-c5"
+      },
+      {
+        "id": "monday-loop-chat",
+        "type": "CHAT_LINK",
+        "title": "메신저",
+        "parentId": null,
+        "visible": true,
+        "text": ""
+      },
+      {
+        "id": "monday-loop-final",
+        "type": "TEXT",
+        "title": "부표_원본_기록.txt",
+        "parentId": "monday-loop-stage-5",
+        "visible": false,
+        "text": "독립 배터리 관측 부표 / 원본 수신 기록\n\n09-14 월요일 / 1084 / 정상 수신\n09-15 화요일 / 1085 / 정상 수신\n09-16 수요일 / 1086 / 정상 수신\n\n관측 PC와 전원·저장장치를 공유하지 않습니다. 세 기록은 서로 다른 날에 생성됐고 재전송이 아닙니다.\n\n종이 노트의 번호와 순서가 일치합니다. 바다는 세 번의 아침을 기록했습니다.",
+        "clueId": "monday-loop-final-clue"
+      },
+      {
+        "id": "monday-loop-scene",
+        "type": "IMAGE",
+        "title": "관측소_현장사진",
+        "parentId": null,
+        "visible": true,
+        "text": "세 번째 아침의 관측소. 수신 신호 영상은 이 수신기의 불빛 길이와 간격을 재현한 기록입니다.",
+        "assetId": "island",
+        "alt": "비 오는 바다를 향한 관측소 책상 위 노트와 무전기, 창밖의 부표.",
+        "observations": [
+          {
+            "label": "관측 책상",
+            "text": "종이 노트와 별도 배터리에 연결한 수신기, 해초가 붙은 젖은 파란 밧줄이 놓여 있습니다."
+          },
+          {
+            "label": "창밖",
+            "text": "주황색 부체 위에 안테나와 기록함이 달린 관측 부표입니다. 전원과 저장 위치는 연결 대장을 확인하세요."
+          }
+        ]
+      },
+      {
+        "id": "monday-loop-stage-1",
+        "type": "FOLDER",
+        "title": "수신 자료",
+        "parentId": null,
+        "visible": true,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "puzzleId": "monday-loop-p1-v6"
+      },
+      {
+        "id": "monday-loop-stage-2",
+        "type": "FOLDER",
+        "title": "관측 자료",
+        "parentId": null,
+        "visible": false,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "puzzleId": "monday-loop-p2-v6"
+      },
+      {
+        "id": "monday-loop-record-3",
+        "type": "TEXT",
+        "title": "날짜_조각_맞추기.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "정비선 수신 대장 / 하루 한 번 새벽 관측, 누락 없음\n\n09-14 · 월요일 · 첫 번호 1084\n09-15 · 화요일 · 다음 번호 1085\n09-?? · 수요일 · 마지막 번호 1086\n\n마지막 날짜의 끝 두 숫자는 물에 번졌습니다. 이 세 기록은 재전송이 아니며 연속한 사흘 동안 수신했습니다.\n\n「일정」 폴더 암호: 마지막 관측의 실제 월일 네 자리-첫 관측일부터 지난 일수. 관측 건수와 경과 일수는 다릅니다.",
+        "clueId": "monday-loop-record-clue-3"
+      },
+      {
+        "id": "monday-loop-stage-3",
+        "type": "FOLDER",
+        "title": "일정",
+        "parentId": null,
+        "visible": false,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "puzzleId": "monday-loop-p3-v6"
+      },
+      {
+        "id": "monday-loop-record-4",
+        "type": "TEXT",
+        "title": "독립_기록_고르기.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "관측소 연결 대장\n\nPC 달력 / 본체 전원 / 본체 저장장치\n외부 모니터 / 별도 전원 / PC 화면을 그대로 표시\n관측 부표 / 독립 배터리 / 부표 내부 저장장치\n종이 노트 / 전원 없음 / 직접 필기\n\n전원만 별개인 것으로는 부족합니다. 기록을 보관하는 곳도 비교하세요.\n\n장치 등록 번호: 관측 PC=4102, 외부 모니터=7351, 관측 부표=8624. 기계가 자동 수신한 원본을 찾을 때는 직접 필기한 종이 노트와 구분합니다.\n\n「장비 관리」 폴더 암호: PC와 전원·저장장치를 모두 공유하지 않는 자동 관측 장치 번호-그 장치의 마지막 관측 번호. 별도 전원만으로는 독립된 원본이 아닙니다.",
+        "clueId": "monday-loop-record-clue-4"
+      },
+      {
+        "id": "monday-loop-stage-4",
+        "type": "FOLDER",
+        "title": "장비 관리",
+        "parentId": null,
+        "visible": false,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "puzzleId": "monday-loop-p4-v6"
+      },
+      {
+        "id": "monday-loop-record-5",
+        "type": "TEXT",
+        "title": "아침의_순서_복원.txt",
+        "parentId": null,
+        "visible": false,
+        "text": "외부 점검 장치 / 09-16 아침 기록\n\n조각 1 · 07:59:55 · PC 다시 켜짐\n조각 2 · 08:00:02 · 월요일 안내문 표시\n조각 3 · 07:59:40 · PC 전원 끊김\n조각 4 · 07:59:58 · SNAP-MONDAY 불러오기 완료\n\n점검 장치는 별도 배터리로 작동합니다. 순서를 복원하면 정비 담당자의 작업일지와 대조할 수 있습니다.\n\n「근무 기록」 폴더 암호: 전원이 끊긴 뒤 다시 켜질 때까지의 초-다시 켜진 뒤 월요일 문장이 표시될 때까지의 초. 복원 완료 시각과 안내 표시 시각을 구별합니다.",
+        "clueId": "monday-loop-record-clue-5"
+      },
+      {
+        "id": "monday-loop-stage-5",
+        "type": "FOLDER",
+        "title": "근무 기록",
+        "parentId": null,
+        "visible": false,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "puzzleId": "monday-loop-p5-v6"
+      },
+      {
+        "id": "monday-loop-record-6a",
+        "type": "TEXT",
+        "title": "원본_묶음목록.txt",
+        "parentId": null,
+        "text": "A / 1086 / 09-14 / 관측 PC 복원 목록\nB / 1086 / 09-16 / 부표 기록함\nC / 1085 / 09-16 / 부표 기록함\n\n각 행은 전송받은 묶음의 표지 값이다. 번호만 같아도 복원된 목록의 날짜는 그대로 믿을 수 없다.\n\n원본 묶음 보관 키: A=3847, B=6295, C=7106. 번호와 날짜가 같아도 복원된 PC 표지는 원본으로 취급하지 않습니다.",
+        "visible": false,
+        "clueId": "monday-loop-clue-6a"
+      },
+      {
+        "id": "monday-loop-record-6b",
+        "type": "TEXT",
+        "title": "독립기록_연결도.txt",
+        "parentId": null,
+        "text": "장치 보관 위치 / 이미지 원문\n\n관측 PC: 건물 전원, 정전 후 예전 작업 목록 복원\n부표: 독립 배터리, 부표 기록함에 원본 보존\n통신 중계기: 독립 배터리, 중계기 접수 원장 보존\n\n마지막 종이 관측 번호 1086과 앞서 대조한 실제 날짜 09-16을 모두 만족하고, PC 복원의 영향을 받지 않는 출처를 선택한다.\n\n「별도 보관」 폴더 암호: 마지막 관측의 날짜·번호·독립 출처를 모두 만족한 묶음 키-그 원본과 PC 백업 화면 사이의 날짜 차이(일).",
+        "visible": false,
+        "clueId": "monday-loop-clue-6b"
+      },
+      {
+        "id": "monday-loop-stage-6",
+        "type": "FOLDER",
+        "title": "별도 보관",
+        "parentId": null,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "visible": false,
+        "puzzleId": "monday-loop-p6-v6"
+      },
+      {
+        "id": "monday-loop-record-7a",
+        "type": "TEXT",
+        "title": "중계기_접수원장.log",
+        "parentId": null,
+        "text": "접수 R-086 / UTC 09-15 21:42:00\n출발: 정비선 / 경유: 관측소 / 도착: 육상 관제\n상태: 육상 접수 완료\n\n이 시각은 PC 시각이 아니라 독립 중계기가 보관한 원장 시각이다.",
+        "visible": false,
+        "clueId": "monday-loop-clue-7a"
+      },
+      {
+        "id": "monday-loop-record-7b",
+        "type": "TEXT",
+        "title": "통신_시간기준.txt",
+        "parentId": null,
+        "text": "이번 사건의 섬 현지 시각은 UTC보다 9시간 빠르다. 원장에 UTC가 적힌 항목에만 9시간을 더한다. 현지로 적힌 항목에는 다시 더하지 않는다.\n\n자정을 넘으면 날짜도 다음 날이다. 화면의 월요일 달력은 이 계산의 기준으로 사용하지 않는다.\n\n「점검 내역」 폴더 암호: 육상 접수의 섬 현지 날짜 네 자리-시각 네 자리. UTC 원장만 현지로 바꾸고 날짜 넘김을 반영합니다.",
+        "visible": false,
+        "clueId": "monday-loop-clue-7b"
+      },
+      {
+        "id": "monday-loop-stage-7",
+        "type": "FOLDER",
+        "title": "점검 내역",
+        "parentId": null,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "visible": false,
+        "puzzleId": "monday-loop-p7-v6"
+      },
+      {
+        "id": "monday-loop-record-8a",
+        "type": "TEXT",
+        "title": "보존_작업카드.txt",
+        "parentId": null,
+        "text": "보존 작업 카드\n\n카드 1 / 복사본의 번호·날짜를 원본과 대조 / 승인 문자 Q\n카드 2 / 부표 원본을 읽기 전용으로 보관 / 승인 문자 R\n카드 3 / 검증한 복사본을 새 작업 목록에 연결 / 승인 문자 L\n카드 4 / 별도 저장 위치에 복사본 만들기 / 승인 문자 C\n\n실행 토큰은 올바른 작업 순서의 승인 문자 네 개입니다. 이는 사건 속 보존 절차이며 실제 컴퓨터 명령이 아닙니다.",
+        "visible": false,
+        "clueId": "monday-loop-clue-8a"
+      },
+      {
+        "id": "monday-loop-record-8b",
+        "type": "TEXT",
+        "title": "보존_선후조건.txt",
+        "parentId": null,
+        "text": "먼저 원본이 바뀌지 않도록 보관한다. 그 원본에서 별도 복사본을 만든다. 대조는 복사본이 생긴 뒤에 할 수 있다. 새 목록에는 대조가 끝난 복사본만 연결한다.\n\n오래된 SNAP-MONDAY를 원본 위에 다시 덮는 절차는 없다. PC 화면을 고치는 일과 원본 보존을 구분한다.\n\n「자료 정리」 폴더 암호: 선후조건을 만족하는 작업 순서의 승인 문자 네 개. 원본 보존, 복사, 검증, 목록 연결의 의존 관계를 확인합니다.",
+        "visible": false,
+        "clueId": "monday-loop-clue-8b"
+      },
+      {
+        "id": "monday-loop-stage-8",
+        "type": "FOLDER",
+        "title": "자료 정리",
+        "parentId": null,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "visible": false,
+        "puzzleId": "monday-loop-p8-v6"
+      },
+      {
+        "id": "monday-loop-record-9a",
+        "type": "TEXT",
+        "title": "통신_확인묶음.txt",
+        "parentId": null,
+        "text": "A / R-086 송신 시도 / 수신 확인 없음\nB / R-085 육상 접수 / R-085 인계 완료\nC / R-086 육상 접수 / R-086 후속 인계 완료\n\nSOS의 최초 송신자는 정비선이다. 관측소가 수신·중계했고 육상 관제가 접수했다. 뒤의 인계 기록은 같은 요청 번호로 이어져야 한다.",
+        "visible": false,
+        "clueId": "monday-loop-clue-9a"
+      },
+      {
+        "id": "monday-loop-record-9b",
+        "type": "TEXT",
+        "title": "응답_판독규칙.txt",
+        "parentId": null,
+        "text": "송신 시도는 도착을 보장하지 않는다. 육상 접수는 요청을 받았다는 뜻이며 현장 인계 완료와도 구별한다.\n\nR-086 후속 원장: 09-16 현지 07:30, 정비선 인원 육상 지원팀에 인계 완료. 초기 SOS 불빛 영상은 이 접수나 인계 장면을 담은 영상이 아니다. 통신 원장과 후속 문서를 함께 사용한다.\n\n「인수인계」 폴더 암호: 육상 접수와 후속 인계까지 이어지는 요청 번호-현지 접수에서 인계 완료까지 지난 분. 다른 요청의 완료증은 합치지 않습니다.",
+        "visible": false,
+        "clueId": "monday-loop-clue-9b"
+      },
+      {
+        "id": "monday-loop-stage-9",
+        "type": "FOLDER",
+        "title": "인수인계",
+        "parentId": null,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "visible": false,
+        "puzzleId": "monday-loop-p9-v6"
+      },
+      {
+        "id": "monday-loop-record-10a",
+        "type": "TEXT",
+        "title": "목록_전후비교.txt",
+        "parentId": null,
+        "text": "목록 교체 계획 / 아직 실행하지 않음\n\n기존 PC 목록: SNAP-MONDAY / 09-14 / 마지막 표시 1084\n후보 사본: 검증한 부표 묶음을 별도 저장소에 복사한 것\n보존 조건: 부표 원본 1084, 1085, 1086을 덮어쓰지 않을 것\n\n새 목록은 관측을 다시 수행하는 기능이 아닙니다. 검증한 복사본에 연결하며 번호·실제 날짜·구조 요청의 후속 확인을 함께 기록합니다.",
+        "visible": false,
+        "clueId": "monday-loop-clue-10a"
+      },
+      {
+        "id": "monday-loop-record-10b",
+        "type": "TEXT",
+        "title": "나루의_확인서.txt",
+        "parentId": null,
+        "text": "나루 / 새 목록 연결 승인 대기\n\n달력 숫자만 바꿔서는 원본이 돌아오지 않습니다. 보존 작업 카드의 실행 토큰, 마지막 실제 관측 날짜와 번호, 같은 구조 요청의 접수→인계 경과 시간을 다시 맞춰 주세요.\n\n승인이 끝나면 원본을 읽기 전용으로 보존하고 검증된 사본을 새 목록에 연결합니다. 오래된 백업 화면을 부표 원본 위에 덮어쓰는 작업은 하지 않습니다.\n\n「백업」 폴더 암호: 보존 실행 토큰-마지막 실제 관측 월일-관측 번호-구조 요청 접수부터 인계까지의 분. 앞서 쓴 종이·날짜·통신 기록을 다시 맞춰 새 목록을 승인합니다.",
+        "visible": false,
+        "clueId": "monday-loop-clue-10b"
+      },
+      {
+        "id": "monday-loop-stage-10",
+        "type": "FOLDER",
+        "title": "백업",
+        "parentId": null,
+        "text": "잠금이 해제된 기록입니다. 앞서 읽은 자료도 나중에 다시 필요할 수 있습니다.",
+        "visible": false,
+        "puzzleId": "monday-loop-p10-v6"
+      }
+    ],
+    "clues": [
+      {
+        "id": "monday-loop-c0",
+        "title": "세_번째_월요일.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "monday-loop-c1",
+        "title": "야간_수신기.mp4",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "monday-loop-c2",
+        "title": "통신_카드.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "monday-loop-c3",
+        "title": "관측_메모.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "monday-loop-c4",
+        "title": "복원_작업일지.log",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "monday-loop-c5",
+        "title": "보내지_못한_쪽지.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "monday-loop-final-clue",
+        "title": "부표_원본_기록.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "monday-loop-record-clue-3",
+        "title": "날짜_조각_맞추기.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "monday-loop-record-clue-4",
+        "title": "독립_기록_고르기.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "monday-loop-record-clue-5",
+        "title": "아침의_순서_복원.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "monday-loop-clue-6a",
+        "title": "원본_묶음목록.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "monday-loop-clue-6b",
+        "title": "독립기록_연결도.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "monday-loop-clue-7a",
+        "title": "중계기_접수원장.log",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "monday-loop-clue-7b",
+        "title": "통신_시간기준.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "monday-loop-clue-8a",
+        "title": "보존_작업카드.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "monday-loop-clue-8b",
+        "title": "보존_선후조건.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "monday-loop-clue-9a",
+        "title": "통신_확인묶음.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "monday-loop-clue-9b",
+        "title": "응답_판독규칙.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "monday-loop-clue-10a",
+        "title": "목록_전후비교.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      },
+      {
+        "id": "monday-loop-clue-10b",
+        "title": "나루의_확인서.txt",
+        "description": "원본 기록과 인계 메모를 대조해 확인할 자료입니다."
+      }
+    ],
+    "puzzles": [
+      {
+        "id": "monday-loop-p1-v6",
+        "title": "수신 자료의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "SOS-1086",
+        "ignoreCase": true,
+        "hints": [
+          "「수신 자료」 폴더 암호: 긴 쉼으로 나눈 수신 호출 세 글자-마지막 종이 관측 번호. 서로 다른 두 기록을 연결해 수신 묶음을 엽니다.",
+          "불빛 세 묶음은 점 세 개, 선 세 개, 점 세 개입니다. 카드로 해독한 호출에 해초가 붙은 마지막 관측 번호를 연결하세요.",
+          "정답: SOS-1086"
+        ],
+        "stageTitle": "수신 자료",
+        "evidenceIds": [
+          "monday-loop-f0",
+          "monday-loop-f1",
+          "monday-loop-f2",
+          "monday-loop-f3"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "monday-loop-p2-v6",
+        "title": "관측 자료의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "3-0",
+        "ignoreCase": true,
+        "hints": [
+          "「관측 자료」 폴더 암호: 이 구간의 실제 관측 횟수-번호 사이에서 누락된 관측 수. 하루 한 번, 번호는 1씩 증가하며 종이 기록은 재전송이 아닙니다.",
+          "1084, 1085, 1086은 연속 세 건입니다. 차이 2를 관측 횟수로 쓰면 첫날을 놓칩니다. 빠진 번호는 없습니다.",
+          "정답: 3-0"
+        ],
+        "stageTitle": "관측 자료",
+        "evidenceIds": [
+          "monday-loop-f3",
+          "monday-loop-f2"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "monday-loop-p3-v6",
+        "title": "일정의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "0916-2",
+        "ignoreCase": true,
+        "hints": [
+          "「일정」 폴더 암호: 마지막 관측의 실제 월일 네 자리-첫 관측일부터 지난 일수. 관측 건수와 경과 일수는 다릅니다.",
+          "09-14의 1084에서 이틀 지나 1086입니다. 날짜는 09-16이며 세 건이지만 경과는 2일입니다.",
+          "정답: 0916-2"
+        ],
+        "stageTitle": "일정",
+        "evidenceIds": [
+          "monday-loop-record-3",
+          "monday-loop-f3"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "monday-loop-p4-v6",
+        "title": "장비 관리의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "8624-1086",
+        "ignoreCase": true,
+        "hints": [
+          "「장비 관리」 폴더 암호: PC와 전원·저장장치를 모두 공유하지 않는 자동 관측 장치 번호-그 장치의 마지막 관측 번호. 별도 전원만으로는 독립된 원본이 아닙니다.",
+          "외부 모니터는 별도 전원이어도 PC 화면을 보여 줍니다. 부표 8624는 독립 배터리와 자체 저장장치를 쓰며 마지막 번호는 1086입니다.",
+          "정답: 8624-1086"
+        ],
+        "stageTitle": "장비 관리",
+        "evidenceIds": [
+          "monday-loop-record-4",
+          "monday-loop-f3",
+          "monday-loop-scene"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "monday-loop-p5-v6",
+        "title": "근무 기록의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "15-7",
+        "ignoreCase": true,
+        "hints": [
+          "「근무 기록」 폴더 암호: 전원이 끊긴 뒤 다시 켜질 때까지의 초-다시 켜진 뒤 월요일 문장이 표시될 때까지의 초. 복원 완료 시각과 안내 표시 시각을 구별합니다.",
+          "07:59:40→07:59:55는 15초, 07:59:55→08:00:02는 7초입니다. 복원 완료는 그 사이 07:59:58입니다.",
+          "정답: 15-7"
+        ],
+        "stageTitle": "근무 기록",
+        "evidenceIds": [
+          "monday-loop-record-5",
+          "monday-loop-record-4"
+        ],
+        "inputMode": "text"
+      },
+      {
+        "id": "monday-loop-p6-v6",
+        "title": "별도 보관의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "6295-2",
+        "ignoreCase": true,
+        "stageTitle": "별도 보관",
+        "evidenceIds": [
+          "monday-loop-record-6b",
+          "monday-loop-record-6a",
+          "monday-loop-f3",
+          "monday-loop-final",
+          "monday-loop-f4"
+        ],
+        "inputMode": "text",
+        "hints": [
+          "「별도 보관」 폴더 암호: 마지막 관측의 날짜·번호·독립 출처를 모두 만족한 묶음 키-그 원본과 PC 백업 화면 사이의 날짜 차이(일).",
+          "부표의 1086·09-16인 B만 일치합니다. PC는 09-14 백업 화면이므로 차이는 2일입니다.",
+          "정답: 6295-2"
+        ]
+      },
+      {
+        "id": "monday-loop-p7-v6",
+        "title": "점검 내역의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "0916-0642",
+        "ignoreCase": true,
+        "stageTitle": "점검 내역",
+        "evidenceIds": [
+          "monday-loop-record-7b",
+          "monday-loop-record-7a"
+        ],
+        "inputMode": "text",
+        "hints": [
+          "「점검 내역」 폴더 암호: 육상 접수의 섬 현지 날짜 네 자리-시각 네 자리. UTC 원장만 현지로 바꾸고 날짜 넘김을 반영합니다.",
+          "UTC 09-15 21:42에 9시간을 더하면 현지 09-16 06:42입니다.",
+          "정답: 0916-0642"
+        ]
+      },
+      {
+        "id": "monday-loop-p8-v6",
+        "title": "자료 정리의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "RCQL",
+        "ignoreCase": true,
+        "stageTitle": "자료 정리",
+        "evidenceIds": [
+          "monday-loop-record-8b",
+          "monday-loop-record-8a",
+          "monday-loop-f4"
+        ],
+        "inputMode": "text",
+        "hints": [
+          "「자료 정리」 폴더 암호: 선후조건을 만족하는 작업 순서의 승인 문자 네 개. 원본 보존, 복사, 검증, 목록 연결의 의존 관계를 확인합니다.",
+          "원본 읽기 전용 R을 먼저, 복사 C 뒤에 대조 Q, 마지막에 연결 L입니다. 카드 번호를 그대로 입력하지 않습니다.",
+          "정답: RCQL"
+        ]
+      },
+      {
+        "id": "monday-loop-p9-v6",
+        "title": "인수인계의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "R-086-48",
+        "ignoreCase": true,
+        "stageTitle": "인수인계",
+        "evidenceIds": [
+          "monday-loop-record-9b",
+          "monday-loop-record-9a",
+          "monday-loop-record-7a",
+          "monday-loop-record-7b"
+        ],
+        "inputMode": "text",
+        "hints": [
+          "「인수인계」 폴더 암호: 육상 접수와 후속 인계까지 이어지는 요청 번호-현지 접수에서 인계 완료까지 지난 분. 다른 요청의 완료증은 합치지 않습니다.",
+          "R-086 접수는 현지 06:42, 인계 완료는 07:30입니다. 같은 요청에 대해 48분 차이를 계산하세요.",
+          "정답: R-086-48"
+        ]
+      },
+      {
+        "id": "monday-loop-p10-v6",
+        "title": "백업의 인계 규칙에 맞춰 기록을 대조하세요.",
+        "answer": "RCQL-0916-1086-48",
+        "ignoreCase": true,
+        "stageTitle": "백업",
+        "evidenceIds": [
+          "monday-loop-record-10b",
+          "monday-loop-record-10a",
+          "monday-loop-f3",
+          "monday-loop-record-3",
+          "monday-loop-record-8a",
+          "monday-loop-record-8b",
+          "monday-loop-record-7a",
+          "monday-loop-record-9b"
+        ],
+        "inputMode": "text",
+        "hints": [
+          "「백업」 폴더 암호: 보존 실행 토큰-마지막 실제 관측 월일-관측 번호-구조 요청 접수부터 인계까지의 분. 앞서 쓴 종이·날짜·통신 기록을 다시 맞춰 새 목록을 승인합니다.",
+          "RCQL 순서로 보존합니다. 마지막 관측은 09-16의 1086이며 R-086의 현지 06:42 접수부터 07:30 인계까지 48분입니다.",
+          "정답: RCQL-0916-1086-48"
+        ]
+      }
+    ],
+    "messages": [
+      {
+        "id": "monday-loop-m0",
+        "author": "나루",
+        "time": "08:00",
+        "text": "또 월요일이야. 어제도 이 대화를 했던 것 같은데.",
+        "initial": true
+      },
+      {
+        "id": "monday-loop-m1",
+        "author": "정비선",
+        "time": "08:02",
+        "text": "우리 쪽 수신 번호는 계속 늘고 있어요. 별도 배터리 장치를 확인해 보세요.",
+        "initial": true
+      },
+      {
+        "id": "monday-loop-m2",
+        "author": "나루",
+        "time": "08:04",
+        "text": "점과 선을 한 덩어리로 읽는 게 아니었네. 불빛 사이의 긴 쉼이 글자를 나눠 주는구나.",
+        "initial": false
+      },
+      {
+        "id": "monday-loop-m3",
+        "author": "정비선",
+        "time": "08:06",
+        "text": "다섯 기록을 모두 확인했군요. 작업일지와 부표 원본을 보내 드립니다.",
+        "initial": false
+      },
+      {
+        "id": "monday-loop-chapter-6",
+        "author": "나루",
+        "time": "08:09",
+        "text": "수요일이라는 건 알겠어. 하지만 화면의 작업 목록은 여전히 월요일이야. 빠진 관측도 있었을까? 부표가 보낸 원본 묶음과 통신 확인서를 더 찾아볼게.",
+        "initial": false
+      },
+      {
+        "id": "monday-loop-chapter-8",
+        "author": "나루",
+        "time": "08:12",
+        "text": "관측 자료가 있는 것과 관측소 PC에 표시되는 건 달랐네. 처음 SOS를 보낸 쪽과 나중에 접수를 확인한 쪽도 나눠서 읽어야겠어.",
+        "initial": false
+      },
+      {
+        "id": "monday-loop-chapter-complete",
+        "author": "나루",
+        "time": "08:17",
+        "text": "새 관측 목록이 열렸습니다. 09-16의 1086 묶음은 검증된 사본으로 연결됐고, 세 날의 부표 원본은 읽기 전용으로 남았습니다. R-086의 접수와 후속 인계도 같은 요청으로 연결됐습니다.",
+        "initial": false
+      }
+    ],
+    "rules": [
+      {
+        "id": "monday-loop-advance-1",
+        "priority": 1,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "monday-loop-p1-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-stage-2"
+          },
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "monday-loop-m2"
+          }
+        ]
+      },
+      {
+        "id": "monday-loop-advance-2",
+        "priority": 2,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "monday-loop-p2-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-stage-3"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-record-3"
+          }
+        ]
+      },
+      {
+        "id": "monday-loop-advance-3",
+        "priority": 3,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "monday-loop-p3-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-stage-4"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-record-4"
+          }
+        ]
+      },
+      {
+        "id": "monday-loop-advance-4",
+        "priority": 4,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "monday-loop-p4-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-stage-5"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-record-5"
+          }
+        ]
+      },
+      {
+        "id": "monday-loop-advance-5",
+        "priority": 5,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "monday-loop-p5-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-f4"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-f5"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-final"
+          },
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "monday-loop-m3"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-stage-6"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-record-6a"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-record-6b"
+          },
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "monday-loop-chapter-6"
+          }
+        ]
+      },
+      {
+        "id": "monday-loop-advance-6",
+        "priority": 6,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "monday-loop-p6-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-stage-7"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-record-7a"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-record-7b"
+          }
+        ]
+      },
+      {
+        "id": "monday-loop-advance-7",
+        "priority": 7,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "monday-loop-p7-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-stage-8"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-record-8a"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-record-8b"
+          },
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "monday-loop-chapter-8"
+          }
+        ]
+      },
+      {
+        "id": "monday-loop-advance-8",
+        "priority": 8,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "monday-loop-p8-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-stage-9"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-record-9a"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-record-9b"
+          }
+        ]
+      },
+      {
+        "id": "monday-loop-advance-9",
+        "priority": 9,
+        "once": true,
+        "when": {
+          "type": "PUZZLE_SOLVED",
+          "id": "monday-loop-p9-v6"
+        },
+        "then": [
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-stage-10"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-record-10a"
+          },
+          {
+            "type": "REVEAL_FILE",
+            "id": "monday-loop-record-10b"
+          }
+        ]
+      },
+      {
+        "id": "monday-loop-advance-10",
+        "priority": 10,
+        "once": true,
+        "when": {
+          "type": "ALL",
+          "conditions": [
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "monday-loop-p1-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "monday-loop-p2-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "monday-loop-p3-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "monday-loop-p4-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "monday-loop-p5-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "monday-loop-p6-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "monday-loop-p7-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "monday-loop-p8-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "monday-loop-p9-v6"
+            },
+            {
+              "type": "PUZZLE_SOLVED",
+              "id": "monday-loop-p10-v6"
+            }
+          ]
+        },
+        "then": [
+          {
+            "type": "APPEND_MESSAGE",
+            "id": "monday-loop-chapter-complete"
+          },
+          {
+            "type": "END_CASE",
+            "id": "monday-loop-good"
+          }
+        ]
+      }
+    ],
+    "endings": [
+      {
+        "id": "monday-loop-good",
+        "title": "수요일의 목록",
+        "text": "새 관측 목록이 열렸습니다. 09-16의 1086 묶음은 검증된 사본으로 연결됐고, 세 날의 부표 원본은 읽기 전용으로 남았습니다. R-086의 접수와 후속 인계도 같은 요청으로 연결됐습니다.\n\n세 번의 월요일은 같은 화면을 불러온 세 번의 부팅이었습니다. 종이 노트와 해초가 붙은 밧줄, 독립된 부표는 실제 시간이 흘렀음을 기록했습니다.\n\n나루는 안내문의 첫 줄을 읽고 창밖을 봅니다. “수요일이네.” 화면을 고치기 위해 바다의 기록을 지울 필요는 없었습니다.",
+        "revisitable": false
+      },
+      {
+        "id": "monday-loop-retry",
+        "title": "같은 문장이 같은 하루는 아니다",
+        "text": "같은 인사와 날짜를 보고 시간이 반복된다고 판단했습니다. 하지만 그 결론은 줄어든 우유와 달라진 관측 번호를 설명하지 못합니다.\n\n비공개 기록의 복원 작업일지와 외부 관측함의 원본 날짜를 끝까지 대조해 주세요.",
+        "revisitable": true
+      }
+    ],
+    "hypotheses": [
+      {
+        "id": "monday-loop-truth",
+        "label": "원본 보존과 새 관측 목록 연결",
+        "endingId": "monday-loop-good",
+        "requiredClues": [
+          "monday-loop-c3",
+          "monday-loop-c4",
+          "monday-loop-final-clue",
+          "monday-loop-clue-10a",
+          "monday-loop-clue-10b"
+        ]
+      },
+      {
+        "id": "monday-loop-guess",
+        "label": "섬의 시간 자체가 월요일에 갇혀 같은 하루가 반복되고 있다.",
+        "endingId": "monday-loop-retry",
+        "requiredClues": []
+      }
+    ]
+  }
+]
