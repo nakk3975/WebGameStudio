@@ -53,6 +53,7 @@ import MediaGallery from "./MediaGallery";
 import { availableMedia } from "./case-media";
 import PuzzleAnswer from "./PuzzleAnswer";
 import VisualPuzzle from "./VisualPuzzle";
+import DesktopFiles from "./DesktopFiles";
 import { Brand, Modal } from "./App";
 const Icon = ({ file }: { file: CaseFile }) =>
   file.id === "trash" ? (
@@ -104,6 +105,7 @@ export default function Player({
     [hypothesis, setHypothesis] = useState(""),
     [evidence, setEvidence] = useState<string[]>([]),
     [hintId, setHintId] = useState<string | null>(null),
+    [helpVisible, setHelpVisible] = useState(false),
     [reveal, setReveal] = useState(false),
     [endVisible, setEndVisible] = useState(state.mode === "ENDED"),
     [exiting, setExiting] = useState(false);
@@ -303,6 +305,7 @@ export default function Player({
       if (canOpen(c, state, id)) send({ type: "OPEN_FILE", id });
       if (f.type === "CHAT_LINK") send({ type: "READ_MESSAGES" });
     }
+    pendingWindowFocus.current = id;
     showWindow(id);
   }
   function showWindow(id: string, replaceId?: string) {
@@ -333,7 +336,12 @@ export default function Player({
   }
   const close = (id: string) => {
     setWins((w) => w.filter((x) => x.id !== id));
-    setTimeout(() => document.getElementById("desktop-" + id)?.focus(), 0);
+    setTimeout(() => {
+      const target =
+        document.getElementById("desktop-" + id) ||
+        player.current?.querySelector<HTMLElement>(".desktop-grid");
+      target?.focus();
+    }, 0);
   };
   const patch = (id: string, p: Partial<Win>) =>
     setWins((w) => w.map((x) => (x.id === id ? { ...x, ...p } : x)));
@@ -433,10 +441,8 @@ export default function Player({
         className={`${desktop ? "desktop-icon" : "file-row"} ${selected === f.id ? "selected" : ""}`}
         onClick={() => {
           setSelected(f.id);
-          if (!desktop || window.matchMedia("(max-width: 760px)").matches)
-            open(f.id);
+          open(f.id);
         }}
-        onDoubleClick={() => desktop && open(f.id)}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             e.preventDefault();
@@ -444,6 +450,7 @@ export default function Player({
           }
         }}
         aria-label={f.title}
+        title={`${f.title} · 한 번 클릭하여 열기`}
       >
         <span
           className={
@@ -660,44 +667,6 @@ export default function Player({
     if (f.puzzleId && !state.solvedPuzzleIds.includes(f.puzzleId)) {
       const p = c.puzzles.find((p) => p.id === f.puzzleId)!;
       const Answer = p.inputMode === "visual" ? VisualPuzzle : PuzzleAnswer;
-      const directPassword = !p.inputMode || p.inputMode === "text";
-      const sources = !!p.evidenceIds?.length && (
-        <div className="puzzle-sources">
-          <h3>암호를 찾을 자료</h3>
-          {p.evidenceIds.map((eid) => {
-            const source = files.find((x) => x.id === eid);
-            if (!source || !canOpen(c, state, eid)) return null;
-            return (
-              <details
-                key={eid}
-                onToggle={(e) => {
-                  if (e.currentTarget.open)
-                    send({ type: "OPEN_FILE", id: eid });
-                  else
-                    e.currentTarget
-                      .querySelectorAll("video")
-                      .forEach((video) => video.pause());
-                }}
-              >
-                <summary>{source.title}</summary>
-                {source.type === "IMAGE" ? (
-                  <EvidenceView
-                    casePackage={c}
-                    file={source}
-                    related={availableMedia(c, state)}
-                    paused={mediaPaused}
-                  />
-                ) : (
-                  <>
-                    {attachments(source.id, mediaPaused)}
-                    <pre className="source-text">{recordText(c, source)}</pre>
-                  </>
-                )}
-              </details>
-            );
-          })}
-        </div>
-      );
       return (
         <div className={"vault " + (p.stageTitle ? "stage-puzzle" : "")}>
           <div className="vault-lock">
@@ -708,11 +677,6 @@ export default function Player({
           <p className="folder-lock-notice">
             이 폴더를 열려면 암호가 필요합니다.
           </p>
-          <div className="folder-password-hint">
-            <h3>암호 힌트</h3>
-            <p>{p.title}</p>
-          </div>
-          {!directPassword && sources}
           <Answer
             key={p.id}
             puzzle={p}
@@ -761,7 +725,6 @@ export default function Player({
               }
             }}
           />
-          {directPassword && sources}
           <p className="small muted">
             {(!p.inputMode || p.inputMode === "text") && (
               <>
@@ -777,7 +740,7 @@ export default function Player({
             횟수 제한 없음
           </p>
           <button className="quiet" onClick={() => setHintId(p.id)}>
-            <Lightbulb size={16} /> 암호 힌트 더 보기
+            <Lightbulb size={16} /> 암호 힌트 보기
           </button>
         </div>
       );
@@ -984,7 +947,12 @@ export default function Player({
           <Search size={16} /> 현재 목표
         </span>
         <b>{goal}</b>
-        <span className="muted">파일 더블클릭 또는 Enter로 열기</span>
+        <button
+          className="quiet investigation-help"
+          onClick={() => setHelpVisible(true)}
+        >
+          <BookOpen size={16} /> 조사 방법
+        </button>
       </div>
       {c.puzzles.some((p) => p.stageTitle) && (
         <nav className="stage-rail" aria-label="폴더 바로가기">
@@ -1010,24 +978,6 @@ export default function Player({
         </nav>
       )}
       <div className="desktop-layout">
-        <aside className="desktop-files">
-          <span className="file-rail-label">사건 자료</span>
-          {files
-            .filter((f) => !f.parentId && state.visibleFileIds.includes(f.id))
-            .map((f) => fileButton(f, true))}
-          {!!photos.length && (
-            <button
-              className="desktop-icon"
-              aria-label="이미지 자료"
-              onClick={() => open("@photos")}
-            >
-              <span className="file-symbol folder">
-                <Folder />
-              </span>
-              <span className="file-name">이미지 자료</span>
-            </button>
-          )}
-        </aside>
         <main className="desktop-area" ref={area}>
           <div className="desktop-watermark">
             <span>
@@ -1036,25 +986,59 @@ export default function Player({
             <strong>{entry.display}</strong>
             <p>모든 기록에는, 빈틈이 있다.</p>
           </div>
-          {!wins.some((w) => !w.minimized) && (
-            <div className="desktop-welcome">
-              <BookOpen size={24} />
-              <h2>남겨진 기록에서 시작하세요.</h2>
-              <p>첫 메모에서 조사 의뢰와 잠금 해제 방법을 확인하세요.</p>
-              <button
-                className="primary"
-                onClick={() =>
-                  open(
-                    files.find(
-                      (f) => f.type === "TEXT" && f.visible && !f.parentId,
-                    )?.id || files[0].id,
-                  )
-                }
-              >
-                첫 메모 열기 <ChevronRight size={17} />
-              </button>
-            </div>
-          )}
+          <DesktopFiles
+            items={[
+              ...files
+                .filter(
+                  (f) => !f.parentId && state.visibleFileIds.includes(f.id),
+                )
+                .map((f) => ({ id: f.id, content: fileButton(f, true) })),
+              ...(photos.length
+                ? [
+                    {
+                      id: "@photos",
+                      content: (
+                        <button
+                          className="desktop-icon"
+                          id="desktop-@photos"
+                          aria-label="이미지 자료"
+                          onClick={() => open("@photos")}
+                        >
+                          <span className="file-symbol folder">
+                            <Folder />
+                          </span>
+                          <span className="file-name">이미지 자료</span>
+                        </button>
+                      ),
+                    },
+                  ]
+                : []),
+            ]}
+            introduction={
+              !state.readFileIds.length && (
+                <div className="desktop-start">
+                  <div>
+                    <b>처음이라면 첫 메모부터</b>
+                    <span>
+                      의뢰를 읽고, 바탕화면의 기록을 자유롭게 살펴보세요.
+                    </span>
+                  </div>
+                  <button
+                    className="primary"
+                    onClick={() =>
+                      open(
+                        files.find(
+                          (f) => f.type === "TEXT" && f.visible && !f.parentId,
+                        )?.id || files[0].id,
+                      )
+                    }
+                  >
+                    첫 메모 열기 <ChevronRight size={16} />
+                  </button>
+                </div>
+              )
+            }
+          />
           {wins.map((w, i) => (
             <section
               key={w.id}
@@ -1194,13 +1178,16 @@ export default function Player({
       <footer className="taskbar">
         <button
           className="task-home"
-          onClick={() =>
-            setWins((w) => w.map((x) => ({ ...x, minimized: true })))
-          }
+          onClick={() => {
+            setWins((w) => w.map((x) => ({ ...x, minimized: true })));
+            player.current
+              ?.querySelector<HTMLElement>(".desktop-grid")
+              ?.focus();
+          }}
           aria-label="바탕화면 보기"
         >
           <Ghost size={22} />
-          <span className="mobile-nav-label">자료</span>
+          <span className="desktop-home-label">바탕화면</span>
         </button>
         <div className="task-list">
           {wins.map((w) => (
@@ -1301,6 +1288,36 @@ export default function Player({
           <button onClick={onExit}>돌아가기</button>
         </Modal>
       )}
+      {helpVisible && (
+        <Modal title="조사 방법" onClose={() => setHelpVisible(false)}>
+          <ul className="investigation-help-list">
+            <li>
+              <b>파일은 한 번 클릭</b>
+              <p>
+                바탕화면의 메모, 사진, 영상과 메신저를 열어보세요. 읽은 파일에는
+                ✓ 표시가 남습니다.
+              </p>
+            </li>
+            <li>
+              <b>기록을 대조해서 암호 찾기</b>
+              <p>
+                자물쇠가 있는 폴더는 암호가 필요합니다. 막힐 때만 ‘암호 힌트
+                보기’에서 안내와 자료 위치를 확인하세요.
+              </p>
+            </li>
+            <li>
+              <b>여러 자료를 함께 보기</b>
+              <p>
+                창 위쪽 버튼으로 나란히 배치할 수 있습니다. 아래 ‘바탕화면’을
+                누르면 열린 창을 잠시 내려놓고 다른 파일을 찾을 수 있어요.
+              </p>
+            </li>
+          </ul>
+          <p className="small muted">
+            Tab으로 이동 · Enter 또는 Space로 열기 · Esc로 창 닫기
+          </p>
+        </Modal>
+      )}
       {hintId && (
         <Modal
           title="단계별 힌트"
@@ -1320,6 +1337,35 @@ export default function Player({
                   필요한 만큼만 열어보세요. 힌트를 사용해도 엔딩은 달라지지
                   않습니다.
                 </p>
+                <div className="hint-context">
+                  <h3>암호 안내</h3>
+                  <p>{p.title}</p>
+                </div>
+                {!!p.evidenceIds?.length && (
+                  <details className="hint-locations">
+                    <summary>관련 자료 위치 보기</summary>
+                    <p className="small muted">
+                      자료를 선택하면 원본 파일을 엽니다.
+                    </p>
+                    {p.evidenceIds.map((id) => {
+                      const source = files.find((f) => f.id === id);
+                      return source && canOpen(c, state, id) ? (
+                        <button
+                          key={id}
+                          className="file-row"
+                          onClick={() => {
+                            setHintId(null);
+                            setReveal(false);
+                            open(id);
+                          }}
+                        >
+                          <Icon file={source} />
+                          {source.title}
+                        </button>
+                      ) : null;
+                    })}
+                  </details>
+                )}
                 {p.hints.slice(0, n).map((h, i) => (
                   <p className="hint-step" key={i}>
                     <b>0{i + 1}</b>

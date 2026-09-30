@@ -136,9 +136,11 @@ it.each(caseLibrary)(
       await openFile(f.id);
       const win = windowByTitle(fileTitle(c, f));
       expect(win.textContent).toContain("이 폴더를 열려면 암호가 필요합니다.");
-      expect(win.querySelector(".folder-password-hint")?.textContent).toContain(
-        p.title,
-      );
+      expect(
+        win.querySelector(".folder-password-hint, .puzzle-sources"),
+      ).toBeNull();
+      expect(win.textContent).not.toContain("암호를 찾을 자료");
+      expect(win.textContent).not.toContain(p.title);
       const answer = walkthrough[number][index];
       if (p.inputMode === "visual") {
         const click = async (selector: string) => {

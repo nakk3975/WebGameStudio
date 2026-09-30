@@ -757,9 +757,9 @@ function Workspace({ account }: { account: Account }) {
             모션 줄이기
           </label>
           <hr />
-          <h3>키보드 조작</h3>
+          <h3>파일 열기와 창 조작</h3>
           <p>
-            Tab으로 이동 · Enter로 파일 열기
+            파일은 한 번 클릭 · Tab으로 이동 · Enter 또는 Space로 열기
             <br />
             Esc로 현재 창 닫기 · 제목 표시줄의 버튼으로 창 배치
           </p>
