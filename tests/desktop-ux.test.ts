@@ -47,6 +47,53 @@ async function snapshot() {
   return settings.mock.lastCall![0];
 }
 
+it("raises an inactive recording without moving its pointer target before the click", async () => {
+  const c = caseLibrary.find(
+    (entry) => entry.case.caseId === "encore-last",
+  )!.case;
+  await act(async () =>
+    root.render(
+      createElement(Player, {
+        initial: {
+          format: "ghostdesk-save-1",
+          case: c,
+          state: initialState(c),
+          notes: "",
+          checkpoint: null,
+        },
+        isTest: true,
+        onExit() {},
+        onSaved() {},
+        onSettings: settings,
+      }),
+    ),
+  );
+  await click("조명_실행기록.mp4");
+  await click("공연장_현장사진");
+  const recording = host.querySelector<HTMLElement>(
+    'section[aria-label="조명_실행기록.mp4 창"]',
+  )!;
+  const play = [...recording.querySelectorAll("button")].find(
+    (b) => b.textContent === "영상 재생",
+  )!;
+  const before = [...host.querySelectorAll(".os-window")];
+  const removed: Node[] = [];
+  const observer = new MutationObserver((records) =>
+    records.forEach((r) => removed.push(...r.removedNodes)),
+  );
+  observer.observe(recording.parentElement!, { childList: true });
+  await act(async () =>
+    play.dispatchEvent(new Event("pointerdown", { bubbles: true })),
+  );
+  observer.disconnect();
+  expect(recording.classList.contains("active")).toBe(true);
+  // Reinserted targets lose the browser's pending pointerup/click even though
+  // React retains their component state and jsdom's synthetic click still works.
+  expect(removed).not.toContain(recording);
+  expect([...host.querySelectorAll(".os-window")]).toEqual(before);
+  expect(recording.contains(play)).toBe(true);
+});
+
 it.each(caseLibrary)(
   "$number opens files with one click and keeps guidance opt-in",
   async ({ case: c }) => {

@@ -69,6 +69,7 @@ const Icon = ({ file }: { file: CaseFile }) =>
   );
 type Win = {
   id: string;
+  createdOrder: number;
   x: number;
   y: number;
   layout: "normal" | "max" | "left" | "right";
@@ -110,6 +111,11 @@ export default function Player({
     [endVisible, setEndVisible] = useState(state.mode === "ENDED"),
     [exiting, setExiting] = useState(false);
   const files = c.files.map((file) => evidenceFile(c, file));
+  // Focus changes stacking only. Moving a section between pointerdown and
+  // pointerup makes the browser discard the first click on its controls.
+  const windowsByCreation = [...wins].sort(
+    (a, b) => a.createdOrder - b.createdOrder,
+  );
   const player = useRef<HTMLDivElement>(null),
     area = useRef<HTMLDivElement>(null),
     latest = useRef<Save>(initial),
@@ -327,6 +333,7 @@ export default function Player({
         ...remaining,
         {
           id,
+          createdOrder: Math.max(-1, ...old.map((w) => w.createdOrder)) + 1,
           x: replaced?.x ?? Math.min(48 + remaining.length * 28, 180),
           y: replaced?.y ?? 40 + remaining.length * 20,
           layout: replaced?.layout ?? "normal",
@@ -1085,7 +1092,7 @@ export default function Player({
               )
             }
           />
-          {wins.map((w, i) => (
+          {windowsByCreation.map((w) => (
             <section
               key={w.id}
               tabIndex={-1}
@@ -1101,11 +1108,11 @@ export default function Player({
                       : "document"
                     : undefined;
               })()}
-              className={`os-window ${w.layout} ${i === wins.length - 1 ? "active" : ""}`}
+              className={`os-window ${w.layout} ${w.id === wins.at(-1)?.id ? "active" : ""}`}
               style={{
                 display: w.minimized ? "none" : undefined,
                 ...(w.layout === "normal" ? { left: w.x, top: w.y } : {}),
-                zIndex: i + 1,
+                zIndex: wins.indexOf(w) + 1,
               }}
               onPointerDownCapture={() => focus(w.id)}
             >
@@ -1235,7 +1242,7 @@ export default function Player({
           <span className="desktop-home-label">바탕화면</span>
         </button>
         <div className="task-list">
-          {wins.map((w) => (
+          {windowsByCreation.map((w) => (
             <button
               key={w.id}
               className={!w.minimized ? "task active-task" : "task"}
