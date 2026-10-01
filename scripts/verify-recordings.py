@@ -7,19 +7,22 @@ from statistics import mean
 
 root = Path(__file__).resolve().parents[1]
 assets = root / 'apps/ghostdesk/src/assets'
-expected = {'hotel-motion': 28, 'stage-cues': 14, 'auction-monitor': 11, 'island-receiver': 11}
+expected = {'hotel-motion': 28, 'stage-cues': 14, 'auction-monitor': 11,
+            'island-receiver': 11, 'stage-output-meter': 11}
 report = {}
 for name, duration in expected.items():
     file = assets / f'{name}.mp4'
     probe = json.loads(subprocess.check_output(['ffprobe', '-v', 'error', '-show_streams', '-show_format', '-of', 'json', str(file)]))
     assert len(probe['streams']) == 1
     stream = probe['streams'][0]
-    assert (stream['codec_name'], stream['pix_fmt'], stream['width'], stream['height']) == ('h264', 'yuv420p', 960, 540)
-    assert stream['r_frame_rate'] == '24/1' and float(stream['duration']) == duration
+    fps = 10 if name == 'stage-output-meter' else 24
+    dimensions = (1200, 720) if name == 'stage-output-meter' else (960, 540)
+    assert (stream['codec_name'], stream['pix_fmt'], stream['width'], stream['height']) == ('h264', 'yuv420p', *dimensions)
+    assert stream['r_frame_rate'] == f'{fps}/1' and float(stream['duration']) == duration
     hashes = subprocess.check_output(['ffmpeg', '-v', 'error', '-i', str(file), '-map', '0:v', '-f', 'framemd5', '-']).decode()
     frames = [line.split(',')[-1].strip() for line in hashes.splitlines() if not line.startswith('#')]
-    assert len(frames) == duration * 24
-    item = {'duration': duration, 'fps': 24, 'size': file.stat().st_size,
+    assert len(frames) == duration * fps
+    item = {'duration': duration, 'fps': fps, 'size': file.stat().st_size,
             'decodedFrames': len(frames), 'sha256': hashlib.sha256(file.read_bytes()).hexdigest()}
     if name == 'hotel-motion':
         # The person and cart move for the first nine seconds, then leave view.
@@ -69,11 +72,26 @@ for name, duration in expected.items():
         assert gaps[2] >= 19 and gaps[5] >= 19
         assert all(6 <= gaps[i] <= 8 for i in [0,1,3,4,6,7])
         item.update(decodedSignal='SOS', pulseLengthsFrames=lengths, gapLengthsFrames=gaps)
+    elif name == 'stage-output-meter':
+        # Read the delivered meter bars. B1 starts at 52; B2 runs 51 <= t < 54.
+        for frame, expected_on in [(0, (False, False)), (10, (False, True)),
+                                   (20, (True, True)), (40, (True, False)),
+                                   (100, (True, False))]:
+            pixels = subprocess.check_output(['ffmpeg', '-v', 'error', '-i', str(file),
+                '-vf', f'select=eq(n\\,{frame}),format=rgb24', '-frames:v', '1', '-f', 'rawvideo', '-'])
+            observed = []
+            for y in (315, 490):
+                start = (y * 1200 + 75) * 3
+                red, green, blue = pixels[start:start+3]
+                observed.append(green > red + 35)
+            assert tuple(observed) == expected_on, f'output signals differ at frame {frame}'
+        item['signalBoundariesSeconds'] = {'B1': [2], 'B2': [1, 4]}
     poster_frames = {
         'hotel-motion': [(0, '-0'), (96, '-4'), (192, '-8')],
-        'stage-cues': [(36, '')],
+        'stage-cues': [(0, '')],
         'auction-monitor': [(0, ''), (48, '-2'), (216, '-9')],
-        'island-receiver': [(30, '')],
+        'island-receiver': [(0, '')],
+        'stage-output-meter': [(0, '')],
     }[name]
     for frame, suffix in poster_frames:
         decoded = subprocess.check_output(['ffmpeg', '-v', 'error', '-i', str(file),
@@ -81,7 +99,9 @@ for name, duration in expected.items():
         poster = subprocess.check_output(['ffmpeg', '-v', 'error', '-i',
             str(assets / f'{name}{suffix}.webp'), '-pix_fmt', 'rgb24', '-f', 'rawvideo', '-'])
         assert decoded == poster, f'{name} frame {frame}: photograph differs from shipped video'
-    item['matchingDecodedPostersSeconds'] = [frame / 24 for frame, _ in poster_frames]
+    # The player opens at 00:00.00; its poster must depict that same instant.
+    assert poster_frames[0][0] == 0
+    item['matchingDecodedPostersSeconds'] = [frame / fps for frame, _ in poster_frames]
     report[name] = item
 out = root / 'docs/evidence/continuous-recordings-media.json'
 out.write_text(json.dumps(report, indent=2) + '\n')

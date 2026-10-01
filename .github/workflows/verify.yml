@@ -30,6 +30,11 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm test
+      - name: Verify decoded evidence recordings and first-frame posters
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+          python3 scripts/verify-recordings.py
       - run: npm run build
       - run: npm run standalone
   api:

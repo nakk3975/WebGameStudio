@@ -90,8 +90,7 @@ export const mediaAttachments: Attachment[] = [
     alt,
     sourceIds: [`${caseId}-record-${stage}`],
     versionIds: [`${caseId}-v5`, `${caseId}-v6`],
-    caption:
-      "후속 조사 문서 이미지입니다. 표의 모든 값은 연결된 원문에서도 읽을 수 있습니다.",
+    caption: title,
   })),
   {
     id: "stage-output-meter",
@@ -101,9 +100,8 @@ export const mediaAttachments: Attachment[] = [
     sourceIds: ["encore-last-record-9b"],
     versionIds: ["encore-last-v5", "encore-last-v6"],
     title: "두 출력 버스 기록",
-    caption:
-      "출력 기록을 같은 시간 간격으로 옮겼습니다. 객석과 헤드셋을 구분해 살펴보세요.",
-    alt: "21:56:50 시작. 21:56:51~54에는 B2 스태프 헤드셋에 NOTICE-02 신호가 나타납니다. 21:56:52부터는 B1 객석에 REHEARSAL-06 신호가 나타납니다. 이 구간의 B1에는 NOTICE-02가 없습니다. 사람의 모습이나 위치를 보여 주는 영상이 아닙니다.",
+    caption: "음향 제어기 · 21:56:50–21:57:00",
+    alt: "21:56:50 시작. 21:56:51~54에는 B2 스태프 헤드셋에 NOTICE-02 신호가 나타납니다. 21:56:52부터는 B1 객석에 REHEARSAL-06 신호가 나타납니다. 이 구간의 B1에는 NOTICE-02가 없습니다.",
     recording: {
       duration: 11,
       step: 0.1,
@@ -145,8 +143,7 @@ export const mediaAttachments: Attachment[] = [
     sourceIds: ["demo-0317-record-2", "demo-0317-record-5"],
     title: "접수표 보관 책상",
     alt: "문서함 앞 책상에 나란히 놓인 접수표 세 장.",
-    caption:
-      "접수표가 놓인 보관 책상. 번호와 목적지는 함께 제공된 원문에서 대조하세요.",
+    caption: "기록 보관실 · 접수표 보관 책상",
   },
   {
     id: "lab-network",
@@ -155,8 +152,7 @@ export const mediaAttachments: Attachment[] = [
     sourceIds: ["demo-0317-record-3", "demo-0317-record-4"],
     title: "통신 장비 점검",
     alt: "작은 장비함의 통신 장치와 책상 위 분리된 연결선.",
-    caption:
-      "03:20 통신 장비함 작업대의 점검 사진입니다. PC 책상 전경과는 별도 구역이며, 이전에 처리된 작업은 기록과 함께 확인해야 합니다.",
+    caption: "03:20 · 통신 장비함 점검",
   },
   {
     id: "hotel-frontdesk",
@@ -165,8 +161,7 @@ export const mediaAttachments: Attachment[] = [
     sourceIds: ["hotel-404-f0"],
     title: "야간 프런트",
     alt: "조명이 켜진 호텔 프런트와 뒤편의 객실 열쇠 보관대.",
-    caption:
-      "야간 인계에 등장하는 프런트. 객실 열쇠와 안내 데스크의 모습입니다.",
+    caption: "야간 프런트 · 열쇠 보관대",
   },
   {
     id: "hotel-laundry",
@@ -175,8 +170,7 @@ export const mediaAttachments: Attachment[] = [
     sourceIds: ["hotel-404-record-4", "hotel-404-record-5", "hotel-404-f5"],
     title: "지하 세탁실",
     alt: "시트가 쌓인 선반과 카트가 있는 호텔 지하 세탁실.",
-    caption:
-      "위치 기록에 등장하는 세탁실의 모습. 인계 시각과 수량은 원본 대장을 확인하세요.",
+    caption: "지하 세탁실 · 시트 보관 구역",
   },
   {
     id: "auction-envelopes",
@@ -185,8 +179,7 @@ export const mediaAttachments: Attachment[] = [
     sourceIds: ["auction-seven-record-2"],
     title: "봉투 검수 사진",
     alt: "검수대에 나란히 놓인 밀봉된 봉투 세 개.",
-    caption:
-      "검수대의 봉투들. 봉인표를 옮긴 글은 ‘봉인표 대조’ 자료에서 읽을 수 있습니다.",
+    caption: "LOT-27 · 봉투 검수",
   },
   {
     id: "auction-display",
@@ -195,8 +188,7 @@ export const mediaAttachments: Attachment[] = [
     sourceIds: ["auction-seven-record-4", "auction-seven-f5"],
     title: "마감 뒤 전광판 표시",
     alt: "전광판 감시 단말의 LOT-27, MOTH, 310, CLOSED 표시. 작은 접속 불빛은 꺼져 있습니다.",
-    caption:
-      "22:00:00 마감 표시가 나타난 순간. 전광판 감시 기록의 경과 9초와 같은 화면입니다. 남아 있는 이름과 금액만으로 낙찰자를 판단할 수 없습니다.",
+    caption: "22:00:00 · 전광판 감시 기록 정지 화면",
   },
   {
     id: "stage-console",
@@ -209,8 +201,7 @@ export const mediaAttachments: Attachment[] = [
     ],
     title: "객석 뒤 음향석",
     alt: "같은 소공연장의 닫힌 붉은 커튼과 중앙 마이크를 바라보는 믹서와 노트북.",
-    caption:
-      "22:03, 공연장 현장 사진과 같은 소공연장의 음향석. 공연 중 재생된 내용은 음향 기록에서 확인하세요.",
+    caption: "22:03 · 공연 종료 후 음향석",
   },
   {
     id: "stage-corridor",
@@ -223,8 +214,7 @@ export const mediaAttachments: Attachment[] = [
     ],
     title: "무대 뒤 통로",
     alt: "커튼 옆에서 건물 안쪽으로 이어지는 비어 있는 안전 통로.",
-    caption:
-      "공연 종료 뒤의 안전 통로. 사진에 사람이 없다는 사실만으로 공연 당시의 이동을 판단할 수는 없습니다.",
+    caption: "공연 종료 후 · 무대 뒤 안전 통로",
   },
   {
     id: "island-rope",
@@ -233,8 +223,7 @@ export const mediaAttachments: Attachment[] = [
     sourceIds: ["monday-loop-f3"],
     title: "관측소의 파란 밧줄",
     alt: "물에 젖은 파란 밧줄 사이에 해초가 붙어 있는 모습.",
-    caption:
-      "세 번째 아침, 해초가 붙은 젖은 파란 밧줄의 창가 점검 사진. 앞선 두 날의 상태는 나루의 필기와 대조하세요.",
+    caption: "세 번째 아침 · 창가의 파란 밧줄",
   },
   {
     id: "island-buoy",
@@ -243,8 +232,7 @@ export const mediaAttachments: Attachment[] = [
     sourceIds: ["monday-loop-record-4", "monday-loop-final"],
     title: "해안의 관측 부표",
     alt: "회색 바다 위에 떠 있는 관측 부표와 해안의 작은 관측소.",
-    caption:
-      "관측소 앞바다의 부표. 장치의 전원과 기록 보관 위치는 연결 대장에서 확인하세요.",
+    caption: "관측소 앞바다 · 관측 부표",
   },
 ];
 
@@ -271,25 +259,15 @@ export function availableMedia(
         ),
     )
     .map((item) =>
-      item.id === "auction-display" &&
-      !mediaAttachments
-        .find((m) => m.id === "auction-monitor")
-        ?.versionIds?.includes(c.versionId)
+      item.id === "auction-envelopes" &&
+      (isResolutionCase(c) ||
+        c.puzzles.some((p) => p.visualId === "auction-seal"))
         ? {
             ...item,
-            caption:
-              "22:00:00 마감 표시가 나타난 순간의 전광판입니다. 이름과 금액만으로 낙찰자를 판단할 수 없으므로 갱신 기록과 입찰 원장을 함께 확인하세요.",
+            src: auctionEvidencePhoto(c),
+            alt: "왼쪽 봉인은 파란 선 한 줄, 가운데는 두 줄의 온전한 봉인, 오른쪽은 두 줄 표시가 있는 봉인이 갈라져 있습니다.",
+            caption: "LOT-27 · 봉투 검수",
           }
-        : item.id === "auction-envelopes" &&
-            (isResolutionCase(c) ||
-              c.puzzles.some((p) => p.visualId === "auction-seal"))
-          ? {
-              ...item,
-              src: auctionEvidencePhoto(c),
-              alt: "왼쪽 봉인은 파란 선 한 줄, 가운데는 두 줄의 온전한 봉인, 오른쪽은 두 줄 표시가 있는 봉인이 갈라져 있습니다.",
-              caption:
-                "검수 표시와 봉인 종이의 상태를 확대해 대조할 수 있는 사진입니다.",
-            }
-          : item,
+        : item,
     );
 }

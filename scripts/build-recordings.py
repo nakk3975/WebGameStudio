@@ -42,8 +42,8 @@ for scene in names if args.scene == 'all' else [args.scene]:
                 run('-stream_loop', '2', '-i', encoded, '-t', '28', '-an', '-c', 'copy',
                     '-movflags', '+faststart', assets / f'{name}.mp4')
     posters = {'hotel': [(0, '-0'), (96, '-4'), (192, '-8')],
-               'stage': [(36, '')], 'auction': [(0, ''), (48, '-2'), (216, '-9')],
-               'receiver': [(30, '')]}[scene]
+               'stage': [(0, '')], 'auction': [(0, ''), (48, '-2'), (216, '-9')],
+               'receiver': [(0, '')]}[scene]
     for frame, suffix in posters:
         # Every fallback photograph must match the decoded shipped recording.
         run('-i', assets / f'{name}.mp4', '-vf', f'select=eq(n\\,{frame}),format=rgb24',

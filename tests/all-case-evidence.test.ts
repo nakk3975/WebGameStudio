@@ -5,6 +5,8 @@ import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import Player from "../apps/ghostdesk/src/Player";
 import {
   archivedCases,
+  caseLibrary as currentCases,
+  isResolutionCase,
   tenStageLibrary as caseLibrary,
 } from "../apps/ghostdesk/src/cases";
 import {
@@ -51,7 +53,10 @@ function unlocked(c: CasePackage, count = c.puzzles.length) {
       initialState(c),
     );
 }
-async function mount(c: CasePackage, count = c.puzzles.length) {
+async function mount(
+  c: CasePackage,
+  count = c.puzzles.length - (isResolutionCase(c) ? 1 : 0),
+) {
   const state = unlocked(c, count);
   const initial: Save = {
     format: "ghostdesk-save-1",
@@ -251,15 +256,15 @@ it.each(caseLibrary)(
   },
 );
 
-it.each(caseLibrary)(
+it.each([...caseLibrary, ...currentCases])(
   "$number text records link to separate photos and recordings remain playable",
   async ({ case: c }) => {
     const state = await mount(c);
     const media = availableMedia(c, state);
     // Check all root records, including every supplemental photograph's source.
-    for (const f of c.files.filter(
-      (f) => f.type === "TEXT" && f.parentId === null,
-    )) {
+    for (const f of c.files
+      .map((f) => evidenceFile(c, f))
+      .filter((f) => f.type === "TEXT" && f.parentId === null)) {
       // Respect the product limit of twelve simultaneous windows.
       for (const close of host.querySelectorAll<HTMLButtonElement>(
         'section button[aria-label$=" 닫기"]',
@@ -318,7 +323,11 @@ it.each(caseLibrary)(
   },
 );
 
-it.each(caseLibrary.filter((entry) => entry.case.caseId !== "hotel-404"))(
+it.each(
+  [...caseLibrary, ...currentCases].filter(
+    (entry) => entry.case.caseId !== "hotel-404",
+  ),
+)(
   "$number scene viewer contains its own photo without an unrelated gallery",
   async ({ case: c }) => {
     await mount(c);
@@ -327,6 +336,14 @@ it.each(caseLibrary.filter((entry) => entry.case.caseId !== "hotel-404"))(
     const win = windowByTitle(scene.title);
     expect(win.querySelectorAll("img")).toHaveLength(1);
     expect(win.querySelectorAll("video, .media-thumbnails")).toHaveLength(0);
+    expect(win.querySelector(".observation-tabs")).toBeNull();
+    expect(win.querySelector("figcaption")?.textContent).not.toMatch(
+      /확인하세요|대조하세요|판단할|증명|자료에서/,
+    );
+    if (c.caseId === "encore-last")
+      expect(win.querySelector("figcaption")?.textContent).toBe(
+        "공연 종료 후 · 22:03",
+      );
     if (c.caseId === "auction-seven")
       expect(win.querySelector("img")?.getAttribute("src")).toBe(auctionSeals);
   },

@@ -81,6 +81,6 @@ with tempfile.TemporaryDirectory(prefix='ghostdesk-meter-') as tmp:
     ffmpeg('-framerate', 10, '-i', Path(tmp) / '%04d.png', '-frames:v', 110,
            '-an', '-c:v', 'libx264', '-threads', 2, '-pix_fmt', 'yuv420p',
            '-crf', 20, '-g', 10, '-bf', 0, '-movflags', '+faststart', video)
-    ffmpeg('-i', video, '-vf', 'select=eq(n\\,20),format=rgb24', '-frames:v', 1,
+    ffmpeg('-i', video, '-vf', 'select=eq(n\\,0),format=rgb24', '-frames:v', 1,
            '-c:v', 'libwebp', '-lossless', 1, assets / 'stage-output-meter.webp')
 print('Built five document images and one 11-second output recording with a decoded poster.')

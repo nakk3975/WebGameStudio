@@ -29,7 +29,7 @@
       "red safety passage"
     ],
     "matchingDecodedPostersSeconds": [
-      1.5
+      0.0
     ]
   },
   "auction-monitor": {
@@ -78,7 +78,26 @@
       7
     ],
     "matchingDecodedPostersSeconds": [
-      1.25
+      0.0
+    ]
+  },
+  "stage-output-meter": {
+    "duration": 11,
+    "fps": 10,
+    "size": 327969,
+    "decodedFrames": 110,
+    "sha256": "ecb3cbe16c2203af848ae87e244e704ba2420173ccf70d840aed0425aa8facd0",
+    "signalBoundariesSeconds": {
+      "B1": [
+        2
+      ],
+      "B2": [
+        1,
+        4
+      ]
+    },
+    "matchingDecodedPostersSeconds": [
+      0.0
     ]
   }
 }

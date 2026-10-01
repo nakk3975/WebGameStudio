@@ -1,5 +1,19 @@
 # Fictional case scene assets
 
+## Current evidence audit / 2026-10-01
+
+- All five playable videos now use their decoded frame at 0 seconds as the
+  initial poster. Stage lighting previously used 1.5 seconds, the receiver
+  1.25 seconds, and the output meter 2 seconds despite the controls opening at 0.
+- `verify-recordings.py` now checks all five videos, all nine supplied video
+  stills, and the two output buses. CI runs this decoded-pixel check.
+- Photo captions contain recording labels and capture context; puzzle rules
+  remain in the source records. After-show stage photos visibly say 22:03.
+- `lab-clock-check.jpg` is the simultaneous clock photo added on 2026-10-01.
+  The 03:20 equipment photos are identified separately in the processing log.
+- Published cases, answers and save formats remain unchanged. See the latest
+  section of `docs/ALL_CASE_EVIDENCE_AUDIT.md` for the review scope and results.
+
 ## Current evidence audit / 2026-09-29
 
 The historical sections below describe earlier revisions. Current official cases

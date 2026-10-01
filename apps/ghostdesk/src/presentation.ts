@@ -114,6 +114,15 @@ export function boardRecord(c: CasePackage, clueId: string) {
 
 // The archived package remains immutable; its viewer now plays continuous motion.
 export function recordText(c: CasePackage, f: CaseFile) {
+  if (
+    isOfficialCaseVersion(c) &&
+    c.caseId === "demo-0317" &&
+    f.id === "demo-0317-record-3"
+  )
+    return f.text.replace(
+      "사진은 03:20 점검 때 촬영되었습니다.",
+      "연구실 전경과 통신 장비함 사진은 03:20 점검 때 촬영되었습니다.",
+    );
   if (isResolutionCase(c)) return f.text;
   if (isOfficialCaseVersion(c)) {
     if (
@@ -184,31 +193,21 @@ export function evidenceFile(c: CasePackage, file: CaseFile): CaseFile {
   if (file.assetId === "auction")
     return {
       ...file,
-      observations: [
-        {
-          label: "검수대",
-          text: "봉투 세 개와 포장된 ‘푸른 궤도’가 놓여 있습니다. 봉인표의 판독 기준은 검수 기록에서 확인하세요.",
-        },
-      ],
+      text: "LOT-27 · 봉투 검수",
+      observations: [],
+    };
+  if (file.assetId === "stage")
+    return {
+      ...file,
+      text: "공연 종료 후 · 22:03",
+      observations: [],
     };
   if (file.assetId === "island")
     return {
       ...file,
-      text:
-        isResolutionCase(c) ||
-        c.puzzles.some((p) => p.visualId === "island-signal")
-          ? "세 번째 아침의 관측소. 수신 신호 영상은 이 수신기의 불빛 길이와 간격을 재현한 기록입니다."
-          : "세 번째 아침의 관측소. 수신기의 신호는 수신_신호.txt에 점과 선으로 옮겨 적었습니다.",
-      observations: [
-        {
-          label: "관측 책상",
-          text: "종이 노트와 별도 배터리에 연결한 수신기, 해초가 붙은 젖은 파란 밧줄이 놓여 있습니다.",
-        },
-        {
-          label: "창밖",
-          text: "주황색 부체 위에 안테나와 기록함이 달린 관측 부표입니다. 전원과 저장 위치는 연결 대장을 확인하세요.",
-        },
-      ],
+      text: "관측소 · 세 번째 아침",
+      alt: "관측소 책상 위 종이 노트, 오른쪽 배터리에 연결된 수신기, 해초가 붙은 젖은 파란 밧줄. 창밖 바다에 주황색 부체와 안테나, 기록함이 달린 부표가 보입니다.",
+      observations: [],
     };
   return file;
 }

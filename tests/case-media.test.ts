@@ -134,7 +134,7 @@ it("does not promise unavailable video controls in archived text-only investigat
     const island = c.files.find((f) => f.assetId === "island");
     if (island) {
       const viewed = evidenceFile(c, island);
-      expect(viewed.text).toContain("수신_신호.txt");
+      expect(viewed.text).toBe("관측소 · 세 번째 아침");
       expect(viewed.text).not.toContain("영상");
       expect(c.files.some((f) => f.title === "수신_신호.txt")).toBe(true);
     }
@@ -148,8 +148,7 @@ it("does not promise unavailable video controls in archived text-only investigat
       expect(recordText(c, record)).not.toContain("담아");
     }
   }
-  expect(hotelClip.caption).toContain("이미지 자료");
-  expect(hotelClip.caption).not.toContain("사진 자료");
+  expect(hotelClip.caption).toBe("CAM-404 · 프런트 보관 영상");
 });
 
 it("keeps hotel frame 8821 at its original clock time without changing the published evidence", () => {
@@ -169,4 +168,33 @@ it("does not advance the auction clock beyond its last decoded frame at the end"
   expect(auctionClip.recording!.stamp(9)).toBe("서버 시각 22:00:00");
   expect(auctionClip.recording!.stamp(11 - 1 / 24)).toBe("서버 시각 22:00:01");
   expect(auctionClip.recording!.stamp(11)).toBe("서버 시각 22:00:01");
+});
+
+it("distinguishes the 03:20 equipment photos from the simultaneous clock photo in saved editions", () => {
+  for (const c of [...archivedCases, ...caseLibrary.map((e) => e.case)].filter(
+    (c) => c.caseId === "demo-0317",
+  )) {
+    const original = JSON.stringify(c);
+    const record = c.files.find((f) => f.id === "demo-0317-record-3");
+    if (!record) continue;
+    expect(recordText(c, record)).toContain(
+      "연구실 전경과 통신 장비함 사진은 03:20",
+    );
+    const clock = evidenceFile(
+      c,
+      c.files.find((f) => f.id === "f-photo")!,
+    );
+    expect(clock.assetId).toBe("clock-comparison");
+    expect(clock.text).not.toContain("03:20");
+    expect(JSON.stringify(c)).toBe(original);
+  }
+});
+
+it("keeps captions as recording labels while retaining accessible visual observations", () => {
+  for (const item of [...mediaAttachments, hotelClip]) {
+    expect(item.caption, item.id).not.toMatch(
+      /확인하세요|대조하세요|살펴보세요|관찰하세요|판단할|증명|원문에서/,
+    );
+    expect(item.alt, item.id).toBeTruthy();
+  }
 });
