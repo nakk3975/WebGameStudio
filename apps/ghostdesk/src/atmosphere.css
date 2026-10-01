@@ -177,6 +177,22 @@ select {
   border-color: #ac976c;
   background: #3b3d2c;
 }
+/* Every case contributes its natural height to the same grid cell. Inactive
+   panels stay measurable, but inert and hidden from interaction/accessibility.
+   This also accommodates wrapped text, saved progress and larger font sizes. */
+.case-hero-stack {
+  grid-column: 1 / -1;
+  display: grid;
+  min-width: 0;
+}
+.case-hero-stack > .case-hero {
+  grid-area: 1 / 1;
+}
+.case-hero[aria-hidden="true"],
+.archive-action[aria-hidden="true"] {
+  visibility: hidden;
+  pointer-events: none;
+}
 .case-hero {
   grid-column: 1 / -1;
   display: grid;
@@ -257,6 +273,10 @@ select {
   color: #c2c9b5;
 }
 .case-visual {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   min-width: 0;
   min-height: 0;
   padding: 24px;

@@ -114,10 +114,14 @@ export function boardRecord(c: CasePackage, clueId: string) {
 
 // The archived package remains immutable; its viewer now plays continuous motion.
 export function recordText(c: CasePackage, f: CaseFile) {
+  if (
+    isOfficialCaseVersion(c) &&
+    c.caseId === "demo-0317" &&
+    f.id === "f-photo"
+  )
+    return "야간 점검 / 시계 대조 기록\n\n기록자: 야간 점검 담당자\n측정 방법: 기준 벽시계와 켜져 있던 기록용 PC의 시각을 같은 순간에 확인하여 수기로 기록했습니다.\n\n같은 순간의 표시값\n기준 벽시계   03:10\n기록용 PC     03:17\n\n두 값은 서로 다른 사건의 발생 시각이 아니라, 같은 순간에 두 시계가 표시한 시각입니다. 점검 구간에 시계의 오차는 일정했습니다.\n\n현장 사진은 이 측정 뒤 기준 벽시계 03:20에 촬영했습니다. 촬영할 때는 PC 화면이 꺼져 있었고 벽시계는 사진 구도 밖에 있습니다. 사진에서 이 표시값을 읽어 낸 것은 아닙니다.";
   if (isResolutionCase(c)) return f.text;
   if (isOfficialCaseVersion(c)) {
-    if (c.caseId === "demo-0317" && f.id === "f-photo")
-      return "야간 점검 / 시계 대조 기록\n\n같은 순간에 확인한 표시 시각\n벽시계      03:10\n기록용 PC   03:17\n\n야간 점검 담당자가 두 시계의 표시값을 옮겨 적었습니다.";
     if (
       f.type === "FOLDER" &&
       f.puzzleId &&
@@ -178,15 +182,16 @@ export function evidenceFile(c: CasePackage, file: CaseFile): CaseFile {
   if (file.assetId === "lab")
     return {
       ...file,
+      text: "촬영 시각: 03:20 · 점검 담당자의 수기 기록(기준 벽시계). 벽시계는 사진 구도 밖에 있으며, 촬영 당시 PC 화면은 꺼져 있습니다.",
       alt: "야간 연구실의 책상. 꺼진 모니터 두 대와 검은 PC 본체, 서류와 분리된 연결선이 보입니다.",
       observations: [
         {
           label: "촬영 시각",
-          text: "점검 촬영: 벽시계 기준 03:20. PC 책상 전경입니다. 통신 장비함은 별도 점검 사진에 기록되어 있습니다.",
+          text: "03:20은 점검 담당자가 촬영할 때 따로 적은 시각입니다. 사진에 시각이 찍혀 있는 것은 아닙니다. PC 책상 전경이며, 통신 장비함은 별도 점검 사진에 기록되어 있습니다.",
         },
         {
           label: "시계 대조 기록",
-          text: "동시 측정값은 시계_대조기록.txt에 따로 적었습니다. 현장 사진의 모니터는 꺼져 있습니다.",
+          text: "03:10과 03:17은 사진 촬영 시각이 아닙니다. 촬영 전 같은 순간에 확인한 벽시계와 PC의 표시값이며, 바탕화면의 시계_대조기록.txt에 측정 방법과 함께 적혀 있습니다.",
         },
       ],
     };

@@ -139,7 +139,6 @@ function Workspace({ account }: { account: Account }) {
   const chosen =
     remotePackages[selectedEntry.case.caseId] || selectedEntry.case;
   const saved = saves[chosen.caseId] || null;
-  const status = investigationStatus(saved);
   const archiveKey = `previous-investigation:${account.user?.id || "guest"}:${chosen.caseId}`;
   const [archived, setArchived] = useState<Save | null>(null);
   useEffect(() => {
@@ -528,121 +527,150 @@ function Workspace({ account }: { account: Account }) {
                 })}
               </div>
             </section>
-            <section className="case-hero" aria-label="선택한 사건">
-              <div className="case-intro">
-                <div className="eyebrow">
-                  <span className="square" /> 사건 {selectedEntry.number} ·{" "}
-                  {selectedEntry.theme}
-                </div>
-                <h1>
-                  {chosen.title}
-                  <span className="title-dot">.</span>
-                </h1>
-                <p>{chosen.description}</p>
-                <div className="case-meta">
-                  <span>
-                    <Clock3 size={16} /> 약 {chosen.estimatedMinutes}분
-                  </span>
-                  <span>
-                    <FileCheck2 size={16} /> {selectedEntry.difficulty} ·{" "}
-                    {chosen.puzzles.length}단계
-                  </span>
-                </div>
-                <div className="launch-actions">
-                  <button
-                    className={saved ? "secondary" : "primary"}
-                    disabled={!ready || !account.ready}
-                    onClick={() => (saved ? setRestart(true) : start())}
+            <div className="case-hero-stack">
+              {entries.map((entry) => {
+                const chosen = remotePackages[entry.case.caseId] || entry.case;
+                const saved = saves[chosen.caseId] || null;
+                const status = investigationStatus(saved);
+                const selected =
+                  entry.case.caseId === selectedEntry.case.caseId;
+                return (
+                  <section
+                    key={chosen.caseId}
+                    className="case-hero"
+                    aria-label="선택한 사건"
+                    aria-hidden={!selected}
+                    inert={!selected}
                   >
-                    <Play size={18} />{" "}
-                    {saved ? "새 조사 시작" : "사건 조사 시작"}
-                    <ArrowUpRight size={18} />
-                  </button>
-                  {saved && (
-                    <button
-                      className="primary"
-                      disabled={!ready || !account.ready}
-                      onClick={() => {
-                        // Memory snapshots can still be RUNNING (for example after
-                        // an error exit). Every continuation uses the restore boundary.
-                        setActive(parseSave(saved));
-                        setTest(false);
-                        setView("play");
-                      }}
+                    <div className="case-intro">
+                      <div className="eyebrow">
+                        <span className="square" /> 사건 {entry.number} ·{" "}
+                        {entry.theme}
+                      </div>
+                      <h1>
+                        {chosen.title}
+                        <span className="title-dot">.</span>
+                      </h1>
+                      <p>{chosen.description}</p>
+                      <div className="case-meta">
+                        <span>
+                          <Clock3 size={16} /> 약 {chosen.estimatedMinutes}분
+                        </span>
+                        <span>
+                          <FileCheck2 size={16} /> {entry.difficulty} ·{" "}
+                          {chosen.puzzles.length}단계
+                        </span>
+                      </div>
+                      <div className="launch-actions">
+                        <button
+                          className={saved ? "secondary" : "primary"}
+                          disabled={!ready || !account.ready}
+                          onClick={() => (saved ? setRestart(true) : start())}
+                        >
+                          <Play size={18} />{" "}
+                          {saved ? "새 조사 시작" : "사건 조사 시작"}
+                          <ArrowUpRight size={18} />
+                        </button>
+                        {saved && (
+                          <button
+                            className="primary"
+                            disabled={!ready || !account.ready}
+                            onClick={() => {
+                              // Memory snapshots can still be RUNNING (for example after
+                              // an error exit). Every continuation uses the restore boundary.
+                              setActive(parseSave(saved));
+                              setTest(false);
+                              setView("play");
+                            }}
+                          >
+                            {status === "조사 완료"
+                              ? "결과 보기"
+                              : "이어서 조사"}
+                          </button>
+                        )}
+                      </div>
+                      {saved && (
+                        <div className="resume-summary">
+                          <FileCheck2 size={16} />
+                          <span>
+                            {status} · 단서 {saved.state.clueIds.length}/
+                            {saved.case.clues.length}
+                          </span>
+                        </div>
+                      )}
+                      {saved && saved.case.versionId !== chosen.versionId && (
+                        <p className="edition-notice">
+                          ‘이어서 조사’는 저장 당시의 사건과 진행을 그대로
+                          엽니다. 기록 속 암호 안내, 새 추론 문제와 마지막
+                          해결이 포함된 개정판은 ‘새 조사 시작’에서 만날 수
+                          있어요.
+                        </p>
+                      )}
+                      <div
+                        className="archive-action"
+                        aria-hidden={!archived}
+                        inert={!archived}
+                      >
+                        <button
+                          className="quiet"
+                          onClick={() =>
+                            archived &&
+                            download(
+                              "ghostdesk-previous-investigation.gdsave",
+                              archived,
+                            )
+                          }
+                        >
+                          이 기기의 이전 조사 파일 저장
+                        </button>
+                      </div>
+                      <p className="small muted">
+                        이곳은 가상의 컴퓨터입니다. 실제 파일에는 접근하지
+                        않습니다.
+                      </p>
+                    </div>
+                    <div
+                      className="case-visual"
+                      aria-label="사건 기록 미리보기"
                     >
-                      {status === "조사 완료" ? "결과 보기" : "이어서 조사"}
-                    </button>
-                  )}
-                </div>
-                {saved && (
-                  <div className="resume-summary">
-                    <FileCheck2 size={16} />
-                    <span>
-                      {status} · 단서 {saved.state.clueIds.length}/
-                      {saved.case.clues.length}
-                    </span>
-                  </div>
-                )}
-                {saved && saved.case.versionId !== chosen.versionId && (
-                  <p className="edition-notice">
-                    ‘이어서 조사’는 저장 당시의 사건과 진행을 그대로 엽니다.
-                    기록 속 암호 안내, 새 추론 문제와 마지막 해결이 포함된
-                    개정판은 ‘새 조사 시작’에서 만날 수 있어요.
-                  </p>
-                )}
-                {archived && (
-                  <button
-                    className="quiet"
-                    onClick={() =>
-                      download(
-                        "ghostdesk-previous-investigation.gdsave",
-                        archived,
-                      )
-                    }
-                  >
-                    이 기기의 이전 조사 파일 저장
-                  </button>
-                )}
-                <p className="small muted">
-                  이곳은 가상의 컴퓨터입니다. 실제 파일에는 접근하지 않습니다.
-                </p>
-              </div>
-              <div className="case-visual" aria-label="사건 기록 미리보기">
-                <div className="visual-top">
-                  <span>사건 기록 / {selectedEntry.location}</span>
-                  <span className="file-status">{status}</span>
-                </div>
-                <div
-                  className={
-                    "big-clock" +
-                    (selectedEntry.display.length > 5 ? " word-clock" : "")
-                  }
-                >
-                  {selectedEntry.display}
-                </div>
-                <p className="preview-caption">{selectedEntry.caption}</p>
-                <div className="log-preview">
-                  <span className="amber">{selectedEntry.previewKey}</span>
-                  <span>CASE {selectedEntry.number}</span>
-                  <div>
-                    화면 표시 <b>{selectedEntry.previewValue}</b>
-                  </div>
-                  <div>
-                    확인 상태 <b>{status}</b>
-                  </div>
-                </div>
-                <div className="visual-bottom">
-                  <LockKeyhole size={16} />
-                  <span>
-                    {status === "조사 완료"
-                      ? "기록을 대조하고 조사를 마쳤습니다."
-                      : status === "재조사 필요"
-                        ? "기록을 다시 살펴볼 수 있습니다."
-                        : "기록은 남았다. 진실은 아직."}
-                  </span>
-                </div>
-              </div>
-            </section>
+                      <div className="visual-top">
+                        <span>사건 기록 / {entry.location}</span>
+                        <span className="file-status">{status}</span>
+                      </div>
+                      <div
+                        className={
+                          "big-clock" +
+                          (entry.display.length > 5 ? " word-clock" : "")
+                        }
+                      >
+                        {entry.display}
+                      </div>
+                      <p className="preview-caption">{entry.caption}</p>
+                      <div className="log-preview">
+                        <span className="amber">{entry.previewKey}</span>
+                        <span>CASE {entry.number}</span>
+                        <div>
+                          화면 표시 <b>{entry.previewValue}</b>
+                        </div>
+                        <div>
+                          확인 상태 <b>{status}</b>
+                        </div>
+                      </div>
+                      <div className="visual-bottom">
+                        <LockKeyhole size={16} />
+                        <span>
+                          {status === "조사 완료"
+                            ? "기록을 대조하고 조사를 마쳤습니다."
+                            : status === "재조사 필요"
+                              ? "기록을 다시 살펴볼 수 있습니다."
+                              : "기록은 남았다. 진실은 아직."}
+                        </span>
+                      </div>
+                    </div>
+                  </section>
+                );
+              })}
+            </div>
             <footer className="launch-footer">
               <button className="studio-link" onClick={() => setView("studio")}>
                 <FolderPlus size={22} />
