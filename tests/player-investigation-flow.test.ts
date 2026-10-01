@@ -118,23 +118,30 @@ async function submit(w: HTMLElement, answer: string) {
 }
 
 it.each(versions.filter((c) => c.caseId === "demo-0317"))(
-  "$versionId presents the clock record as text and preserves its clue and saved package",
+  "$versionId presents both clock readings in a photograph and preserves its clue and saved package",
   async (c) => {
     const before = JSON.stringify(c);
     await mount(c);
     expect(host.querySelector("#desktop-f-photo")?.textContent).toContain(
-      "시계_대조기록.txt",
+      "시계_점검사진.jpg",
     );
     expect(
-      host.querySelector("#desktop-f-photo .file-symbol.text"),
+      host.querySelector("#desktop-f-photo .file-symbol.image"),
     ).toBeTruthy();
     await open("f-photo");
-    const record = win("시계_대조기록.txt");
-    expect(record.dataset.view).toBe("document");
-    expect(record.querySelector("img, .clock-evidence")).toBeNull();
-    expect(record.textContent).toMatch(/벽시계\s+03:10/);
-    expect(record.textContent).toMatch(/기록용 PC\s+03:17/);
-    expect(boardRecord(c, "c-photo").title).toBe("시계_대조기록.txt");
+    const record = win("시계_점검사진.jpg");
+    const photo = record.querySelector(".evidence-viewport img");
+    expect(photo?.getAttribute("src")).toContain("lab-clock-check.jpg");
+    expect(photo?.getAttribute("alt")).toContain("03:10");
+    expect(photo?.getAttribute("alt")).toContain("03:17");
+    expect(
+      record.querySelector(".clock-evidence, .observation-tabs"),
+    ).toBeNull();
+    expect(record.querySelector("figcaption")?.textContent).toBe(
+      "야간 점검 · 기록용 PC",
+    );
+    expect(record.textContent).not.toContain("수기로 기록");
+    expect(boardRecord(c, "c-photo").title).toBe("시계_점검사진.jpg");
     const save = await snapshot();
     expect(save.state.clueIds).toContain("c-photo");
     expect(save.state.readFileIds).toContain("f-photo");
@@ -238,7 +245,7 @@ it("advances a visual answer at the window limit without hiding other evidence",
   expect(host.querySelectorAll(".os-window")).toHaveLength(12);
   expect(photo.isConnected).toBe(false);
   expect(win("전송 내역").classList.contains("active")).toBe(true);
-  expect(win("시계_대조기록.txt").isConnected).toBe(true);
+  expect(win("시계_점검사진.jpg").isConnected).toBe(true);
   expect((await snapshot()).state.solvedPuzzleIds).toHaveLength(4);
 });
 

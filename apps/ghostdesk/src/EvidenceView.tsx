@@ -1,5 +1,6 @@
 import type { CaseFile, CasePackage } from "../../../packages/contracts/src";
 import lab from "./assets/lab.webp";
+import labClock from "./assets/lab-clock-check.jpg";
 import auction from "./assets/auction.webp";
 import stage from "./assets/stage.webp";
 import island from "./assets/island.webp";
@@ -9,7 +10,14 @@ import { auctionEvidencePhoto, type CaseMedia } from "./case-media";
 import { evidenceFile } from "./presentation";
 import { isOfficialCaseVersion } from "./cases";
 
-const photos = { lab, hotel: hotelClip.src, auction, stage, island };
+const photos = {
+  lab,
+  "clock-comparison": labClock,
+  hotel: hotelClip.src,
+  auction,
+  stage,
+  island,
+};
 export default function EvidenceView({
   casePackage,
   file,
@@ -32,7 +40,7 @@ export default function EvidenceView({
         { label: "중앙 카트", text: "접힌 흰 시트가 카트에 놓여 있습니다." },
       ]
     : file.observations || [];
-  if (asset === "clock-comparison")
+  if (asset === "clock-comparison" && !isOfficialCaseVersion(casePackage))
     return (
       <div className="image-content">
         <div className="clock-evidence" role="img" aria-label={file.alt}>
