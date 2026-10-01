@@ -1,0 +1,83 @@
+{
+  "baselineMain": "9a4a71909fc786e26e600e0d6c74ccf5de4b5212",
+  "date": "2026-10-01",
+  "scope": "production build / local Vite preview / guest / v6",
+  "browser": "Chromium 153.0.8010.0 (installed binary override)",
+  "playwright": "1.63.0",
+  "node": "24.19.0",
+  "stats": {
+    "startTime": "2026-10-01T02:29:19.019Z",
+    "duration": 94121.58,
+    "expected": 5,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "cases": [
+    {
+      "title": "03:17에 멈춘 전송: guest v6 full investigation",
+      "status": "passed",
+      "durationMs": 34565,
+      "retry": 0,
+      "attachments": [
+        "completed-save",
+        "completed-investigation"
+      ]
+    },
+    {
+      "title": "자정의 404호: guest v6 full investigation",
+      "status": "passed",
+      "durationMs": 34542,
+      "retry": 0,
+      "attachments": [
+        "completed-save",
+        "completed-investigation"
+      ]
+    },
+    {
+      "title": "낙찰 7초 전: guest v6 full investigation",
+      "status": "passed",
+      "durationMs": 33287,
+      "retry": 0,
+      "attachments": [
+        "completed-save",
+        "completed-investigation"
+      ]
+    },
+    {
+      "title": "마지막 앙코르: guest v6 full investigation",
+      "status": "passed",
+      "durationMs": 32200,
+      "retry": 0,
+      "attachments": [
+        "completed-save",
+        "completed-investigation"
+      ]
+    },
+    {
+      "title": "월요일이 두 번 온 날: guest v6 full investigation",
+      "status": "passed",
+      "durationMs": 22338,
+      "retry": 0,
+      "attachments": [
+        "completed-save",
+        "completed-investigation"
+      ]
+    }
+  ],
+  "otherChecks": {
+    "typecheck": "passed",
+    "vitest": {
+      "files": 19,
+      "tests": 299,
+      "status": "passed"
+    },
+    "productionBuild": "passed"
+  },
+  "unverified": [
+    "new-user perceived difficulty and unaided completion",
+    "signed-in account save round trip and cross-device conflicts",
+    "deployed production five-case browser completion",
+    "other browsers/mobile/exhaustive visual fidelity"
+  ]
+}

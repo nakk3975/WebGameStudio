@@ -11,3 +11,6 @@ apps/api/target/
 *.key
 
 __pycache__/
+
+/playwright-report/
+/test-results/

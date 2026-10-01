@@ -8,6 +8,8 @@ on:
       - "apps/ghostdesk/**"
       - "packages/**"
       - "tests/**"
+      - "e2e/**"
+      - "tsconfig.json"
       - "scripts/**"
       - "package*.json"
       - "*.config.ts"
@@ -48,3 +50,23 @@ jobs:
           java-version: "21"
           cache: maven
       - run: mvn -B -s apps/api/maven-settings.xml -f apps/api/pom.xml verify
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24.19.0"
+          cache: npm
+      - run: npm ci
+      - run: npm run test:e2e:install
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ghostdesk-browser-results
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14
